@@ -44,14 +44,20 @@
         .animate-mandi:hover {
             animation-play-state: paused;
         }
+        @media print {
+            body * { visibility: hidden; }
+            #read-modal-card, #read-modal-card * { visibility: visible; }
+            #read-modal-card { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
 
-    <!-- Reading Progress Bar -->
+    <!-- Top Reading Scroll Progress Bar -->
     <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width: 0%;"></div>
 
-    <!-- Breaking News Bar -->
+    <!-- Top Breaking News Bar -->
     <div class="bg-red-700 text-white py-1.5 px-4 text-sm flex items-center shadow-md overflow-hidden">
         <span class="bg-black text-xs font-bold uppercase px-2 py-0.5 rounded mr-3 flex items-center shrink-0 z-10 shadow">
             <span class="w-2 h-2 rounded-full bg-red-500 animate-ping mr-1"></span> ब्रेकिंग
@@ -63,14 +69,14 @@
         </div>
     </div>
 
-    <!-- Mandi Bhav Live Bar -->
+    <!-- Mandi & Fuel Rates Bar -->
     <div class="bg-amber-600 text-white py-1 px-4 text-xs flex items-center shadow-sm overflow-hidden border-b border-amber-700">
         <span class="bg-amber-950 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2 flex items-center shrink-0 z-10">
-            <i class="fa-solid fa-wheat-awn mr-1"></i> मंडी भाव
+            <i class="fa-solid fa-chart-line mr-1"></i> लाइव दरें
         </span>
         <div class="overflow-hidden whitespace-nowrap w-full relative">
             <div class="animate-mandi font-medium tracking-wide">
-                गेहूं: ₹2,450 - ₹2,780/क्विंटल &nbsp;|&nbsp; मक्का: ₹2,100 - ₹2,350/क्विंटल &nbsp;|&nbsp; सरसों: ₹5,100 - ₹5,450/क्विंटल &nbsp;|&nbsp; चना: ₹5,800 - ₹6,200/क्विंटल &nbsp;|&nbsp; सोयाबीन: ₹4,300 - ₹4,650/क्विंटल &nbsp;|&nbsp; जीरा: ₹24,000 - ₹28,500/क्विंटल
+                पेट्रोल: ₹104.80/L &nbsp;|&nbsp; डीज़ल: ₹90.30/L &nbsp;|&nbsp; LPG सिलेंडर: ₹810 &nbsp;|&nbsp; गेहूं: ₹2,450 - ₹2,780 &nbsp;|&nbsp; मक्का: ₹2,100 - ₹2,350 &nbsp;|&nbsp; सरसों: ₹5,100 - ₹5,450 &nbsp;|&nbsp; चना: ₹5,800 - ₹6,200/क्विंटल
             </div>
         </div>
     </div>
@@ -203,6 +209,18 @@
             <!-- Sidebar -->
             <aside class="space-y-6">
                 
+                <!-- WhatsApp Newsletter Community Box -->
+                <div class="bg-gradient-to-r from-emerald-600 to-teal-700 p-4 rounded-xl text-white shadow-md">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <i class="fa-brands fa-whatsapp text-2xl text-white"></i>
+                        <h4 class="font-bold text-sm">व्हाट्सएप न्यूज़ बुलेटिन</h4>
+                    </div>
+                    <p class="text-xs text-emerald-100 mb-3">क्षेत्र की हर बड़ी खबर सीधे अपने मोबाइल पर तुरंत पाने के लिए हमारे व्हाट्सएप ग्रुप से जुड़ें।</p>
+                    <a href="https://chat.whatsapp.com/" target="_blank" class="w-full block text-center bg-white text-emerald-800 hover:bg-emerald-50 text-xs font-bold py-2 rounded-lg transition shadow">
+                        ग्रुप जॉइन करें &rarr;
+                    </a>
+                </div>
+
                 <!-- Sidebar Commercial Ad -->
                 <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 p-5 rounded-xl border border-indigo-700/60 text-white shadow-md relative overflow-hidden">
                     <div class="absolute -right-6 -bottom-6 opacity-10 text-white text-8xl pointer-events-none">
@@ -224,12 +242,44 @@
                     </a>
                 </div>
 
+                <!-- Emergency Blood Donors & Medical Directory -->
+                <div class="bg-red-50 dark:bg-gray-900 p-4 rounded-xl border border-red-200 dark:border-red-900 text-xs shadow-sm">
+                    <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-2">
+                        <span class="font-bold text-red-700 dark:text-red-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-droplet text-red-600 animate-pulse"></i> रक्तदान & इमरजेंसी डायरेक्टरी
+                        </span>
+                    </div>
+                    <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+                        <li class="flex justify-between"><span>ब्लड बैंक (उदयपुर):</span> <strong>0294-2451555</strong></li>
+                        <li class="flex justify-between"><span>सामुदायिक स्वास्थ्य केंद्र:</span> <strong>108 / 102</strong></li>
+                        <li class="flex justify-between"><span>रक्तदाता हेल्पलाइन:</span> <strong>+91 80035 77576</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Local Transport & Bus Schedule Guide -->
+                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-xs shadow-sm">
+                    <div class="flex items-center gap-1.5 font-bold text-indigo-600 dark:text-indigo-400 border-b dark:border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-bus"></i> प्रमुख बस समय-सारणी (Bus Guide)
+                    </div>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
+                            <span>कल्याणपुर ➔ उदयपुर:</span> <strong class="text-gray-800 dark:text-gray-200">हर 20 मिनट में</strong>
+                        </li>
+                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
+                            <span>उदयपुर ➔ अहमदाबाद:</span> <strong class="text-gray-800 dark:text-gray-200">प्रातः 06:00 से निरंतर</strong>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>ऋषभदेव ➔ डूंगरपुर:</span> <strong class="text-gray-800 dark:text-gray-200">हर 30 मिनट में</strong>
+                        </li>
+                    </ul>
+                </div>
+
                 <!-- Job Alerts & Career Widget -->
-                <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-                    <div class="flex items-center gap-2 mb-3 text-red-600 font-bold text-xs uppercase tracking-wider">
+                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-xs">
+                    <div class="flex items-center gap-2 mb-3 text-red-600 font-bold uppercase tracking-wider">
                         <i class="fa-solid fa-briefcase"></i> रोज़गार व भर्ती अलर्ट
                     </div>
-                    <ul class="space-y-3 text-xs text-gray-700 dark:text-gray-300 divide-y dark:divide-gray-800">
+                    <ul class="space-y-2 text-gray-700 dark:text-gray-300 divide-y dark:divide-gray-800">
                         <li class="pt-2 flex justify-between items-center">
                             <div>
                                 <span class="font-bold block text-gray-900 dark:text-gray-100">राजस्थान पटवार & CET भर्ती</span>
@@ -247,30 +297,13 @@
                     </ul>
                 </div>
 
-                <!-- Upcoming Local Events Widget -->
-                <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-                    <div class="flex items-center gap-2 mb-3 text-indigo-600 font-bold text-xs uppercase tracking-wider">
-                        <i class="fa-solid fa-calendar-check"></i> आगामी क्षेत्रीय कार्यक्रम
-                    </div>
-                    <ul class="space-y-2.5 text-xs text-gray-700 dark:text-gray-300">
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-circle-dot text-indigo-500 text-[10px] mt-1"></i>
-                            <div><strong>ऋषभदेव मेला:</strong> आगामी सप्ताह में सांस्कृतिक एवं धार्मिक आयोजन।</div>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-circle-dot text-indigo-500 text-[10px] mt-1"></i>
-                            <div><strong>किसान गोष्ठी:</strong> ब्लॉक स्तर पर जैविक खेती जागरूकता कार्यशाला।</div>
-                        </li>
-                    </ul>
-                </div>
-
                 <!-- Public Opinion Poll -->
-                <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
-                    <div class="flex items-center gap-2 mb-2 text-red-600 font-bold text-xs uppercase tracking-wider">
+                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-xs">
+                    <div class="flex items-center gap-2 mb-2 text-red-600 font-bold uppercase tracking-wider">
                         <i class="fa-solid fa-square-poll-vertical"></i> जनमत संग्रह (Poll)
                     </div>
                     <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 mb-3" id="poll-question">क्या आपके क्षेत्र में सड़क व सफाई व्यवस्था संतोषजनक है?</h4>
-                    <div id="poll-options" class="space-y-2 text-xs">
+                    <div id="poll-options" class="space-y-2">
                         <button onclick="castVote('yes')" class="w-full text-left p-2 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex justify-between cursor-pointer">
                             <span>हाँ, पूरी तरह ठीक है</span>
                             <span id="poll-yes-pct" class="font-bold text-emerald-600">62%</span>
@@ -281,27 +314,6 @@
                         </button>
                     </div>
                     <p id="poll-voted-msg" class="text-[11px] text-gray-500 mt-2 text-center">वोट देने के लिए किसी एक विकल्प पर क्लिक करें।</p>
-                </div>
-
-                <!-- Local Notice Box -->
-                <div class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800">
-                    <h3 class="font-bold text-gray-800 dark:text-gray-100 border-b dark:border-gray-800 pb-2 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-bullhorn text-red-600"></i> सूचना भेजें
-                    </h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">क्या आपके पास क्षेत्र की कोई महत्वपूर्ण खबर, फोटो या वीडियो है? हमें सीधे संपर्क करें।</p>
-                    <a href="https://wa.me/918003577576" target="_blank" class="w-full block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold text-sm transition">
-                        <i class="fa-brands fa-whatsapp text-lg mr-1"></i> WhatsApp पर भेजें
-                    </a>
-                </div>
-
-                <!-- Emergency Helpline -->
-                <div class="bg-red-50 dark:bg-gray-900 p-4 rounded-lg border border-red-200 dark:border-red-900 text-sm">
-                    <h4 class="font-bold text-red-800 dark:text-red-400 mb-2">आपातकालीन सहायता नंबर:</h4>
-                    <ul class="space-y-1 text-gray-700 dark:text-gray-300">
-                        <li><strong>पुलिस सहायता:</strong> 112 / 100</li>
-                        <li><strong>एम्बुलेंस:</strong> 108</li>
-                        <li><strong>महिला हेल्पलाइन:</strong> 1090</li>
-                    </ul>
                 </div>
             </aside>
         </div>
@@ -346,7 +358,7 @@
                     </div>
                 </div>
 
-                <!-- 30-Sec Video Upload Section -->
+                <!-- Video Upload Section -->
                 <div class="p-3 bg-red-50/50 dark:bg-gray-800 rounded border border-red-200 dark:border-gray-700 space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-red-700 dark:text-red-400 mb-1 flex items-center gap-1">
@@ -392,15 +404,19 @@
     <!-- Read Full News Modal -->
     <div id="read-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
-            <button onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+            <button onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer no-print">&times;</button>
             
             <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-3">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
                     <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
+                    <span id="read-time-badge" class="text-[11px] text-gray-400"><i class="fa-regular fa-clock mr-1"></i>1 मिनट</span>
                 </div>
 
-                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs no-print">
+                    <button onclick="window.print()" class="px-1.5 py-0.5 hover:text-red-600 text-gray-600 dark:text-gray-300 mr-2 font-bold flex items-center gap-1" title="प्रिंट या PDF सेव करें">
+                        <i class="fa-solid fa-print"></i> प्रिंट
+                    </button>
                     <span class="text-gray-500 text-[10px] mr-1">फॉन्ट:</span>
                     <button onclick="changeFontSize('small')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A-</button>
                     <button onclick="changeFontSize('normal')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A</button>
@@ -419,7 +435,7 @@
             </div>
 
             <!-- Audio Player Bar -->
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 no-print">
                 <div class="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-gray-200">
                     <i class="fa-solid fa-volume-high text-red-600 text-sm"></i> खबर सुनें (Audio News)
                 </div>
@@ -440,7 +456,7 @@
             <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
             
             <!-- Interactive Reactions Bar -->
-            <div class="mt-6 pt-4 border-t dark:border-gray-800 flex items-center justify-between flex-wrap gap-2">
+            <div class="mt-6 pt-4 border-t dark:border-gray-800 flex items-center justify-between flex-wrap gap-2 no-print">
                 <span class="text-xs font-bold text-gray-500">प्रतिक्रिया दें:</span>
                 <div class="flex items-center gap-2">
                     <button onclick="submitReaction('like')" class="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-full text-xs font-semibold cursor-pointer">
@@ -456,14 +472,14 @@
             </div>
 
             <!-- Share & Action Buttons -->
-            <div class="mt-4 pt-3 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3">
-                <div class="flex items-center gap-2">
+            <div class="mt-4 pt-3 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3 no-print">
+                <div class="flex items-center gap-2 flex-wrap">
                     <a id="modal-whatsapp-share" href="#" target="_blank" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-green-700 shadow-sm">
                         <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
                     </a>
-                    <a id="modal-telegram-share" href="#" target="_blank" class="bg-sky-500 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-sky-600 shadow-sm">
-                        <i class="fa-brands fa-telegram text-sm"></i> Telegram
-                    </a>
+                    <button onclick="generateStatusCard()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-image"></i> स्टेटस कार्ड बनाएं
+                    </button>
                     <button onclick="copyCurrentNewsLink()" class="bg-gray-800 hover:bg-black text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
                         <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
                     </button>
@@ -473,13 +489,15 @@
                 </button>
             </div>
 
+            <!-- Hidden Canvas for Status Card Generation -->
+            <canvas id="status-card-canvas" class="hidden"></canvas>
+
             <!-- Comments Section -->
-            <div class="mt-8 pt-6 border-t dark:border-gray-800">
+            <div class="mt-8 pt-6 border-t dark:border-gray-800 no-print">
                 <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-comments text-red-600"></i> पाठक टिप्पणियाँ (Comments)
                 </h3>
                 
-                <!-- New Comment Input Form -->
                 <form onsubmit="handleCommentSubmit(event)" class="space-y-2 mb-4">
                     <input type="text" id="comment-author" placeholder="आपका नाम" required class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded px-3 py-1.5 text-xs outline-none text-gray-900 dark:text-gray-100">
                     <textarea id="comment-text" rows="2" placeholder="अपनी राय लिखें..." required class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded px-3 py-1.5 text-xs outline-none text-gray-900 dark:text-gray-100"></textarea>
@@ -545,9 +563,9 @@
         let currentSpeakingText = '';
         let currentActiveNewsUrl = window.location.href;
         let currentActiveNewsId = null;
+        let currentActiveItem = null;
         let deferredPrompt;
 
-        // Bookmarks in LocalStorage
         function getSavedBookmarks() {
             return JSON.parse(localStorage.getItem('chunda_bookmarks') || '[]');
         }
@@ -1093,7 +1111,6 @@
             return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
         }
 
-        // Generate 3 Quick Bullet Points
         function generateAISummary(content) {
             const sentences = content.split(/[।.\n]/).map(s => s.trim()).filter(s => s.length > 10);
             if (sentences.length <= 3) {
@@ -1107,6 +1124,7 @@
             const item = allNewsData.find(i => i.id === id);
             if (!item) return;
             currentActiveNewsId = id;
+            currentActiveItem = item;
 
             try {
                 db.collection("news_posts").doc(id).update({
@@ -1119,15 +1137,17 @@
             const currentViews = (item.views || 0) + 1;
             document.getElementById('read-views').innerHTML = `<i class="fa-solid fa-eye text-red-500"></i> ${currentViews} Views`;
 
+            const wordCount = (item.content || '').split(' ').length;
+            const readMinutes = Math.max(1, Math.ceil(wordCount / 120));
+            document.getElementById('read-time-badge').innerHTML = `<i class="fa-regular fa-clock mr-1"></i>${readMinutes} मिनट में पढ़ें`;
+
             document.getElementById('read-title').innerText = item.title;
             document.getElementById('read-category').innerText = item.category;
             document.getElementById('read-date').innerText = item.date;
             document.getElementById('read-content').innerText = item.content;
 
-            // Render AI Summary
             document.getElementById('read-summary').innerHTML = generateAISummary(item.content);
 
-            // Reactions UI
             const reactions = item.reactions || { like: 0, love: 0, clap: 0 };
             document.getElementById('react-like-count').innerText = reactions.like || 0;
             document.getElementById('react-love-count').innerText = reactions.love || 0;
@@ -1168,7 +1188,6 @@
             const shareTitle = '📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: ' + currentActiveNewsUrl;
             
             document.getElementById('modal-whatsapp-share').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle)}`;
-            document.getElementById('modal-telegram-share').href = `https://t.me/share/url?url=${encodeURIComponent(currentActiveNewsUrl)}&text=${encodeURIComponent(item.title)}`;
 
             loadComments(id);
 
@@ -1177,7 +1196,6 @@
             modal.classList.add('flex');
         }
 
-        // Submit Reactions
         async function submitReaction(type) {
             if (!currentActiveNewsId) return;
             try {
@@ -1193,7 +1211,6 @@
             }
         }
 
-        // Live Comments Sub-collection
         function loadComments(postId) {
             const list = document.getElementById('comments-list');
             list.innerHTML = '<p class="text-gray-400 text-center py-2">कमेंट्स लोड हो रहे हैं...</p>';
@@ -1237,6 +1254,93 @@
             }
         }
 
+        // WhatsApp/Instagram Story Status Card Generator (Canvas Export)
+        function generateStatusCard() {
+            if (!currentActiveItem) return;
+            const canvas = document.getElementById('status-card-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1080;
+            canvas.height = 1350;
+
+            // Background Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 1350);
+            gradient.addColorStop(0, '#0f172a');
+            gradient.addColorStop(1, '#1e1b4b');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1080, 1350);
+
+            // Header Banner
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(0, 0, 1080, 120);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 44px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('CHUNDA KSHETRA NEWS', 540, 75);
+
+            // Category & Date
+            ctx.font = 'bold 28px sans-serif';
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillText(`【 ${currentActiveItem.category || 'समाचार'} 】 • ${currentActiveItem.date || ''}`, 540, 190);
+
+            // Headline Wrap
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 46px sans-serif';
+            ctx.textAlign = 'left';
+
+            const words = currentActiveItem.title.split(' ');
+            let line = '';
+            let y = 280;
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > 920 && n > 0) {
+                    ctx.fillText(line, 80, y);
+                    line = words[n] + ' ';
+                    y += 65;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, 80, y);
+
+            // Summary Content Wrap
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '32px sans-serif';
+            const contentSnippet = currentActiveItem.content.substring(0, 300) + '...';
+            const contentWords = contentSnippet.split(' ');
+            let cLine = '';
+            let cy = y + 80;
+            for (let n = 0; n < contentWords.length; n++) {
+                const testLine = cLine + contentWords[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > 920 && n > 0) {
+                    ctx.fillText(cLine, 80, cy);
+                    cLine = contentWords[n] + ' ';
+                    cy += 48;
+                    if (cy > 1150) break;
+                } else {
+                    cLine = testLine;
+                }
+            }
+            ctx.fillText(cLine, 80, cy);
+
+            // Footer Branding
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 1220, 1080, 130);
+
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 30px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('पूरा समाचार पढ़ने के लिए विज़िट करें: chundanews.github.io/chundanews', 540, 1295);
+
+            // Trigger Download
+            const link = document.createElement('a');
+            link.download = `ChundaNews_${currentActiveItem.id}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
         function closeReadModal() {
             const modal = document.getElementById('read-modal');
             const video = document.querySelector('#read-video-container video');
@@ -1245,6 +1349,7 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             currentActiveNewsId = null;
+            currentActiveItem = null;
         }
 
         window.onload = initApp;
