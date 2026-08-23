@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#dc2626">
+    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22CHUNDA%20KSHETRA%20NEWS%22%2C%22short_name%22%3A%22ChundaNews%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23dc2626%22%7D">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        @keyframes tickerMotion {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+        .animate-ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: tickerMotion 45s linear infinite;
+        }
+        .animate-ticker:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Top Reading Scroll Progress Bar -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width: 0%;"></div>
+
+    <!-- Top Breaking News Bar -->
+    <div class="bg-red-700 text-white py-1.5 px-4 text-sm flex items-center shadow-md overflow-hidden">
+        <span class="bg-black text-xs font-bold uppercase px-2 py-0.5 rounded mr-3 flex items-center shrink-0 z-10 shadow">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping mr-1"></span> ब्रेकिंग
+        </span>
+        <div class="overflow-hidden whitespace-nowrap w-full relative">
+            <div id="breaking-ticker" class="animate-ticker font-medium tracking-wide">
+                चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Panchang & Weather Utility Sub-Header -->
+    <div class="bg-gray-800 text-gray-300 text-xs py-1.5 px-4 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-4">
+                <span id="live-panchang" class="flex items-center gap-1.5 font-medium">
+                    <i class="fa-solid fa-calendar-day text-amber-400"></i> लोड हो रहा है...
+                </span>
+                <span id="live-weather" class="flex items-center gap-1.5 font-medium border-l border-gray-600 pl-3">
+                    <i class="fa-solid fa-sun text-yellow-400"></i> उदयपुर क्षेत्र: 29°C धूप
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="installPWA()" id="pwa-install-btn" class="hidden text-amber-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
+                    <i class="fa-solid fa-mobile-screen-button"></i> ऐप इंस्टॉल करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-40 shadow-sm transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-red-600 tracking-tight flex items-center gap-2 cursor-pointer" onclick="filterNews('all')">
+                    <i class="fa-solid fa-newspaper"></i> CHUNDA KSHETRA NEWS
+                </h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">आपका अपना स्वतंत्र डिजिटल न्यूज़ पोर्टल</p>
+            </div>
+
+            <!-- Live Search Box -->
+            <div class="relative flex-1 max-w-xs min-w-[200px]">
+                <input type="text" id="search-input" oninput="handleLiveSearch()" placeholder="खबर खोजें..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full pl-9 pr-4 py-1.5 text-xs focus:ring-2 focus:ring-red-500 focus:bg-white dark:focus:bg-gray-900 outline-none text-gray-800 dark:text-gray-200">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Dark Mode Toggle Button -->
+                <button onclick="toggleDarkMode()" id="dark-mode-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer text-sm" title="डार्क / लाइट मोड">
+                    <i class="fa-solid fa-moon" id="dark-icon"></i>
+                </button>
+
+                <button onclick="toggleAdminModal()" id="admin-login-btn" class="text-xs bg-gray-800 hover:bg-black text-white px-3 py-2 rounded font-semibold transition flex items-center gap-1 cursor-pointer">
+                    <i class="fa-solid fa-lock"></i> एडमिन लॉगिन
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Categories -->
+        <nav class="bg-gray-900 text-gray-200 border-t border-gray-800">
+            <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-6 py-2 text-sm font-medium">
+                <button onclick="filterNews('all')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">सभी खबरें</button>
+                <button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">क्षेत्रीय</button>
+                <button onclick="filterNews('राजनीति')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">राजनीति</button>
+                <button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">शिक्षा व रोज़गार</button>
+                <button onclick="filterNews('अपराध व सुरक्षा')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">अपराध व सुरक्षा</button>
+                <button onclick="filterNews('कृषि व मौसम')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">कृषि व मौसम</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Header Leaderboard Ad Slot -->
+    <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 border border-dashed border-amber-300 dark:border-amber-700 rounded-lg p-3 text-center flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="text-left">
+                <span class="text-[10px] bg-amber-200 dark:bg-amber-900 text-amber-800 dark:text-amber-200 font-bold px-1.5 py-0.5 rounded uppercase">विज्ञापन स्थान</span>
+                <p class="text-xs font-bold text-gray-800 dark:text-gray-200">अपने व्यापार, संस्थान या कोचिंग का विज्ञापन यहाँ लगाएं</p>
+            </div>
+            <a href="https://wa.me/918003577576" target="_blank" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded transition shadow-sm whitespace-nowrap">
+                <i class="fa-brands fa-whatsapp mr-1"></i> संपर्क करें
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Top Bar (Visible after Login) -->
+    <div id="admin-action-bar" class="hidden bg-emerald-700 text-white px-4 py-2 text-sm flex justify-between items-center shadow-inner">
+        <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> एडमिन मोड सक्रिय है</span>
+        <div class="flex gap-2">
+            <button onclick="openNewPostModal()" class="bg-white text-emerald-800 px-3 py-1 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow">
+                <i class="fa-solid fa-plus"></i> नई खबर जोड़ें
+            </button>
+            <button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-700 cursor-pointer shadow">
+                लॉगआउट
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- News Feed (2 Columns) -->
+            <div class="md:col-span-2 space-y-6">
+                
+                <!-- Lead / Hero Story Section -->
+                <div id="hero-container" class="hidden"></div>
+
+                <div class="flex justify-between items-center border-b-2 border-red-600 pb-2">
+                    <h2 id="current-category-title" class="text-xl font-bold text-gray-800 dark:text-gray-100">ताज़ा समाचार</h2>
+                    <span id="news-count" class="text-xs bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 px-2 py-1 rounded-full font-bold">0 खबरें</span>
+                </div>
+
+                <!-- Regular News Grid -->
+                <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="col-span-2 text-center py-12 text-gray-500">
+                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-2 text-red-600"></i>
+                        <p>खबरें लोड हो रही हैं...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar (1 Column) -->
+            <aside class="space-y-6">
+                
+                <!-- Public Opinion Poll Widget -->
+                <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+                    <div class="flex items-center gap-2 mb-2 text-red-600 font-bold text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-square-poll-vertical"></i> जनमत संग्रह (Poll)
+                    </div>
+                    <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 mb-3" id="poll-question">क्या आपके क्षेत्र में सड़क व सफाई व्यवस्था संतोषजनक है?</h4>
+                    <div id="poll-options" class="space-y-2 text-xs">
+                        <button onclick="castVote('yes')" class="w-full text-left p-2 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex justify-between cursor-pointer">
+                            <span>हाँ, पूरी तरह ठीक है</span>
+                            <span id="poll-yes-pct" class="font-bold text-emerald-600">62%</span>
+                        </button>
+                        <button onclick="castVote('no')" class="w-full text-left p-2 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex justify-between cursor-pointer">
+                            <span>नहीं, सुधार की ज़रूरत है</span>
+                            <span id="poll-no-pct" class="font-bold text-red-600">38%</span>
+                        </button>
+                    </div>
+                    <p id="poll-voted-msg" class="text-[11px] text-gray-500 mt-2 text-center">वोट देने के लिए किसी एक विकल्प पर क्लिक करें।</p>
+                </div>
+
+                <!-- E-Paper / PDF Bulletin Download Card -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 p-4 rounded-lg border border-blue-200 dark:border-blue-900 shadow-sm flex items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded">ई-बुलेटिन</span>
+                        <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 mt-1">साप्ताहिक ई-पेपर (PDF)</h4>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">डिजिटल संस्करण डाउनलोड करें</p>
+                    </div>
+                    <button onclick="alert('नया साप्ताहिक संस्करण तैयार हो रहा है। जल्द उपलब्ध होगा!')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold p-3 rounded-full transition shadow cursor-pointer">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                </div>
+
+                <!-- Sidebar Commercial Ad Box -->
+                <div class="bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 p-5 rounded-lg border border-red-200 dark:border-red-900 text-center shadow-sm">
+                    <span class="text-[10px] bg-red-600 text-white font-bold px-2 py-0.5 rounded uppercase">Sponsored Space</span>
+                    <h4 class="font-bold text-gray-900 dark:text-gray-100 mt-2 mb-1">अपने बिज़नेस का डिजिटल प्रचार करें</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">क्षेत्र के हज़ारों पाठकों तक सीधा अपना संदेश पहुंचाएं।</p>
+                    <a href="https://wa.me/918003577576" target="_blank" class="inline-block bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded shadow transition">
+                        <i class="fa-solid fa-bullhorn mr-1"></i> विज्ञापन दरें जानें
+                    </a>
+                </div>
+
+                <!-- Local Notice Box -->
+                <div class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800">
+                    <h3 class="font-bold text-gray-800 dark:text-gray-100 border-b dark:border-gray-800 pb-2 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-bullhorn text-red-600"></i> सूचना भेजें
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">क्या आपके पास क्षेत्र की कोई महत्वपूर्ण खबर, फोटो या वीडियो है? हमें सीधे संपर्क करें।</p>
+                    <a href="https://wa.me/918003577576" target="_blank" class="w-full block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold text-sm transition">
+                        <i class="fa-brands fa-whatsapp text-lg mr-1"></i> WhatsApp पर भेजें
+                    </a>
+                </div>
+
+                <!-- Emergency Helpline -->
+                <div class="bg-red-50 dark:bg-gray-900 p-4 rounded-lg border border-red-200 dark:border-red-900 text-sm">
+                    <h4 class="font-bold text-red-800 dark:text-red-400 mb-2">आपातकालीन सहायता नंबर:</h4>
+                    <ul class="space-y-1 text-gray-700 dark:text-gray-300">
+                        <li><strong>पुलिस सहायता:</strong> 112 / 100</li>
+                        <li><strong>एम्बुलेंस:</strong> 108</li>
+                        <li><strong>महिला हेल्पलाइन:</strong> 1090</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Post/Edit News Modal -->
+    <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <h3 id="post-modal-title" class="text-lg font-bold border-b dark:border-gray-800 pb-2 mb-4 text-gray-800 dark:text-gray-100">नई खबर पोस्ट करें</h3>
+            <form id="news-form" onsubmit="handleNewsSubmit(event)" class="space-y-4">
+                <input type="hidden" id="edit-doc-id">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">शीर्षक (Headline)</label>
+                    <input type="text" id="news-title" required class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 outline-none text-gray-900 dark:text-gray-100">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">श्रेणी (Category)</label>
+                    <select id="news-category" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100">
+                        <option value="क्षेत्रीय">क्षेत्रीय</option>
+                        <option value="राजनीति">राजनीति</option>
+                        <option value="शिक्षा व रोज़गार">शिक्षा व रोज़गार</option>
+                        <option value="अपराध व सुरक्षा">अपराध व सुरक्षा</option>
+                        <option value="कृषि व मौसम">कृषि व मौसम</option>
+                    </select>
+                </div>
+                
+                <!-- Multiple Image Upload & URL Options -->
+                <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-images text-red-600"></i> फ़ोटो चुनें (Multiple Photos)
+                        </label>
+                        <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950 file:text-red-700 dark:file:text-red-400 hover:file:bg-red-100">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">या इमेज URL</label>
+                        <input type="url" id="news-image" placeholder="https://..." class="w-full border dark:border-gray-700 rounded px-3 py-2 text-sm outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    </div>
+                </div>
+
+                <!-- 30-Sec Video Upload Section -->
+                <div class="p-3 bg-red-50/50 dark:bg-gray-800 rounded border border-red-200 dark:border-gray-700 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-red-700 dark:text-red-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-video text-red-600"></i> न्यूज़ वीडियो (30 Sec / Max 10MB)
+                        </label>
+                        <input type="file" id="news-video-file" accept="video/mp4,video/webm" class="w-full text-xs text-gray-600 dark:text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">या वीडियो URL (YouTube / Video Link)</label>
+                        <input type="url" id="news-video-url" placeholder="https://youtube.com/... या https://..." class="w-full border dark:border-gray-700 rounded px-3 py-2 text-sm outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">विस्तृत समाचार (Content)</label>
+                    <textarea id="news-content" rows="4" required class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100"></textarea>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="news-breaking" class="w-4 h-4 text-red-600 rounded">
+                    <label for="news-breaking" class="text-sm font-semibold text-red-600 dark:text-red-400">ब्रेकिंग न्यूज़ बार में दिखाएं</label>
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t dark:border-gray-800">
+                    <button type="button" onclick="togglePostModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">रद्द करें</button>
+                    <button type="submit" id="submit-btn" class="bg-red-600 text-white px-5 py-2 rounded text-sm font-bold hover:bg-red-700 cursor-pointer">पोस्ट करें</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6 text-center shadow-xl">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">एडमिन सत्यापन</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">सुरक्षा पासवर्ड दर्ज करें</p>
+            <input type="password" id="admin-pin" placeholder="पासवर्ड दर्ज करें" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 text-center rounded px-3 py-2 text-base font-sans mb-4 outline-none text-gray-900 dark:text-gray-100">
+            <div class="flex justify-center gap-2">
+                <button type="button" onclick="toggleAdminModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">रद्द करें</button>
+                <button type="button" onclick="verifyAdminPin()" class="bg-black text-white px-5 py-2 rounded text-sm font-bold cursor-pointer">लॉगिन</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Read Full News Modal -->
+    <div id="read-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
+            <button onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+            
+            <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-3">
+                <div class="flex items-center gap-2">
+                    <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
+                    <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
+                </div>
+
+                <!-- Font Size Controller -->
+                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                    <span class="text-gray-500 text-[10px] mr-1">फॉन्ट:</span>
+                    <button onclick="changeFontSize('small')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A-</button>
+                    <button onclick="changeFontSize('normal')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A</button>
+                    <button onclick="changeFontSize('large')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A+</button>
+                </div>
+            </div>
+            
+            <h2 id="read-title" class="text-2xl font-bold mt-1 mb-2 text-gray-900 dark:text-gray-100 leading-snug"></h2>
+            
+            <!-- Text to Speech Audio Player Bar -->
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-gray-200">
+                    <i class="fa-solid fa-volume-high text-red-600 text-sm"></i> खबर सुनें (Audio News)
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="playNewsAudio()" id="audio-play-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded font-bold flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-play"></i> सुनें
+                    </button>
+                    <button onclick="stopNewsAudio()" id="audio-stop-btn" class="bg-gray-700 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded font-bold hidden flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-stop"></i> रोकें
+                    </button>
+                </div>
+            </div>
+
+            <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
+            
+            <!-- Video Player Section -->
+            <div id="read-video-container" class="mb-4 hidden rounded-lg overflow-hidden bg-black aspect-video flex items-center justify-center"></div>
+
+            <!-- Gallery Grid for Multiple Images -->
+            <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
+
+            <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
+            
+            <!-- Share & Action Buttons -->
+            <div class="mt-6 pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <a id="modal-whatsapp-share" href="#" target="_blank" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-green-700 shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                    </a>
+                    <a id="modal-telegram-share" href="#" target="_blank" class="bg-sky-500 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-sky-600 shadow-sm">
+                        <i class="fa-brands fa-telegram text-sm"></i> Telegram
+                    </a>
+                    <button onclick="copyCurrentNewsLink()" class="bg-gray-800 hover:bg-black text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Info Modal -->
+    <div id="legal-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-xl w-full p-6 relative max-h-[80vh] overflow-y-auto shadow-2xl">
+            <button onclick="closeLegalModal()" class="absolute top-3 right-4 text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+            <h3 id="legal-title" class="text-xl font-bold border-b dark:border-gray-800 pb-2 mb-3 text-red-600"></h3>
+            <div id="legal-content" class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed space-y-2 whitespace-pre-line"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 text-sm mt-12 py-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+            <h2 class="text-white font-bold text-lg">CHUNDA KSHETRA NEWS</h2>
+            <p class="text-xs text-gray-500">निष्पक्षता एवं विश्वसनीयता के साथ आपके क्षेत्र की आवाज़</p>
+            
+            <!-- Footer Legal Links -->
+            <div class="flex justify-center flex-wrap gap-6 text-xs text-gray-400 pt-2">
+                <button type="button" onclick="openLegalModal('disclaimer')" class="hover:text-white underline cursor-pointer">अस्वीकरण (Disclaimer)</button>
+                <button type="button" onclick="openLegalModal('privacy')" class="hover:text-white underline cursor-pointer">गोपनीयता नीति (Privacy)</button>
+                <button type="button" onclick="openLegalModal('grievance')" class="hover:text-white underline text-yellow-400 cursor-pointer">शिकायत निवारण (Grievance)</button>
+            </div>
+
+            <div class="text-xs text-gray-500 pt-2">
+                &copy; 2026 CHUNDA KSHETRA NEWS. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Configuration & Application Logic -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
+            authDomain: "chunda-news.firebaseapp.com",
+            projectId: "chunda-news",
+            storageBucket: "chunda-news.firebasestorage.app",
+            messagingSenderId: "872760222820",
+            appId: "1:872760222820:web:5e316ef1eb27d5a7046b71",
+            measurementId: "G-N7CHPOLVYX"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let allNewsData = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let isAdminLoggedIn = false;
+        let currentSpeakingText = '';
+        let currentActiveNewsUrl = window.location.href;
+        let deferredPrompt;
+
+        // PWA Installation Trigger
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('pwa-install-btn').classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        // Live Panchang Calculator
+        function initPanchang() {
+            const today = new Date();
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const dateFormatted = today.toLocaleDateString('hi-IN', options);
+            document.getElementById('live-panchang').innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${dateFormatted}`;
+        }
+
+        // Reading Scroll Progress Tracker
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("scroll-progress").style.width = scrolled + "%";
+        };
+
+        // Font Size Adjuster
+        function changeFontSize(size) {
+            const content = document.getElementById('read-content');
+            if (size === 'small') {
+                content.className = "text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-xs";
+            } else if (size === 'large') {
+                content.className = "text-gray-800 dark:text-gray-200 leading-relaxed space-y-4 whitespace-pre-line text-base sm:text-lg font-medium";
+            } else {
+                content.className = "text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm";
+            }
+        }
+
+        // Copy News Link to Clipboard
+        function copyCurrentNewsLink() {
+            navigator.clipboard.writeText(currentActiveNewsUrl).then(() => {
+                const textSpan = document.getElementById('copy-btn-text');
+                textSpan.innerText = "कॉपी हो गया! ✓";
+                setTimeout(() => { textSpan.innerText = "लिंक कॉपी"; }, 2000);
+            });
+        }
+
+        // Public Poll Voting Logic
+        function castVote(choice) {
+            alert("आपकी राय दर्ज कर ली गई है। धन्यवाद!");
+            document.getElementById('poll-voted-msg').innerText = "✓ आपका मत सफलतापूर्वक दर्ज हो गया है।";
+            document.getElementById('poll-voted-msg').classList.add('text-emerald-600', 'font-bold');
+        }
+
+        // Dark Mode Logic
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('dark-icon').className = 'fa-solid fa-sun';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('dark-icon').className = 'fa-solid fa-moon';
+            }
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                document.getElementById('dark-icon').className = 'fa-solid fa-moon';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                document.getElementById('dark-icon').className = 'fa-solid fa-sun';
+            }
+        }
+
+        // Text to Speech Logic (Hindi Support)
+        function playNewsAudio() {
+            if (!('speechSynthesis' in window)) {
+                alert("आपके ब्राउज़र में ऑडियो सपोर्ट उपलब्ध नहीं है।");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(currentSpeakingText);
+            utterance.lang = 'hi-IN';
+            utterance.rate = 0.95;
+
+            utterance.onend = () => {
+                document.getElementById('audio-play-btn').classList.remove('hidden');
+                document.getElementById('audio-stop-btn').classList.add('hidden');
+            };
+
+            window.speechSynthesis.speak(utterance);
+            document.getElementById('audio-play-btn').classList.add('hidden');
+            document.getElementById('audio-stop-btn').classList.remove('hidden');
+        }
+
+        function stopNewsAudio() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            document.getElementById('audio-play-btn').classList.remove('hidden');
+            document.getElementById('audio-stop-btn').classList.add('hidden');
+        }
+
+        const legalData = {
+            disclaimer: {
+                title: "अस्वीकरण (Disclaimer)",
+                content: "चूंडा क्षेत्र न्यूज़ (CHUNDA KSHETRA NEWS) एक स्वतंत्र डिजिटल समाचार माध्यम है। हमारे पोर्टल पर प्रकाशित सभी समाचार, आलेख और विचार संवाददाताओं, प्रत्यक्षदर्शियों और विभिन्न स्रोतों से एकत्रित किए जाते हैं। हम सामग्री की प्रामाणिकता और सटीकता के प्रति सतर्क रहते हैं, फिर भी किसी अनजाने त्रुटि या विसंगति के लिए संस्थान उत्तरदायी नहीं होगा। किसी भी कानूनी विवाद की स्थिति में न्यायिक क्षेत्राधिकार स्थानीय न्यायालय रहेगा।"
+            },
+            privacy: {
+                title: "गोपनीयता नीति (Privacy Policy)",
+                content: "हम अपने पाठकों की निजता का सम्मान करते हैं। यह वेबसाइट उपयोगकर्ताओं की कोई भी व्यक्तिगत वित्तीय जानकारी एकत्र नहीं करती है। साइट के बेहतर संचालन और ट्रैफ़िक विश्लेषण के लिए मानक कुकीज़ का उपयोग किया जा सकता है। उपयोगकर्ता द्वारा साझा की गई जानकारी पूर्णतः सुरक्षित रखी जाती है।"
+            },
+            grievance: {
+                title: "शिकायत निवारण (Grievance Redressal - IT Rules 2021)",
+                content: "सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश और डिजिटल मीडिया आचार संहिता) नियम, 2021 के अनुपालन हेतु विवरण:\n\n• शिकायत अधिकारी: संपादक / व्यवस्थापक\n• संस्थान: चूंडा क्षेत्र न्यूज़\n• ईमेल: contact.chundanews@gmail.com\n• पता: कल्याणपुर, उदयपुर, राजस्थान\n\nकिसी भी आपत्ति या शिकायत का निवारण 15 कार्यदिवसों के भीतर नियमानुसार किया जाएगा।"
+            }
+        };
+
+        function openLegalModal(type) {
+            document.getElementById('legal-title').innerText = legalData[type].title;
+            document.getElementById('legal-content').innerText = legalData[type].content;
+            const modal = document.getElementById('legal-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeLegalModal() {
+            const modal = document.getElementById('legal-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function initApp() {
+            initTheme();
+            initPanchang();
+            db.collection("news_posts").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+                allNewsData = [];
+                snapshot.forEach(doc => {
+                    allNewsData.push({ id: doc.id, ...doc.data() });
+                });
+                renderNews();
+                updateBreakingTicker();
+            }, (error) => {
+                console.error("Firestore Error:", error);
+                document.getElementById('news-container').innerHTML = `<p class="col-span-2 text-center text-red-500">डेटा लोड करने में समस्या आई।</p>`;
+            });
+        }
+
+        function handleLiveSearch() {
+            searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+            renderNews();
+        }
+
+        function renderNews() {
+            const container = document.getElementById('news-container');
+            const heroContainer = document.getElementById('hero-container');
+
+            let filtered = currentFilter === 'all' ? allNewsData : allNewsData.filter(item => item.category === currentFilter);
+
+            if (searchQuery) {
+                filtered = filtered.filter(item => 
+                    item.title.toLowerCase().includes(searchQuery) || 
+                    item.content.toLowerCase().includes(searchQuery)
+                );
+            }
+            
+            document.getElementById('news-count').innerText = `${filtered.length} खबरें`;
+
+            if (filtered.length === 0) {
+                heroContainer.classList.add('hidden');
+                heroContainer.innerHTML = '';
+                container.innerHTML = `<div class="col-span-2 text-center py-8 text-gray-500">कोई खबर नहीं मिली।</div>`;
+                return;
+            }
+
+            // Hero Lead Story (Top First News)
+            if (currentFilter === 'all' && !searchQuery && filtered.length > 0) {
+                const leadItem = filtered[0];
+                const regularItems = filtered.slice(1);
+
+                let leadThumbnail = '';
+                const leadHasVideo = leadItem.video ? `<span class="absolute top-3 left-3 bg-red-600 text-white text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-play"></i> वीडियो</span>` : '';
+
+                if (leadItem.images && leadItem.images.length > 0) {
+                    leadThumbnail = `<img src="${leadItem.images[0]}" class="h-64 sm:h-80 w-full object-cover group-hover:scale-105 transition duration-300">`;
+                } else if (leadItem.image) {
+                    leadThumbnail = `<img src="${leadItem.image}" class="h-64 sm:h-80 w-full object-cover group-hover:scale-105 transition duration-300">`;
+                } else {
+                    leadThumbnail = `<div class="h-64 sm:h-80 w-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400"><i class="fa-solid fa-newspaper text-5xl"></i></div>`;
+                }
+
+                const viewsCount = leadItem.views || 0;
+
+                heroContainer.classList.remove('hidden');
+                heroContainer.innerHTML = `
+                    <div class="relative bg-white dark:bg-gray-900 rounded-xl shadow-md border border-gray-200 dark:border-gray-800 overflow-hidden group cursor-pointer" onclick="openReadModal('${leadItem.id}')">
+                        <div class="relative overflow-hidden">
+                            ${leadThumbnail}
+                            ${leadHasVideo}
+                            <span class="absolute bottom-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded shadow">बड़ी खबर / Lead Story</span>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-center text-xs text-gray-400 mb-1">
+                                <span>${leadItem.date || ''}</span>
+                                <span class="font-semibold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount} Views</span>
+                            </div>
+                            <h2 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-gray-100 leading-snug mt-1 group-hover:text-red-600 transition">${leadItem.title}</h2>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mt-2 line-clamp-3 leading-relaxed">${leadItem.content}</p>
+                            <div class="mt-4 flex justify-between items-center text-xs font-bold text-red-600">
+                                <span>विस्तार से पढ़ें &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                renderCards(regularItems, container);
+            } else {
+                heroContainer.classList.add('hidden');
+                heroContainer.innerHTML = '';
+                renderCards(filtered, container);
+            }
+        }
+
+        function renderCards(items, container) {
+            container.innerHTML = items.map(item => {
+                let thumbnail = '';
+                const hasVideoBadge = item.video ? `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-play"></i> वीडियो</span>` : '';
+
+                if (item.images && item.images.length > 0) {
+                    thumbnail = `<div class="relative"><img src="${item.images[0]}" class="h-44 w-full object-cover">${hasVideoBadge}${item.images.length > 1 ? `<span class="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-images mr-1"></i>+${item.images.length}</span>` : ''}</div>`;
+                } else if (item.image) {
+                    thumbnail = `<div class="relative"><img src="${item.image}" class="h-44 w-full object-cover">${hasVideoBadge}</div>`;
+                } else {
+                    thumbnail = `<div class="relative h-44 w-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400">${hasVideoBadge}<i class="fa-solid fa-newspaper text-3xl"></i></div>`;
+                }
+
+                const dateStr = item.date || new Date().toLocaleDateString('hi-IN');
+                const viewsCount = item.views || 0;
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: ' + window.location.href)}`;
+
+                const adminControls = isAdminLoggedIn ? `
+                    <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
+                        <button onclick="event.stopPropagation(); editNewsPost('${item.id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold hover:bg-blue-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i> एडिट
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold hover:bg-red-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> डिलीट
+                        </button>
+                    </div>
+                ` : '';
+
+                return `
+                <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        ${thumbnail}
+                        <div class="p-4">
+                            <div class="flex justify-between items-center text-xs mb-2">
+                                <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded">${item.category}</span>
+                                <span class="text-gray-400">${dateStr}</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-3">${item.content}</p>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-gray-900/50">
+                        <div class="flex justify-between items-center w-full">
+                            <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                            <span class="text-[11px] text-gray-500 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount}</span>
+                            <a href="${whatsappUrl}" target="_blank" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1">
+                                <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
+                            </a>
+                        </div>
+                        ${adminControls}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateBreakingTicker() {
+            const breaking = allNewsData.filter(i => i.isBreaking);
+            if (breaking.length > 0) {
+                document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('   ✦   ');
+            } else {
+                document.getElementById('breaking-ticker').innerText = "चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...";
+            }
+        }
+
+        function filterNews(cat) {
+            currentFilter = cat;
+            document.getElementById('current-category-title').innerText = cat === 'all' ? 'ताज़ा समाचार' : cat;
+            renderNews();
+        }
+
+        function processImageFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxWidth = 800;
+                        const scaleSize = maxWidth / img.width;
+                        const targetWidth = (img.width > maxWidth) ? maxWidth : img.width;
+                        const targetHeight = (img.width > maxWidth) ? (img.height * scaleSize) : img.height;
+                        
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.70));
+                    };
+                    img.onerror = error => reject(error);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function processVideoFile(file) {
+            return new Promise((resolve, reject) => {
+                if (file.size > 10 * 1024 * 1024) {
+                    reject(new Error("वीडियो साइज़ 10MB से कम होना चाहिए (लगभग 30 सेकंड)।"));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function openNewPostModal() {
+            document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
+            document.getElementById('news-form').reset();
+            document.getElementById('edit-doc-id').value = "";
+            document.getElementById('submit-btn').innerText = "पोस्ट करें";
+            togglePostModal();
+        }
+
+        function editNewsPost(id) {
+            const item = allNewsData.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('post-modal-title').innerText = "खबर एडिट / अपडेट करें";
+            document.getElementById('edit-doc-id').value = item.id;
+            document.getElementById('news-title').value = item.title;
+            document.getElementById('news-category').value = item.category;
+            document.getElementById('news-content').value = item.content;
+            document.getElementById('news-image').value = (item.image && typeof item.image === 'string' && item.image.startsWith('http')) ? item.image : '';
+            document.getElementById('news-video-url').value = (item.video && typeof item.video === 'string' && item.video.startsWith('http')) ? item.video : '';
+            document.getElementById('news-breaking').checked = !!item.isBreaking;
+            document.getElementById('submit-btn').innerText = "अपडेट करें";
+            
+            togglePostModal();
+        }
+
+        async function deleteNewsPost(id) {
+            if (confirm("क्या आप वाकई इस खबर को हटाना चाहते हैं?")) {
+                try {
+                    await db.collection("news_posts").doc(id).delete();
+                    alert("खबर डिलीट कर दी गई है!");
+                } catch (err) {
+                    alert("एरर: " + err.message);
+                }
+            }
+        }
+
+        async function handleNewsSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "प्रोसेसिंग व सेविंग...";
+
+            const editId = document.getElementById('edit-doc-id').value;
+            const fileInput = document.getElementById('news-files');
+            const videoFileInput = document.getElementById('news-video-file');
+            let imagesArray = [];
+            let videoData = document.getElementById('news-video-url').value.trim();
+
+            try {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const compressedBase64 = await processImageFile(fileInput.files[i]);
+                        imagesArray.push(compressedBase64);
+                    }
+                }
+
+                const manualUrl = document.getElementById('news-image').value.trim();
+                if (manualUrl) imagesArray.push(manualUrl);
+
+                if (videoFileInput.files && videoFileInput.files[0]) {
+                    videoData = await processVideoFile(videoFileInput.files[0]);
+                }
+
+                const postData = {
+                    title: document.getElementById('news-title').value,
+                    category: document.getElementById('news-category').value,
+                    content: document.getElementById('news-content').value,
+                    isBreaking: document.getElementById('news-breaking').checked,
+                    video: videoData || null,
+                    date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                };
+
+                if (imagesArray.length > 0) {
+                    postData.images = imagesArray;
+                    postData.image = imagesArray[0];
+                }
+
+                if (editId) {
+                    await db.collection("news_posts").doc(editId).update(postData);
+                    alert("खबर सफलतापूर्वक अपडेट हो गई!");
+                } else {
+                    postData.views = 0;
+                    postData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection("news_posts").add(postData);
+                    alert("खबर सफलतापूर्वक पोस्ट हो गई!");
+                }
+
+                document.getElementById('news-form').reset();
+                togglePostModal();
+            } catch (err) {
+                alert("एरर: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = editId ? "अपडेट करें" : "पोस्ट करें";
+            }
+        }
+
+        function toggleAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function togglePostModal() {
+            const modal = document.getElementById('post-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function verifyAdminPin() {
+            const pin = document.getElementById('admin-pin').value;
+            if (pin === "Admin@kpr") {
+                isAdminLoggedIn = true;
+                document.getElementById('admin-action-bar').classList.remove('hidden');
+                document.getElementById('admin-login-btn').classList.add('hidden');
+                toggleAdminModal();
+                renderNews();
+                alert("एडमिन लॉगिन सफल!");
+            } else {
+                alert("गलत पासवर्ड!");
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-action-bar').classList.add('hidden');
+            document.getElementById('admin-login-btn').classList.remove('hidden');
+            document.getElementById('admin-pin').value = '';
+            renderNews();
+        }
+
+        function getYouTubeEmbedUrl(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+        }
+
+        async function openReadModal(id) {
+            const item = allNewsData.find(i => i.id === id);
+            if (!item) return;
+
+            try {
+                db.collection("news_posts").doc(id).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+            } catch (e) {
+                console.log("View count error", e);
+            }
+
+            const currentViews = (item.views || 0) + 1;
+            document.getElementById('read-views').innerHTML = `<i class="fa-solid fa-eye text-red-500"></i> ${currentViews} Views`;
+
+            document.getElementById('read-title').innerText = item.title;
+            document.getElementById('read-category').innerText = item.category;
+            document.getElementById('read-date').innerText = item.date;
+            document.getElementById('read-content').innerText = item.content;
+
+            currentSpeakingText = `${item.title}। ${item.content}`;
+            stopNewsAudio();
+
+            // Video Handling
+            const videoContainer = document.getElementById('read-video-container');
+            videoContainer.innerHTML = '';
+            if (item.video) {
+                videoContainer.classList.remove('hidden');
+                const ytEmbed = typeof item.video === 'string' && item.video.includes('youtu') ? getYouTubeEmbedUrl(item.video) : null;
+                if (ytEmbed) {
+                    videoContainer.innerHTML = `<iframe src="${ytEmbed}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
+                } else {
+                    videoContainer.innerHTML = `<video src="${item.video}" controls playsinline class="w-full max-h-80 rounded-lg"></video>`;
+                }
+            } else {
+                videoContainer.classList.add('hidden');
+            }
+
+            // Image Gallery Handling
+            const gallery = document.getElementById('read-images-gallery');
+            gallery.innerHTML = '';
+            let imgs = item.images || (item.image ? [item.image] : []);
+            if (imgs.length > 0) {
+                gallery.classList.remove('hidden');
+                gallery.innerHTML = imgs.map(src => `<img src="${src}" class="w-full h-56 object-cover rounded-lg shadow-sm border border-gray-100 dark:border-gray-800">`).join('');
+            } else {
+                gallery.classList.add('hidden');
+            }
+
+            currentActiveNewsUrl = window.location.href.split('?')[0] + '?news=' + item.id;
+            const shareTitle = '📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: ' + currentActiveNewsUrl;
+            
+            document.getElementById('modal-whatsapp-share').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle)}`;
+            document.getElementById('modal-telegram-share').href = `https://t.me/share/url?url=${encodeURIComponent(currentActiveNewsUrl)}&text=${encodeURIComponent(item.title)}`;
+
+            const modal = document.getElementById('read-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeReadModal() {
+            const modal = document.getElementById('read-modal');
+            const video = document.querySelector('#read-video-container video');
+            if (video) video.pause();
+            stopNewsAudio();
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
