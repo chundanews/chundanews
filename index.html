@@ -35,14 +35,23 @@
         .animate-ticker:hover {
             animation-play-state: paused;
         }
+        .animate-mandi {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: tickerMotion 35s linear infinite;
+        }
+        .animate-mandi:hover {
+            animation-play-state: paused;
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
 
-    <!-- Top Reading Scroll Progress Bar -->
+    <!-- Reading Progress Bar -->
     <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width: 0%;"></div>
 
-    <!-- Top Breaking News Bar -->
+    <!-- Breaking News Bar -->
     <div class="bg-red-700 text-white py-1.5 px-4 text-sm flex items-center shadow-md overflow-hidden">
         <span class="bg-black text-xs font-bold uppercase px-2 py-0.5 rounded mr-3 flex items-center shrink-0 z-10 shadow">
             <span class="w-2 h-2 rounded-full bg-red-500 animate-ping mr-1"></span> ब्रेकिंग
@@ -54,7 +63,19 @@
         </div>
     </div>
 
-    <!-- Live Panchang & Weather Utility Sub-Header -->
+    <!-- Mandi Bhav Live Bar -->
+    <div class="bg-amber-600 text-white py-1 px-4 text-xs flex items-center shadow-sm overflow-hidden border-b border-amber-700">
+        <span class="bg-amber-950 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2 flex items-center shrink-0 z-10">
+            <i class="fa-solid fa-wheat-awn mr-1"></i> मंडी भाव
+        </span>
+        <div class="overflow-hidden whitespace-nowrap w-full relative">
+            <div class="animate-mandi font-medium tracking-wide">
+                गेहूं: ₹2,450 - ₹2,780/क्विंटल &nbsp;|&nbsp; मक्का: ₹2,100 - ₹2,350/क्विंटल &nbsp;|&nbsp; सरसों: ₹5,100 - ₹5,450/क्विंटल &nbsp;|&nbsp; चना: ₹5,800 - ₹6,200/क्विंटल &nbsp;|&nbsp; सोयाबीन: ₹4,300 - ₹4,650/क्विंटल &nbsp;|&nbsp; जीरा: ₹24,000 - ₹28,500/क्विंटल
+            </div>
+        </div>
+    </div>
+
+    <!-- Utility Sub-Header -->
     <div class="bg-gray-800 text-gray-300 text-xs py-1.5 px-4 border-b border-gray-700">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-4">
@@ -66,6 +87,9 @@
                 </span>
             </div>
             <div class="flex items-center gap-3">
+                <button onclick="filterBookmarks()" class="text-amber-400 hover:text-white flex items-center gap-1 font-semibold cursor-pointer">
+                    <i class="fa-solid fa-bookmark text-red-500"></i> सेव की गई खबरें (<span id="bookmark-count">0</span>)
+                </button>
                 <button onclick="installPWA()" id="pwa-install-btn" class="hidden text-amber-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
                     <i class="fa-solid fa-mobile-screen-button"></i> ऐप इंस्टॉल करें
                 </button>
@@ -90,7 +114,6 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <!-- Dark Mode Toggle Button -->
                 <button onclick="toggleDarkMode()" id="dark-mode-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer text-sm" title="डार्क / लाइट मोड">
                     <i class="fa-solid fa-moon" id="dark-icon"></i>
                 </button>
@@ -118,7 +141,7 @@
         </nav>
     </header>
 
-    <!-- Top Banner Ad: MD CSC CENTER KALYANPUR -->
+    <!-- Top Banner Ad: MD CSC CENTER -->
     <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
         <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-xl p-3.5 shadow-lg border border-blue-700/50 flex flex-col md:flex-row items-center justify-between gap-3">
             <div class="flex items-center gap-3 text-left w-full md:w-auto">
@@ -142,7 +165,7 @@
         </div>
     </div>
 
-    <!-- Admin Top Bar (Visible after Login) -->
+    <!-- Admin Action Bar -->
     <div id="admin-action-bar" class="hidden bg-emerald-700 text-white px-4 py-2 text-sm flex justify-between items-center shadow-inner">
         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> एडमिन मोड सक्रिय है</span>
         <div class="flex gap-2">
@@ -159,10 +182,9 @@
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- News Feed (2 Columns) -->
+            <!-- News Feed Column -->
             <div class="md:col-span-2 space-y-6">
                 
-                <!-- Lead / Hero Story Section -->
                 <div id="hero-container" class="hidden"></div>
 
                 <div class="flex justify-between items-center border-b-2 border-red-600 pb-2">
@@ -170,7 +192,6 @@
                     <span id="news-count" class="text-xs bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 px-2 py-1 rounded-full font-bold">0 खबरें</span>
                 </div>
 
-                <!-- Regular News Grid -->
                 <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="col-span-2 text-center py-12 text-gray-500">
                         <i class="fa-solid fa-spinner fa-spin text-3xl mb-2 text-red-600"></i>
@@ -179,10 +200,10 @@
                 </div>
             </div>
 
-            <!-- Sidebar (1 Column) -->
+            <!-- Sidebar -->
             <aside class="space-y-6">
                 
-                <!-- Sidebar Commercial Card: MD CSC CENTER -->
+                <!-- Sidebar Commercial Ad -->
                 <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 p-5 rounded-xl border border-indigo-700/60 text-white shadow-md relative overflow-hidden">
                     <div class="absolute -right-6 -bottom-6 opacity-10 text-white text-8xl pointer-events-none">
                         <i class="fa-solid fa-building-columns"></i>
@@ -195,7 +216,7 @@
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> सभी प्रतियोगी परीक्षा ऑनलाइन फॉर्म</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> आधार से नकद निकासी (AEPS) व मनी ट्रांसफर</li>
                         <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> हाई क्वालिटी PVC कार्ड प्रिंटिंग व लेमिनेशन</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> पासपोर्ट फोटो, पैन कार्ड व जाति-मूल प्रमाण पत्र</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> पासपोर्ट फोटो, पैन कार्ड व प्रमाण पत्र</li>
                     </ul>
 
                     <a href="https://wa.me/918003577576?text=नमस्ते,%20मुझे%20CSC%20सर्विस%20की%20जानकारी%20चाहिए।" target="_blank" class="w-full block text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow transition">
@@ -203,7 +224,47 @@
                     </a>
                 </div>
 
-                <!-- Public Opinion Poll Widget -->
+                <!-- Job Alerts & Career Widget -->
+                <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3 text-red-600 font-bold text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-briefcase"></i> रोज़गार व भर्ती अलर्ट
+                    </div>
+                    <ul class="space-y-3 text-xs text-gray-700 dark:text-gray-300 divide-y dark:divide-gray-800">
+                        <li class="pt-2 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold block text-gray-900 dark:text-gray-100">राजस्थान पटवार & CET भर्ती</span>
+                                <span class="text-[11px] text-gray-500">ऑनलाइन आवेदन जारी</span>
+                            </div>
+                            <span class="bg-red-50 dark:bg-red-950 text-red-600 font-bold px-2 py-0.5 rounded text-[10px]">Active</span>
+                        </li>
+                        <li class="pt-2 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold block text-gray-900 dark:text-gray-100">रेलवे सुरक्षा बल (RPF) भर्ती</span>
+                                <span class="text-[11px] text-gray-500">अंतिम तिथि नज़दीक</span>
+                            </div>
+                            <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-600 font-bold px-2 py-0.5 rounded text-[10px]">Apply</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Upcoming Local Events Widget -->
+                <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3 text-indigo-600 font-bold text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-calendar-check"></i> आगामी क्षेत्रीय कार्यक्रम
+                    </div>
+                    <ul class="space-y-2.5 text-xs text-gray-700 dark:text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-dot text-indigo-500 text-[10px] mt-1"></i>
+                            <div><strong>ऋषभदेव मेला:</strong> आगामी सप्ताह में सांस्कृतिक एवं धार्मिक आयोजन।</div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-dot text-indigo-500 text-[10px] mt-1"></i>
+                            <div><strong>किसान गोष्ठी:</strong> ब्लॉक स्तर पर जैविक खेती जागरूकता कार्यशाला।</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Public Opinion Poll -->
                 <div class="bg-white dark:bg-gray-900 p-5 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
                     <div class="flex items-center gap-2 mb-2 text-red-600 font-bold text-xs uppercase tracking-wider">
                         <i class="fa-solid fa-square-poll-vertical"></i> जनमत संग्रह (Poll)
@@ -220,18 +281,6 @@
                         </button>
                     </div>
                     <p id="poll-voted-msg" class="text-[11px] text-gray-500 mt-2 text-center">वोट देने के लिए किसी एक विकल्प पर क्लिक करें।</p>
-                </div>
-
-                <!-- E-Paper / PDF Bulletin Download Card -->
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 p-4 rounded-lg border border-blue-200 dark:border-blue-900 shadow-sm flex items-center justify-between gap-3">
-                    <div>
-                        <span class="text-[10px] bg-blue-600 text-white font-bold px-2 py-0.5 rounded">ई-बुलेटिन</span>
-                        <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 mt-1">साप्ताहिक ई-पेपर (PDF)</h4>
-                        <p class="text-xs text-gray-600 dark:text-gray-400">डिजिटल संस्करण डाउनलोड करें</p>
-                    </div>
-                    <button onclick="alert('नया साप्ताहिक संस्करण तैयार हो रहा है। जल्द उपलब्ध होगा!')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold p-3 rounded-full transition shadow cursor-pointer">
-                        <i class="fa-solid fa-download"></i>
-                    </button>
                 </div>
 
                 <!-- Local Notice Box -->
@@ -351,7 +400,6 @@
                     <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
                 </div>
 
-                <!-- Font Size Controller -->
                 <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
                     <span class="text-gray-500 text-[10px] mr-1">फॉन्ट:</span>
                     <button onclick="changeFontSize('small')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A-</button>
@@ -362,7 +410,15 @@
             
             <h2 id="read-title" class="text-2xl font-bold mt-1 mb-2 text-gray-900 dark:text-gray-100 leading-snug"></h2>
             
-            <!-- Text to Speech Audio Player Bar -->
+            <!-- AI 3-Point Summary Box -->
+            <div class="bg-red-50 dark:bg-red-950/40 border-l-4 border-red-600 p-3 my-3 rounded-r-lg">
+                <div class="flex items-center gap-1.5 text-xs font-bold text-red-700 dark:text-red-400 mb-1">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 30 सेकंड में समझें (AI Summary)
+                </div>
+                <div id="read-summary" class="text-xs text-gray-700 dark:text-gray-300 space-y-1"></div>
+            </div>
+
+            <!-- Audio Player Bar -->
             <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-gray-200">
                     <i class="fa-solid fa-volume-high text-red-600 text-sm"></i> खबर सुनें (Audio News)
@@ -379,16 +435,28 @@
 
             <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
             
-            <!-- Video Player Section -->
             <div id="read-video-container" class="mb-4 hidden rounded-lg overflow-hidden bg-black aspect-video flex items-center justify-center"></div>
-
-            <!-- Gallery Grid for Multiple Images -->
             <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
-
             <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
             
+            <!-- Interactive Reactions Bar -->
+            <div class="mt-6 pt-4 border-t dark:border-gray-800 flex items-center justify-between flex-wrap gap-2">
+                <span class="text-xs font-bold text-gray-500">प्रतिक्रिया दें:</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="submitReaction('like')" class="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-full text-xs font-semibold cursor-pointer">
+                        👍 <span id="react-like-count">0</span>
+                    </button>
+                    <button onclick="submitReaction('love')" class="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-full text-xs font-semibold cursor-pointer">
+                        ❤️ <span id="react-love-count">0</span>
+                    </button>
+                    <button onclick="submitReaction('clap')" class="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-full text-xs font-semibold cursor-pointer">
+                        👏 <span id="react-clap-count">0</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Share & Action Buttons -->
-            <div class="mt-6 pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3">
+            <div class="mt-4 pt-3 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center gap-2">
                     <a id="modal-whatsapp-share" href="#" target="_blank" class="bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-green-700 shadow-sm">
                         <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
@@ -400,7 +468,31 @@
                         <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
                     </button>
                 </div>
+                <button onclick="toggleBookmarkCurrentNews()" id="modal-bookmark-btn" class="text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-red-600 flex items-center gap-1 cursor-pointer">
+                    <i class="fa-regular fa-bookmark" id="modal-bm-icon"></i> बाद में पढ़ें
+                </button>
             </div>
+
+            <!-- Comments Section -->
+            <div class="mt-8 pt-6 border-t dark:border-gray-800">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-comments text-red-600"></i> पाठक टिप्पणियाँ (Comments)
+                </h3>
+                
+                <!-- New Comment Input Form -->
+                <form onsubmit="handleCommentSubmit(event)" class="space-y-2 mb-4">
+                    <input type="text" id="comment-author" placeholder="आपका नाम" required class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded px-3 py-1.5 text-xs outline-none text-gray-900 dark:text-gray-100">
+                    <textarea id="comment-text" rows="2" placeholder="अपनी राय लिखें..." required class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded px-3 py-1.5 text-xs outline-none text-gray-900 dark:text-gray-100"></textarea>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-1.5 rounded cursor-pointer transition">
+                        कमेंट पोस्ट करें
+                    </button>
+                </form>
+
+                <div id="comments-list" class="space-y-2 max-h-48 overflow-y-auto text-xs">
+                    <p class="text-gray-400 text-center py-2">कोई कमेंट नहीं है। पहले कमेंट करें!</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -419,7 +511,6 @@
             <h2 class="text-white font-bold text-lg">CHUNDA KSHETRA NEWS</h2>
             <p class="text-xs text-gray-500">निष्पक्षता एवं विश्वसनीयता के साथ आपके क्षेत्र की आवाज़</p>
             
-            <!-- Footer Legal Links -->
             <div class="flex justify-center flex-wrap gap-6 text-xs text-gray-400 pt-2">
                 <button type="button" onclick="openLegalModal('disclaimer')" class="hover:text-white underline cursor-pointer">अस्वीकरण (Disclaimer)</button>
                 <button type="button" onclick="openLegalModal('privacy')" class="hover:text-white underline cursor-pointer">गोपनीयता नीति (Privacy)</button>
@@ -453,9 +544,53 @@
         let isAdminLoggedIn = false;
         let currentSpeakingText = '';
         let currentActiveNewsUrl = window.location.href;
+        let currentActiveNewsId = null;
         let deferredPrompt;
 
-        // PWA Installation Trigger
+        // Bookmarks in LocalStorage
+        function getSavedBookmarks() {
+            return JSON.parse(localStorage.getItem('chunda_bookmarks') || '[]');
+        }
+
+        function updateBookmarkBadge() {
+            const count = getSavedBookmarks().length;
+            document.getElementById('bookmark-count').innerText = count;
+        }
+
+        function toggleBookmark(id) {
+            let bookmarks = getSavedBookmarks();
+            if (bookmarks.includes(id)) {
+                bookmarks = bookmarks.filter(b => b !== id);
+            } else {
+                bookmarks.push(id);
+            }
+            localStorage.setItem('chunda_bookmarks', JSON.stringify(bookmarks));
+            updateBookmarkBadge();
+            renderNews();
+            if (currentActiveNewsId === id) updateModalBookmarkUI(id);
+        }
+
+        function toggleBookmarkCurrentNews() {
+            if (currentActiveNewsId) toggleBookmark(currentActiveNewsId);
+        }
+
+        function updateModalBookmarkUI(id) {
+            const isSaved = getSavedBookmarks().includes(id);
+            const icon = document.getElementById('modal-bm-icon');
+            if (isSaved) {
+                icon.className = 'fa-solid fa-bookmark text-red-600';
+            } else {
+                icon.className = 'fa-regular fa-bookmark';
+            }
+        }
+
+        function filterBookmarks() {
+            currentFilter = 'bookmarks';
+            document.getElementById('current-category-title').innerText = 'सेव की गई खबरें';
+            renderNews();
+        }
+
+        // PWA Installation
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -475,7 +610,6 @@
             }
         }
 
-        // Live Panchang Calculator
         function initPanchang() {
             const today = new Date();
             const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -483,7 +617,6 @@
             document.getElementById('live-panchang').innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${dateFormatted}`;
         }
 
-        // Reading Scroll Progress Tracker
         window.onscroll = function() {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -491,7 +624,6 @@
             document.getElementById("scroll-progress").style.width = scrolled + "%";
         };
 
-        // Font Size Adjuster
         function changeFontSize(size) {
             const content = document.getElementById('read-content');
             if (size === 'small') {
@@ -503,7 +635,6 @@
             }
         }
 
-        // Copy News Link to Clipboard
         function copyCurrentNewsLink() {
             navigator.clipboard.writeText(currentActiveNewsUrl).then(() => {
                 const textSpan = document.getElementById('copy-btn-text');
@@ -512,14 +643,12 @@
             });
         }
 
-        // Public Poll Voting Logic
         function castVote(choice) {
             alert("आपकी राय दर्ज कर ली गई है। धन्यवाद!");
             document.getElementById('poll-voted-msg').innerText = "✓ आपका मत सफलतापूर्वक दर्ज हो गया है।";
             document.getElementById('poll-voted-msg').classList.add('text-emerald-600', 'font-bold');
         }
 
-        // Dark Mode Logic
         function initTheme() {
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
@@ -542,7 +671,6 @@
             }
         }
 
-        // Text to Speech Logic (Hindi Support)
         function playNewsAudio() {
             if (!('speechSynthesis' in window)) {
                 alert("आपके ब्राउज़र में ऑडियो सपोर्ट उपलब्ध नहीं है।");
@@ -574,15 +702,15 @@
         const legalData = {
             disclaimer: {
                 title: "अस्वीकरण (Disclaimer)",
-                content: "चूंडा क्षेत्र न्यूज़ (CHUNDA KSHETRA NEWS) एक स्वतंत्र डिजिटल समाचार माध्यम है। हमारे पोर्टल पर प्रकाशित सभी समाचार, आलेख और विचार संवाददाताओं, प्रत्यक्षदर्शियों और विभिन्न स्रोतों से एकत्रित किए जाते हैं। हम सामग्री की प्रामाणिकता और सटीकता के प्रति सतर्क रहते हैं, फिर भी किसी अनजाने त्रुटि या विसंगति के लिए संस्थान उत्तरदायी नहीं होगा। किसी भी कानूनी विवाद की स्थिति में न्यायिक क्षेत्राधिकार स्थानीय न्यायालय रहेगा।"
+                content: "चूंडा क्षेत्र न्यूज़ (CHUNDA KSHETRA NEWS) एक स्वतंत्र डिजिटल समाचार माध्यम है। हमारे पोर्टल पर प्रकाशित सभी समाचार, आलेख और विचार संवाददाताओं, प्रत्यक्षदर्शियों और विभिन्न स्रोतों से एकत्रित किए जाते हैं।"
             },
             privacy: {
                 title: "गोपनीयता नीति (Privacy Policy)",
-                content: "हम अपने पाठकों की निजता का सम्मान करते हैं। यह वेबसाइट उपयोगकर्ताओं की कोई भी व्यक्तिगत वित्तीय जानकारी एकत्र नहीं करती है। साइट के बेहतर संचालन और ट्रैफ़िक विश्लेषण के लिए मानक कुकीज़ का उपयोग किया जा सकता है। उपयोगकर्ता द्वारा साझा की गई जानकारी पूर्णतः सुरक्षित रखी जाती है।"
+                content: "हम अपने पाठकों की निजता का सम्मान करते हैं। यह वेबसाइट उपयोगकर्ताओं की कोई भी व्यक्तिगत वित्तीय जानकारी एकत्र नहीं करती है।"
             },
             grievance: {
                 title: "शिकायत निवारण (Grievance Redressal - IT Rules 2021)",
-                content: "सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश और डिजिटल मीडिया आचार संहिता) नियम, 2021 के अनुपालन हेतु विवरण:\n\n• शिकायत अधिकारी: संपादक / व्यवस्थापक\n• संस्थान: चूंडा क्षेत्र न्यूज़\n• ईमेल: contact.chundanews@gmail.com\n• पता: कल्याणपुर, उदयपुर, राजस्थान\n\nकिसी भी आपत्ति या शिकायत का निवारण 15 कार्यदिवसों के भीतर नियमानुसार किया जाएगा।"
+                content: "• शिकायत अधिकारी: संपादक / व्यवस्थापक\n• संस्थान: चूंडा क्षेत्र न्यूज़\n• ईमेल: contact.chundanews@gmail.com\n• पता: कल्याणपुर, उदयपुर, राजस्थान"
             }
         };
 
@@ -603,6 +731,7 @@
         function initApp() {
             initTheme();
             initPanchang();
+            updateBookmarkBadge();
             db.collection("news_posts").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
                 allNewsData = [];
                 snapshot.forEach(doc => {
@@ -624,8 +753,16 @@
         function renderNews() {
             const container = document.getElementById('news-container');
             const heroContainer = document.getElementById('hero-container');
+            const savedBookmarks = getSavedBookmarks();
 
-            let filtered = currentFilter === 'all' ? allNewsData : allNewsData.filter(item => item.category === currentFilter);
+            let filtered = [];
+            if (currentFilter === 'all') {
+                filtered = allNewsData;
+            } else if (currentFilter === 'bookmarks') {
+                filtered = allNewsData.filter(item => savedBookmarks.includes(item.id));
+            } else {
+                filtered = allNewsData.filter(item => item.category === currentFilter);
+            }
 
             if (searchQuery) {
                 filtered = filtered.filter(item => 
@@ -643,7 +780,6 @@
                 return;
             }
 
-            // Hero Lead Story (Top First News)
             if (currentFilter === 'all' && !searchQuery && filtered.length > 0) {
                 const leadItem = filtered[0];
                 const regularItems = filtered.slice(1);
@@ -704,6 +840,7 @@
         }
 
         function renderCards(items, container) {
+            const savedBookmarks = getSavedBookmarks();
             container.innerHTML = items.map(item => {
                 let thumbnail = '';
                 const hasVideoBadge = item.video ? `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-play"></i> वीडियो</span>` : '';
@@ -718,6 +855,7 @@
 
                 const dateStr = item.date || new Date().toLocaleDateString('hi-IN');
                 const viewsCount = item.views || 0;
+                const isBookmarked = savedBookmarks.includes(item.id);
                 const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: ' + window.location.href)}`;
 
                 const adminControls = isAdminLoggedIn ? `
@@ -738,7 +876,12 @@
                         <div class="p-4">
                             <div class="flex justify-between items-center text-xs mb-2">
                                 <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded">${item.category}</span>
-                                <span class="text-gray-400">${dateStr}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-400">${dateStr}</span>
+                                    <button onclick="event.stopPropagation(); toggleBookmark('${item.id}')" class="text-gray-400 hover:text-red-600 cursor-pointer">
+                                        <i class="${isBookmarked ? 'fa-solid text-red-600' : 'fa-regular'} fa-bookmark"></i>
+                                    </button>
+                                </div>
                             </div>
                             <h3 class="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-3">${item.content}</p>
@@ -894,6 +1037,7 @@
                     alert("खबर सफलतापूर्वक अपडेट हो गई!");
                 } else {
                     postData.views = 0;
+                    postData.reactions = { like: 0, love: 0, clap: 0 };
                     postData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection("news_posts").add(postData);
                     alert("खबर सफलतापूर्वक पोस्ट हो गई!");
@@ -949,9 +1093,20 @@
             return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
         }
 
+        // Generate 3 Quick Bullet Points
+        function generateAISummary(content) {
+            const sentences = content.split(/[।.\n]/).map(s => s.trim()).filter(s => s.length > 10);
+            if (sentences.length <= 3) {
+                return sentences.map(s => `<p class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-red-600 mt-0.5"></i> <span>${s}।</span></p>`).join('');
+            }
+            return [sentences[0], sentences[Math.floor(sentences.length / 2)], sentences[sentences.length - 1]]
+                .map(s => `<p class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-red-600 mt-0.5"></i> <span>${s}।</span></p>`).join('');
+        }
+
         async function openReadModal(id) {
             const item = allNewsData.find(i => i.id === id);
             if (!item) return;
+            currentActiveNewsId = id;
 
             try {
                 db.collection("news_posts").doc(id).update({
@@ -968,6 +1123,17 @@
             document.getElementById('read-category').innerText = item.category;
             document.getElementById('read-date').innerText = item.date;
             document.getElementById('read-content').innerText = item.content;
+
+            // Render AI Summary
+            document.getElementById('read-summary').innerHTML = generateAISummary(item.content);
+
+            // Reactions UI
+            const reactions = item.reactions || { like: 0, love: 0, clap: 0 };
+            document.getElementById('react-like-count').innerText = reactions.like || 0;
+            document.getElementById('react-love-count').innerText = reactions.love || 0;
+            document.getElementById('react-clap-count').innerText = reactions.clap || 0;
+
+            updateModalBookmarkUI(id);
 
             currentSpeakingText = `${item.title}। ${item.content}`;
             stopNewsAudio();
@@ -1004,9 +1170,71 @@
             document.getElementById('modal-whatsapp-share').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareTitle)}`;
             document.getElementById('modal-telegram-share').href = `https://t.me/share/url?url=${encodeURIComponent(currentActiveNewsUrl)}&text=${encodeURIComponent(item.title)}`;
 
+            loadComments(id);
+
             const modal = document.getElementById('read-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+        }
+
+        // Submit Reactions
+        async function submitReaction(type) {
+            if (!currentActiveNewsId) return;
+            try {
+                const docRef = db.collection("news_posts").doc(currentActiveNewsId);
+                const field = `reactions.${type}`;
+                await docRef.update({
+                    [field]: firebase.firestore.FieldValue.increment(1)
+                });
+                const countElem = document.getElementById(`react-${type}-count`);
+                countElem.innerText = parseInt(countElem.innerText || '0') + 1;
+            } catch (err) {
+                console.error("Reaction Error:", err);
+            }
+        }
+
+        // Live Comments Sub-collection
+        function loadComments(postId) {
+            const list = document.getElementById('comments-list');
+            list.innerHTML = '<p class="text-gray-400 text-center py-2">कमेंट्स लोड हो रहे हैं...</p>';
+            
+            db.collection("news_posts").doc(postId).collection("comments").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+                if (snapshot.empty) {
+                    list.innerHTML = '<p class="text-gray-400 text-center py-2">कोई कमेंट नहीं है। पहले कमेंट करें!</p>';
+                    return;
+                }
+                list.innerHTML = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return `
+                    <div class="bg-gray-50 dark:bg-gray-800 p-2.5 rounded border dark:border-gray-700">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-gray-900 dark:text-gray-100">${data.author || 'पाठक'}</span>
+                            <span class="text-[10px] text-gray-400">${data.date || ''}</span>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300">${data.text}</p>
+                    </div>`;
+                }).join('');
+            });
+        }
+
+        async function handleCommentSubmit(e) {
+            e.preventDefault();
+            if (!currentActiveNewsId) return;
+
+            const authorInput = document.getElementById('comment-author');
+            const textInput = document.getElementById('comment-text');
+
+            try {
+                await db.collection("news_posts").doc(currentActiveNewsId).collection("comments").add({
+                    author: authorInput.value.trim(),
+                    text: textInput.value.trim(),
+                    date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short' }),
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                textInput.value = '';
+            } catch (err) {
+                alert("कमेंट पोस्ट करने में समस्या आई: " + err.message);
+            }
         }
 
         function closeReadModal() {
@@ -1016,6 +1244,7 @@
             stopNewsAudio();
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+            currentActiveNewsId = null;
         }
 
         window.onload = initApp;
