@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <!-- Utility Sub-Header (Live API Weather & Panchang) -->
+    <!-- Utility Sub-Header -->
     <div class="bg-gray-800 text-gray-300 text-xs py-1.5 px-4 border-b border-gray-700">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-4">
@@ -93,7 +93,10 @@
                 </span>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="filterBookmarks()" class="text-amber-400 hover:text-white flex items-center gap-1 font-semibold cursor-pointer">
+                <button onclick="openCitizenReportModal()" class="text-yellow-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
+                    <i class="fa-solid fa-bullhorn text-red-500"></i> खबर भेजें (Citizen Reporter)
+                </button>
+                <button onclick="filterBookmarks()" class="text-amber-400 hover:text-white flex items-center gap-1 font-semibold cursor-pointer border-l border-gray-600 pl-3">
                     <i class="fa-solid fa-bookmark text-red-500"></i> सेव की गई खबरें (<span id="bookmark-count">0</span>)
                 </button>
                 <button onclick="installPWA()" id="pwa-install-btn" class="hidden text-amber-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
@@ -127,6 +130,50 @@
                 <button onclick="toggleAdminModal()" id="admin-login-btn" class="text-xs bg-gray-800 hover:bg-black text-white px-3 py-2 rounded font-semibold transition flex items-center gap-1 cursor-pointer">
                     <i class="fa-solid fa-lock"></i> एडमिन लॉगिन
                 </button>
+            </div>
+        </div>
+
+        <!-- Visual Web Stories Row -->
+        <div class="bg-gray-50 dark:bg-gray-950 border-t border-b dark:border-gray-800 py-2.5 px-4 overflow-x-auto flex gap-4 no-scrollbar max-w-7xl mx-auto">
+            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('क्षेत्रीय')">
+                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
+                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-red-600 font-bold text-lg border-2 border-white dark:border-gray-900">
+                        <i class="fa-solid fa-mountain-sun"></i>
+                    </div>
+                </div>
+                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">क्षेत्रीय</span>
+            </div>
+            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('खेल (Sports)')">
+                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
+                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-blue-600 font-bold text-lg border-2 border-white dark:border-gray-900">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                </div>
+                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">खेल</span>
+            </div>
+            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('शिक्षा व रोज़गार')">
+                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
+                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-emerald-600 font-bold text-lg border-2 border-white dark:border-gray-900">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                </div>
+                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">रोज़गार</span>
+            </div>
+            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('कृषि व मौसम')">
+                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
+                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-amber-600 font-bold text-lg border-2 border-white dark:border-gray-900">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                </div>
+                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">कृषि</span>
+            </div>
+            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('राजनीति')">
+                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
+                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-purple-600 font-bold text-lg border-2 border-white dark:border-gray-900">
+                        <i class="fa-solid fa-landmark"></i>
+                    </div>
+                </div>
+                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">राजनीति</span>
             </div>
         </div>
 
@@ -207,37 +254,61 @@
 
             <!-- Sidebar -->
             <aside class="space-y-6">
-                <!-- WhatsApp Newsletter Community Box -->
-                <div class="bg-gradient-to-r from-emerald-600 to-teal-700 p-4 rounded-xl text-white shadow-md">
-                    <div class="flex items-center gap-2 mb-1.5">
-                        <i class="fa-brands fa-whatsapp text-2xl text-white"></i>
-                        <h4 class="font-bold text-sm">व्हाट्सएप न्यूज़ बुलेटिन</h4>
+                
+                <!-- Live Video / YouTube News Hub Widget -->
+                <div class="bg-black text-white p-4 rounded-xl shadow-md border border-gray-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold flex items-center gap-1.5 text-red-500">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> लाइव वीडियो हब
+                        </span>
+                        <span class="text-[10px] bg-red-600 px-1.5 py-0.5 rounded font-bold uppercase">Streaming</span>
                     </div>
-                    <p class="text-xs text-emerald-100 mb-3">क्षेत्र की हर बड़ी खबर सीधे अपने मोबाइल पर तुरंत पाने के लिए हमारे व्हाट्सएप ग्रुप से जुड़ें।</p>
-                    <a href="https://chat.whatsapp.com/" target="_blank" class="w-full block text-center bg-white text-emerald-800 hover:bg-emerald-50 text-xs font-bold py-2 rounded-lg transition shadow">
-                        ग्रुप जॉइन करें &rarr;
+                    <div class="aspect-video w-full rounded-lg overflow-hidden bg-gray-900 mb-2">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/live_stream?channel=UC..." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <p class="text-[11px] text-gray-400">क्षेत्र के महत्वपूर्ण आयोजनों और लाइव प्रेस कॉन्फ्रेंस का सीधा प्रसारण देखें।</p>
+                </div>
+
+                <!-- Lost & Found / खोया-पाया Corner -->
+                <div class="bg-amber-50 dark:bg-gray-900 p-4 rounded-xl border border-amber-200 dark:border-amber-900 text-xs shadow-sm">
+                    <div class="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-400 border-b dark:border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-magnifying-glass-location text-amber-600"></i> खोया - पाया (Lost & Found)
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-2">यदि आपका कोई दस्तावेज़, पर्स या वाहन गुम हुआ है अथवा मिला है, तो तुरंत निःशुल्क सूचना दर्ज कराएं।</p>
+                    <a href="https://wa.me/918003577576?text=सूचना:%20खोया-पाया%20हेतु" target="_blank" class="w-full block text-center bg-amber-600 hover:bg-amber-700 text-white font-bold py-1.5 rounded transition">
+                        खोया-पाया सूचना दें &rarr;
                     </a>
                 </div>
 
-                <!-- Sidebar Commercial Ad -->
-                <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 p-5 rounded-xl border border-indigo-700/60 text-white shadow-md relative overflow-hidden">
-                    <div class="absolute -right-6 -bottom-6 opacity-10 text-white text-8xl pointer-events-none">
-                        <i class="fa-solid fa-building-columns"></i>
+                <!-- Obituary / शोक संदेश Section -->
+                <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-300 dark:border-gray-800 text-xs shadow-sm">
+                    <div class="flex items-center gap-1.5 font-bold text-gray-800 dark:text-gray-200 border-b dark:border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-feather-pointed text-gray-600"></i> शोक संदेश व श्रद्धांजलि
                     </div>
-                    <span class="text-[10px] bg-yellow-400 text-black font-extrabold px-2 py-0.5 rounded uppercase">डिजिटल सेवा केंद्र</span>
-                    <h4 class="font-black text-lg text-white mt-2 leading-tight">MD CSC CENTER KALYANPUR</h4>
-                    <p class="text-xs text-blue-200 mt-1 mb-3">आपके क्षेत्र का सबसे विश्वसनीय ऑनलाइन सर्विस सेंटर</p>
-                    
-                    <ul class="text-xs text-gray-300 space-y-1.5 mb-4 text-left border-t border-indigo-800/80 pt-3">
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> सभी प्रतियोगी परीक्षा ऑनलाइन फॉर्म</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> आधार से नकद निकासी (AEPS) व मनी ट्रांसफर</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> हाई क्वालिटी PVC कार्ड प्रिंटिंग व लेमिनेशन</li>
-                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> पासपोर्ट फोटो, पैन कार्ड व प्रमाण पत्र</li>
-                    </ul>
-
-                    <a href="https://wa.me/918003577576?text=नमस्ते,%20मुझे%20CSC%20सर्विस%20की%20जानकारी%20चाहिए।" target="_blank" class="w-full block text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow transition">
-                        <i class="fa-brands fa-whatsapp text-sm mr-1"></i> व्हाट्सएप पर संपर्क करें
+                    <p class="text-gray-600 dark:text-gray-400 mb-2">क्षेत्रीय श्रद्धांजलि, उठावना व शोक सभा की सूचना निःशुल्क प्रकाशित करवाने के लिए संपर्क करें।</p>
+                    <a href="https://wa.me/918003577576?text=शोक%20संदेश%20प्रकाशन%20हेतु" target="_blank" class="w-full block text-center bg-gray-800 hover:bg-black text-white font-bold py-1.5 rounded transition">
+                        शोक संदेश भेजें
                     </a>
+                </div>
+
+                <!-- Local Business Directory / Classifieds -->
+                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-xs shadow-sm">
+                    <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-2">
+                        <span class="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-store"></i> लोकल बाज़ार & सेवाएं
+                        </span>
+                    </div>
+                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
+                            <span>MD CSC सेंटर (डिजिटल सेवाएं):</span> <strong class="text-gray-900 dark:text-gray-100">8003577576</strong>
+                        </li>
+                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
+                            <span>प्रॉपर्टी / ज़मीन खरीद-बिक्री:</span> <strong class="text-gray-900 dark:text-gray-100">कल्याणपुर</strong>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>टैक्सी / वाहन सेवा:</span> <strong class="text-gray-900 dark:text-gray-100">24x7 उपलब्ध</strong>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Emergency Blood Donors & Medical Directory -->
@@ -251,47 +322,6 @@
                         <li class="flex justify-between"><span>ब्लड बैंक (उदयपुर):</span> <strong>0294-2451555</strong></li>
                         <li class="flex justify-between"><span>सामुदायिक स्वास्थ्य केंद्र:</span> <strong>108 / 102</strong></li>
                         <li class="flex justify-between"><span>रक्तदाता हेल्पलाइन:</span> <strong>+91 80035 77576</strong></li>
-                    </ul>
-                </div>
-
-                <!-- Local Transport & Bus Schedule Guide -->
-                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-xs shadow-sm">
-                    <div class="flex items-center gap-1.5 font-bold text-indigo-600 dark:text-indigo-400 border-b dark:border-gray-800 pb-2 mb-2">
-                        <i class="fa-solid fa-bus"></i> प्रमुख बस समय-सारणी (Bus Guide)
-                    </div>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
-                            <span>कल्याणपुर ➔ उदयपुर:</span> <strong class="text-gray-800 dark:text-gray-200">हर 20 मिनट में</strong>
-                        </li>
-                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
-                            <span>उदयपुर ➔ अहमदाबाद:</span> <strong class="text-gray-800 dark:text-gray-200">प्रातः 06:00 से निरंतर</strong>
-                        </li>
-                        <li class="flex justify-between">
-                            <span>ऋषभदेव ➔ डूंगरपुर:</span> <strong class="text-gray-800 dark:text-gray-200">हर 30 मिनट में</strong>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Job Alerts & Career Widget -->
-                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-xs">
-                    <div class="flex items-center gap-2 mb-3 text-red-600 font-bold uppercase tracking-wider">
-                        <i class="fa-solid fa-briefcase"></i> रोज़गार व भर्ती अलर्ट
-                    </div>
-                    <ul class="space-y-2 text-gray-700 dark:text-gray-300 divide-y dark:divide-gray-800">
-                        <li class="pt-2 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold block text-gray-900 dark:text-gray-100">राजस्थान पटवार & CET भर्ती</span>
-                                <span class="text-[11px] text-gray-500">ऑनलाइन आवेदन जारी</span>
-                            </div>
-                            <span class="bg-red-50 dark:bg-red-950 text-red-600 font-bold px-2 py-0.5 rounded text-[10px]">Active</span>
-                        </li>
-                        <li class="pt-2 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold block text-gray-900 dark:text-gray-100">रेलवे सुरक्षा बल (RPF) भर्ती</span>
-                                <span class="text-[11px] text-gray-500">अंतिम तिथि नज़दीक</span>
-                            </div>
-                            <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-600 font-bold px-2 py-0.5 rounded text-[10px]">Apply</span>
-                        </li>
                     </ul>
                 </div>
 
@@ -317,7 +347,36 @@
         </div>
     </main>
 
-    <!-- Post/Edit News Modal -->
+    <!-- Citizen Reporter News Submission Modal -->
+    <div id="citizen-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <i class="fa-solid fa-camera text-red-600"></i> नागरिक पत्रकार बनें (खबर भेजें)
+                </h3>
+                <button onclick="closeCitizenReportModal()" class="text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">आपका नाम व मोबाइल नंबर</label>
+                    <input type="text" id="citizen-name" required placeholder="नाम व संपर्क सूत्र" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">क्षेत्र / गांव / कस्बा</label>
+                    <input type="text" id="citizen-location" required placeholder="जैसे: कल्याणपुर, ऋषभदेव आदि" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">समाचार का विवरण</label>
+                    <textarea id="citizen-details" rows="4" required placeholder="घटना, समस्या या कार्यक्रम का पूरा विवरण लिखें..." class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100"></textarea>
+                </div>
+                <button type="submit" id="citizen-submit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded transition cursor-pointer">
+                    संपादक को खबर भेजें
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Post/Edit News Modal (Admin) -->
     <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <h3 id="post-modal-title" class="text-lg font-bold border-b dark:border-gray-800 pb-2 mb-4 text-gray-800 dark:text-gray-100">नई खबर पोस्ट करें</h3>
@@ -432,12 +491,19 @@
                 <div id="read-summary" class="text-xs text-gray-700 dark:text-gray-300 space-y-1"></div>
             </div>
 
-            <!-- Audio Player Bar -->
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 no-print">
+            <!-- Audio Player Bar with Speed Controls -->
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 no-print flex-wrap">
                 <div class="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-gray-200">
                     <i class="fa-solid fa-volume-high text-red-600 text-sm"></i> खबर सुनें (Audio News)
                 </div>
-                <div class="flex gap-2">
+                <div class="flex items-center gap-2">
+                    <!-- Audio Speed Selector -->
+                    <select id="audio-speed" onchange="changeAudioSpeed(this.value)" class="text-[11px] bg-white dark:bg-gray-900 border dark:border-gray-700 rounded px-1.5 py-1 outline-none">
+                        <option value="1">1.0x गति</option>
+                        <option value="1.25">1.25x गति</option>
+                        <option value="1.5">1.5x गति</option>
+                    </select>
+
                     <button onclick="playNewsAudio()" id="audio-play-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded font-bold flex items-center gap-1 cursor-pointer">
                         <i class="fa-solid fa-play"></i> सुनें
                     </button>
@@ -561,12 +627,11 @@
         let currentActiveNewsUrl = window.location.href;
         let currentActiveNewsId = null;
         let currentActiveItem = null;
+        let audioPlaySpeed = 1.0;
         let deferredPrompt;
 
-        // FREE LIVE WEATHER API (Open-Meteo for Udaipur/Rishabhdev region)
         async function fetchLiveWeather() {
             try {
-                // Coordinates for Southern Rajasthan (Udaipur/Rishabhdev)
                 const lat = 24.5854;
                 const lon = 73.7125;
                 const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);
@@ -595,7 +660,6 @@
             }
         }
 
-        // AUTO MARKET / MANDI RATES LOGIC
         function initLiveRates() {
             const rates = [
                 "पेट्रोल: ₹104.80/L",
@@ -650,6 +714,41 @@
             currentFilter = 'bookmarks';
             document.getElementById('current-category-title').innerText = 'सेव की गई खबरें';
             renderNews();
+        }
+
+        // Citizen Reporter Logic
+        function openCitizenReportModal() {
+            document.getElementById('citizen-modal').classList.remove('hidden');
+            document.getElementById('citizen-modal').classList.add('flex');
+        }
+
+        function closeCitizenReportModal() {
+            document.getElementById('citizen-modal').classList.add('hidden');
+            document.getElementById('citizen-modal').classList.remove('flex');
+        }
+
+        async function handleCitizenSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('citizen-submit-btn');
+            btn.disabled = true;
+            btn.innerText = "भेजा जा रहा है...";
+
+            try {
+                await db.collection("citizen_reports").add({
+                    name: document.getElementById('citizen-name').value,
+                    location: document.getElementById('citizen-location').value,
+                    details: document.getElementById('citizen-details').value,
+                    date: new Date().toLocaleDateString('hi-IN'),
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("आपकी खबर संपादक टीम को भेज दी गई है। सत्यापन के बाद यह प्रकाशित होगी। धन्यवाद!");
+                closeCitizenReportModal();
+            } catch (err) {
+                alert("एरर: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "संपादक को खबर भेजें";
+            }
         }
 
         // PWA Installation
@@ -733,6 +832,13 @@
             }
         }
 
+        function changeAudioSpeed(val) {
+            audioPlaySpeed = parseFloat(val);
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                playNewsAudio();
+            }
+        }
+
         function playNewsAudio() {
             if (!('speechSynthesis' in window)) {
                 alert("आपके ब्राउज़र में ऑडियो सपोर्ट उपलब्ध नहीं है।");
@@ -741,7 +847,7 @@
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(currentSpeakingText);
             utterance.lang = 'hi-IN';
-            utterance.rate = 0.95;
+            utterance.rate = audioPlaySpeed;
 
             utterance.onend = () => {
                 document.getElementById('audio-play-btn').classList.remove('hidden');
