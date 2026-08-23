@@ -69,6 +69,18 @@
         </div>
     </div>
 
+    <!-- Live Sports Scorecard Ticker -->
+    <div class="bg-slate-900 text-amber-300 py-1 px-4 text-xs flex items-center border-b border-gray-800 overflow-hidden">
+        <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded mr-2 flex items-center shrink-0">
+            <i class="fa-solid fa-trophy mr-1"></i> लाइव स्कोर
+        </span>
+        <div class="overflow-hidden whitespace-nowrap w-full relative">
+            <div class="animate-mandi font-medium text-gray-200">
+                🏏 <strong class="text-amber-400">ग्रामीण प्रीमियर लीग (Kalyanpur):</strong> रॉयल टाइगर्स 142/4 (16.2 Ov) बनाम मेवाड़ स्टार्स | 🏆 आगामी मुकाबला: ऋषभदेव सुपरकिंग्स बनाम छाणी पैंथर्स (सायं 4 बजे)
+            </div>
+        </div>
+    </div>
+
     <!-- Live Market & Fuel Rates Bar -->
     <div class="bg-amber-600 text-white py-1 px-4 text-xs flex items-center shadow-sm overflow-hidden border-b border-amber-700">
         <span class="bg-amber-950 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2 flex items-center shrink-0 z-10">
@@ -94,13 +106,13 @@
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="openCitizenReportModal()" class="text-yellow-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
-                    <i class="fa-solid fa-bullhorn text-red-500"></i> खबर भेजें (Citizen Reporter)
+                    <i class="fa-solid fa-bullhorn text-red-500"></i> खबर भेजें
                 </button>
                 <button onclick="filterBookmarks()" class="text-amber-400 hover:text-white flex items-center gap-1 font-semibold cursor-pointer border-l border-gray-600 pl-3">
-                    <i class="fa-solid fa-bookmark text-red-500"></i> सेव की गई खबरें (<span id="bookmark-count">0</span>)
+                    <i class="fa-solid fa-bookmark text-red-500"></i> सेव खबरें (<span id="bookmark-count">0</span>)
                 </button>
                 <button onclick="installPWA()" id="pwa-install-btn" class="hidden text-amber-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
-                    <i class="fa-solid fa-mobile-screen-button"></i> ऐप इंस्टॉल करें
+                    <i class="fa-solid fa-mobile-screen-button"></i> ऐप इंस्टॉल
                 </button>
             </div>
         </div>
@@ -237,6 +249,23 @@
             
             <!-- News Feed Column -->
             <div class="md:col-span-2 space-y-6">
+                
+                <!-- Daily 2-Min Audio Podcast Bar -->
+                <div class="bg-gradient-to-r from-red-600 to-rose-700 rounded-xl p-3.5 text-white flex items-center justify-between shadow-md">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-podcast"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-black text-sm">आज का 2-मिनट ऑडियो न्यूज़ बुलेटिन</h4>
+                            <p class="text-[11px] text-red-100">दिनभर की प्रमुख 5 बड़ी खबरें एक साथ सुनें</p>
+                        </div>
+                    </div>
+                    <button onclick="playTop5AudioBulletin()" class="bg-white text-red-700 hover:bg-red-50 text-xs font-black px-3.5 py-1.5 rounded-lg shadow cursor-pointer transition flex items-center gap-1">
+                        <i class="fa-solid fa-circle-play"></i> बुलेटिन सुनें
+                    </button>
+                </div>
+
                 <div id="hero-container" class="hidden"></div>
 
                 <div class="flex justify-between items-center border-b-2 border-red-600 pb-2">
@@ -255,21 +284,57 @@
             <!-- Sidebar -->
             <aside class="space-y-6">
                 
-                <!-- Live Video / YouTube News Hub Widget -->
-                <div class="bg-black text-white p-4 rounded-xl shadow-md border border-gray-800">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold flex items-center gap-1.5 text-red-500">
-                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> लाइव वीडियो हब
+                <!-- Daily Student GK / Current Affairs Quiz Corner -->
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 p-4 rounded-xl border border-purple-200 dark:border-purple-900 text-xs shadow-sm">
+                    <div class="flex items-center justify-between border-b dark:border-gray-700 pb-2 mb-2">
+                        <span class="font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1.5 uppercase tracking-wide">
+                            <i class="fa-solid fa-brain"></i> आज का प्रतियोगी क्विज़ (GK)
                         </span>
-                        <span class="text-[10px] bg-red-600 px-1.5 py-0.5 rounded font-bold uppercase">Streaming</span>
+                        <span class="bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">Daily GK</span>
                     </div>
-                    <div class="aspect-video w-full rounded-lg overflow-hidden bg-gray-900 mb-2">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/live_stream?channel=UC..." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <p class="font-bold text-gray-800 dark:text-gray-200 mb-2.5" id="quiz-question">राजस्थान में ऋषभदेव जी का प्रसिद्ध मंदिर किस नदी के तट पर स्थित है?</p>
+                    <div class="space-y-1.5" id="quiz-options">
+                        <button onclick="checkQuiz(0)" class="w-full text-left p-2 rounded border dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-gray-700 transition cursor-pointer">A. कोयल नदी</button>
+                        <button onclick="checkQuiz(1)" class="w-full text-left p-2 rounded border dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-gray-700 transition cursor-pointer">B. बनास नदी</button>
+                        <button onclick="checkQuiz(2)" class="w-full text-left p-2 rounded border dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-gray-700 transition cursor-pointer">C. सोम नदी</button>
                     </div>
-                    <p class="text-[11px] text-gray-400">क्षेत्र के महत्वपूर्ण आयोजनों और लाइव प्रेस कॉन्फ्रेंस का सीधा प्रसारण देखें।</p>
+                    <div id="quiz-result" class="mt-2 font-bold hidden text-center"></div>
                 </div>
 
-                <!-- Lost & Found / खोया-पाया Corner -->
+                <!-- Farmer Mandi Bhav Calculator Tool -->
+                <div class="bg-amber-50/70 dark:bg-gray-900 p-4 rounded-xl border border-amber-200 dark:border-amber-900 text-xs shadow-sm">
+                    <div class="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-400 border-b dark:border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-calculator text-amber-600"></i> किसान मंडी भाव कैलकुलेटर
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-0.5">उपज का वज़न (क्विंटल में):</label>
+                            <input type="number" id="calc-weight" placeholder="जैसे: 15" oninput="calcMandiTotal()" class="w-full border dark:border-gray-700 rounded p-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-0.5">मंडी भाव दर (₹ प्रति क्विंटल):</label>
+                            <input type="number" id="calc-rate" placeholder="जैसे: 2550" oninput="calcMandiTotal()" class="w-full border dark:border-gray-700 rounded p-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none">
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700 text-center font-bold text-amber-700 dark:text-amber-400">
+                            अनुमानित कुल मूल्य: <span id="calc-total">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Power / Water Supply Alert Notice Board -->
+                <div class="bg-rose-50 dark:bg-gray-900 p-4 rounded-xl border border-rose-200 dark:border-rose-900 text-xs shadow-sm">
+                    <div class="flex items-center gap-1.5 font-bold text-rose-700 dark:text-rose-400 border-b dark:border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> बिजली व जलापूर्ति शटडाउन अलर्ट
+                    </div>
+                    <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+                        <li class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-bolt text-amber-500 mt-0.5"></i>
+                            <div><strong>11KV जीएसएस मेंटेनेंस:</strong> कल्याणपुर व आस-पास कल प्रातः 09:00 से दोपहर 01:00 तक विद्युत आपूर्ति बंद रहेगी।</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Lost & Found Corner -->
                 <div class="bg-amber-50 dark:bg-gray-900 p-4 rounded-xl border border-amber-200 dark:border-amber-900 text-xs shadow-sm">
                     <div class="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-400 border-b dark:border-gray-800 pb-2 mb-2">
                         <i class="fa-solid fa-magnifying-glass-location text-amber-600"></i> खोया - पाया (Lost & Found)
@@ -291,26 +356,6 @@
                     </a>
                 </div>
 
-                <!-- Local Business Directory / Classifieds -->
-                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-xs shadow-sm">
-                    <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-2">
-                        <span class="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-store"></i> लोकल बाज़ार & सेवाएं
-                        </span>
-                    </div>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
-                            <span>MD CSC सेंटर (डिजिटल सेवाएं):</span> <strong class="text-gray-900 dark:text-gray-100">8003577576</strong>
-                        </li>
-                        <li class="flex justify-between border-b dark:border-gray-800 pb-1">
-                            <span>प्रॉपर्टी / ज़मीन खरीद-बिक्री:</span> <strong class="text-gray-900 dark:text-gray-100">कल्याणपुर</strong>
-                        </li>
-                        <li class="flex justify-between">
-                            <span>टैक्सी / वाहन सेवा:</span> <strong class="text-gray-900 dark:text-gray-100">24x7 उपलब्ध</strong>
-                        </li>
-                    </ul>
-                </div>
-
                 <!-- Emergency Blood Donors & Medical Directory -->
                 <div class="bg-red-50 dark:bg-gray-900 p-4 rounded-xl border border-red-200 dark:border-red-900 text-xs shadow-sm">
                     <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-2">
@@ -324,28 +369,14 @@
                         <li class="flex justify-between"><span>रक्तदाता हेल्पलाइन:</span> <strong>+91 80035 77576</strong></li>
                     </ul>
                 </div>
-
-                <!-- Public Opinion Poll -->
-                <div class="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-xs">
-                    <div class="flex items-center gap-2 mb-2 text-red-600 font-bold uppercase tracking-wider">
-                        <i class="fa-solid fa-square-poll-vertical"></i> जनमत संग्रह (Poll)
-                    </div>
-                    <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 mb-3" id="poll-question">क्या आपके क्षेत्र में सड़क व सफाई व्यवस्था संतोषजनक है?</h4>
-                    <div id="poll-options" class="space-y-2">
-                        <button onclick="castVote('yes')" class="w-full text-left p-2 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex justify-between cursor-pointer">
-                            <span>हाँ, पूरी तरह ठीक है</span>
-                            <span id="poll-yes-pct" class="font-bold text-emerald-600">62%</span>
-                        </button>
-                        <button onclick="castVote('no')" class="w-full text-left p-2 rounded border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex justify-between cursor-pointer">
-                            <span>नहीं, सुधार की ज़रूरत है</span>
-                            <span id="poll-no-pct" class="font-bold text-red-600">38%</span>
-                        </button>
-                    </div>
-                    <p id="poll-voted-msg" class="text-[11px] text-gray-500 mt-2 text-center">वोट देने के लिए किसी एक विकल्प पर क्लिक करें।</p>
-                </div>
             </aside>
         </div>
     </main>
+
+    <!-- Floating WhatsApp Channel Follow Button -->
+    <a href="https://whatsapp.com/channel/..." target="_blank" class="fixed bottom-6 right-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2.5 shadow-2xl flex items-center gap-2 z-40 text-xs font-bold transition hover:scale-105 border-2 border-white">
+        <i class="fa-brands fa-whatsapp text-lg"></i> चैनल फॉलो करें
+    </a>
 
     <!-- Citizen Reporter News Submission Modal -->
     <div id="citizen-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
@@ -401,7 +432,6 @@
                     </select>
                 </div>
                 
-                <!-- Multiple Image Upload & URL Options -->
                 <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
@@ -415,7 +445,6 @@
                     </div>
                 </div>
 
-                <!-- Video Upload Section -->
                 <div class="p-3 bg-red-50/50 dark:bg-gray-800 rounded border border-red-200 dark:border-gray-700 space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-red-700 dark:text-red-400 mb-1 flex items-center gap-1">
@@ -483,7 +512,6 @@
             
             <h2 id="read-title" class="text-2xl font-bold mt-1 mb-2 text-gray-900 dark:text-gray-100 leading-snug"></h2>
             
-            <!-- AI Summary Box -->
             <div class="bg-red-50 dark:bg-red-950/40 border-l-4 border-red-600 p-3 my-3 rounded-r-lg">
                 <div class="flex items-center gap-1.5 text-xs font-bold text-red-700 dark:text-red-400 mb-1">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> 30 सेकंड में समझें (AI Summary)
@@ -497,7 +525,6 @@
                     <i class="fa-solid fa-volume-high text-red-600 text-sm"></i> खबर सुनें (Audio News)
                 </div>
                 <div class="flex items-center gap-2">
-                    <!-- Audio Speed Selector -->
                     <select id="audio-speed" onchange="changeAudioSpeed(this.value)" class="text-[11px] bg-white dark:bg-gray-900 border dark:border-gray-700 rounded px-1.5 py-1 outline-none">
                         <option value="1">1.0x गति</option>
                         <option value="1.25">1.25x गति</option>
@@ -630,6 +657,44 @@
         let audioPlaySpeed = 1.0;
         let deferredPrompt;
 
+        // Daily GK Quiz Logic
+        function checkQuiz(selectedIndex) {
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.classList.remove('hidden');
+            if (selectedIndex === 0) {
+                resultDiv.innerHTML = "✅ सही उत्तर! ऋषभदेव जी का मंदिर कोयल नदी के तट पर स्थित है।";
+                resultDiv.className = "mt-2 font-bold text-emerald-600 text-center";
+            } else {
+                resultDiv.innerHTML = "❌ गलत उत्तर! सही उत्तर है: (A) कोयल नदी।";
+                resultDiv.className = "mt-2 font-bold text-red-600 text-center";
+            }
+        }
+
+        // Farmer Mandi Calculator Logic
+        function calcMandiTotal() {
+            const weight = parseFloat(document.getElementById('calc-weight').value) || 0;
+            const rate = parseFloat(document.getElementById('calc-rate').value) || 0;
+            const total = weight * rate;
+            document.getElementById('calc-total').innerText = '₹' + total.toLocaleString('hi-IN');
+        }
+
+        // Top 5 Audio Bulletin Player
+        function playTop5AudioBulletin() {
+            if (!('speechSynthesis' in window)) {
+                alert("आपके ब्राउज़र में ऑडियो सपोर्ट उपलब्ध नहीं है।");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const top5Titles = allNewsData.slice(0, 5).map((item, idx) => `खबर नंबर ${idx + 1}: ${item.title}।`).join(' ');
+            const bulletinText = `चूंडा क्षेत्र न्यूज़ दैनिक ऑडियो बुलेटिन में आपका स्वागत है। आज की प्रमुख खबरें इस प्रकार हैं: ${top5Titles} अधिक जानकारी के लिए जुड़े रहें।`;
+            
+            const utterance = new SpeechSynthesisUtterance(bulletinText);
+            utterance.lang = 'hi-IN';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+            alert("ऑडियो बुलेटिन शुरू हो गया है!");
+        }
+
         async function fetchLiveWeather() {
             try {
                 const lat = 24.5854;
@@ -716,7 +781,6 @@
             renderNews();
         }
 
-        // Citizen Reporter Logic
         function openCitizenReportModal() {
             document.getElementById('citizen-modal').classList.remove('hidden');
             document.getElementById('citizen-modal').classList.add('flex');
@@ -751,7 +815,6 @@
             }
         }
 
-        // PWA Installation
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
