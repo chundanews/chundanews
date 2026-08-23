@@ -661,6 +661,17 @@
 
                 const viewsCount = leadItem.views || 0;
 
+                const leadAdminControls = isAdminLoggedIn ? `
+                    <div class="flex gap-2 pt-3 border-t dark:border-gray-800 mt-3">
+                        <button onclick="event.stopPropagation(); editNewsPost('${leadItem.id}')" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded font-bold hover:bg-blue-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i> लीड स्टोरी एडिट करें
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteNewsPost('${leadItem.id}')" class="text-xs bg-red-600 text-white px-3 py-1.5 rounded font-bold hover:bg-red-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> लीड स्टोरी डिलीट करें
+                        </button>
+                    </div>
+                ` : '';
+
                 heroContainer.classList.remove('hidden');
                 heroContainer.innerHTML = `
                     <div class="relative bg-white dark:bg-gray-900 rounded-xl shadow-md border border-gray-200 dark:border-gray-800 overflow-hidden group cursor-pointer" onclick="openReadModal('${leadItem.id}')">
@@ -679,6 +690,7 @@
                             <div class="mt-4 flex justify-between items-center text-xs font-bold text-red-600">
                                 <span>विस्तार से पढ़ें &rarr;</span>
                             </div>
+                            ${leadAdminControls}
                         </div>
                     </div>
                 `;
