@@ -234,6 +234,9 @@
     <div id="admin-action-bar" class="hidden bg-emerald-700 text-white px-4 py-2 text-sm flex justify-between items-center shadow-inner">
         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> एडमिन मोड सक्रिय है</span>
         <div class="flex gap-2">
+            <button onclick="openAdminCitizenReports()" class="bg-blue-600 text-white px-3 py-1 rounded font-bold hover:bg-blue-700 cursor-pointer shadow">
+                <i class="fa-solid fa-inbox"></i> प्राप्त खबरें देखें
+            </button>
             <button onclick="openNewPostModal()" class="bg-white text-emerald-800 px-3 py-1 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow">
                 <i class="fa-solid fa-plus"></i> नई खबर जोड़ें
             </button>
@@ -378,7 +381,7 @@
         <i class="fa-brands fa-whatsapp text-lg"></i> चैनल फॉलो करें
     </a>
 
-    <!-- Citizen Reporter News Submission Modal -->
+    <!-- Citizen Reporter News Submission Modal (With Direct Email to ashokvvaishn@gmail.com) -->
     <div id="citizen-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
@@ -387,6 +390,7 @@
                 </h3>
                 <button onclick="closeCitizenReportModal()" class="text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
             </div>
+            
             <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">आपका नाम व मोबाइल नंबर</label>
@@ -397,13 +401,31 @@
                     <input type="text" id="citizen-location" required placeholder="जैसे: कल्याणपुर, ऋषभदेव आदि" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">समाचार का विवरण</label>
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">समाचार का शीर्षक व विवरण</label>
                     <textarea id="citizen-details" rows="4" required placeholder="घटना, समस्या या कार्यक्रम का पूरा विवरण लिखें..." class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100"></textarea>
                 </div>
-                <button type="submit" id="citizen-submit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded transition cursor-pointer">
-                    संपादक को खबर भेजें
+                
+                <p class="text-[11px] text-gray-500">यह खबर सीधे संपादक <strong>ashokvvaishn@gmail.com</strong> को ईमेल व WhatsApp पर जाएगी।</p>
+                
+                <button type="submit" id="citizen-submit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded transition cursor-pointer flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> संपादक को खबर भेजें (Email & WhatsApp)
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Admin Citizen Reports Viewer Modal -->
+    <div id="admin-reports-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <i class="fa-solid fa-inbox text-blue-600"></i> पाठकों द्वारा भेजी गई खबरें
+                </h3>
+                <button onclick="closeAdminCitizenReports()" class="text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div id="admin-reports-list" class="space-y-3 text-xs">
+                <p class="text-center text-gray-400 py-6">खबरें लोड हो रही हैं...</p>
+            </div>
         </div>
     </div>
 
@@ -781,6 +803,7 @@
             renderNews();
         }
 
+        // Citizen Reporter Logic (Sends to ashokvvaishn@gmail.com & Firebase & WhatsApp)
         function openCitizenReportModal() {
             document.getElementById('citizen-modal').classList.remove('hidden');
             document.getElementById('citizen-modal').classList.add('flex');
@@ -795,24 +818,110 @@
             e.preventDefault();
             const btn = document.getElementById('citizen-submit-btn');
             btn.disabled = true;
-            btn.innerText = "भेजा जा रहा है...";
+            btn.innerText = "ईमेल व WhatsApp पर भेजा जा रहा है...";
+
+            const name = document.getElementById('citizen-name').value.trim();
+            const location = document.getElementById('citizen-location').value.trim();
+            const details = document.getElementById('citizen-details').value.trim();
 
             try {
+                // 1. Save to Firebase Firestore
                 await db.collection("citizen_reports").add({
-                    name: document.getElementById('citizen-name').value,
-                    location: document.getElementById('citizen-location').value,
-                    details: document.getElementById('citizen-details').value,
+                    name: name,
+                    location: location,
+                    details: details,
                     date: new Date().toLocaleDateString('hi-IN'),
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                alert("आपकी खबर संपादक टीम को भेज दी गई है। सत्यापन के बाद यह प्रकाशित होगी। धन्यवाद!");
+
+                // 2. Send Direct Email via FormSubmit API to ashokvvaishn@gmail.com
+                fetch("https://formsubmit.co/ajax/ashokvvaishn@gmail.com", {
+                    method: "POST",
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _subject: `नई नागरिक खबर: ${location} से (${name})`,
+                        प्रेषक_का_नाम_व_नंबर: name,
+                        क्षेत्र_स्थान: location,
+                        समाचार_विवरण: details,
+                        दिनांक: new Date().toLocaleString('hi-IN')
+                    })
+                }).catch(err => console.log("Email background error", err));
+
+                // 3. Prompt Direct WhatsApp send to Admin
+                const waText = `📰 *नागरिक पत्रकार खबर (Chunda News)*\n\n👤 *नाम:* ${name}\n📍 *स्थान:* ${location}\n📝 *विवरण:* ${details}`;
+                const waUrl = `https://wa.me/918003577576?text=${encodeURIComponent(waText)}`;
+
+                alert("आपकी खबर संपादक (ashokvvaishn@gmail.com) को सफलतापूर्वक भेज दी गई है!\n\nत्वरित प्रकाशन हेतु आप इसे सीधे WhatsApp पर भी भेज सकते हैं।");
+                window.open(waUrl, '_blank');
                 closeCitizenReportModal();
             } catch (err) {
                 alert("एरर: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = "संपादक को खबर भेजें";
+                btn.innerText = "संपादक को खबर भेजें (Email & WhatsApp)";
             }
+        }
+
+        // Admin Citizen Reports Modal Management
+        async function openAdminCitizenReports() {
+            const modal = document.getElementById('admin-reports-modal');
+            const list = document.getElementById('admin-reports-list');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            list.innerHTML = '<p class="text-center text-gray-400 py-6">खबरें लोड हो रही हैं...</p>';
+
+            try {
+                const snapshot = await db.collection("citizen_reports").orderBy("timestamp", "desc").get();
+                if (snapshot.empty) {
+                    list.innerHTML = '<p class="text-center text-gray-400 py-6">अभी कोई नई नागरिक खबर नहीं है।</p>';
+                    return;
+                }
+
+                list.innerHTML = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return `
+                    <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700 space-y-1.5">
+                        <div class="flex justify-between items-center text-gray-500 font-semibold text-[11px]">
+                            <span><i class="fa-solid fa-user text-red-500"></i> ${data.name || 'अज्ञात'} (📍 ${data.location || ''})</span>
+                            <span>${data.date || ''}</span>
+                        </div>
+                        <p class="text-gray-800 dark:text-gray-200 text-xs whitespace-pre-line">${data.details || ''}</p>
+                        <div class="pt-2 flex justify-end gap-2 border-t dark:border-gray-700">
+                            <button onclick="copyReportToNews('${doc.id}', '${encodeURIComponent(data.location || '')}', '${encodeURIComponent(data.details || '')}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-[11px] font-bold cursor-pointer">
+                                <i class="fa-solid fa-upload"></i> इसे सीधे पोस्ट करें
+                            </button>
+                            <button onclick="deleteCitizenReport('${doc.id}')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded text-[11px] font-bold cursor-pointer">
+                                <i class="fa-solid fa-trash"></i> हटाएं
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                list.innerHTML = `<p class="text-red-500 text-center py-4">लोड करने में समस्या: ${err.message}</p>`;
+            }
+        }
+
+        function closeAdminCitizenReports() {
+            const modal = document.getElementById('admin-reports-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function deleteCitizenReport(id) {
+            if (confirm("क्या आप इस रिपोर्ट को हटाना चाहते हैं?")) {
+                await db.collection("citizen_reports").doc(id).delete();
+                openAdminCitizenReports();
+            }
+        }
+
+        function copyReportToNews(id, locEnc, detailsEnc) {
+            closeAdminCitizenReports();
+            openNewPostModal();
+            document.getElementById('news-title').value = decodeURIComponent(locEnc) + ": ";
+            document.getElementById('news-content').value = decodeURIComponent(detailsEnc);
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -941,7 +1050,7 @@
             },
             grievance: {
                 title: "शिकायत निवारण (Grievance Redressal)",
-                content: "• शिकायत अधिकारी: संपादक\n• संस्थान: चूंडा क्षेत्र न्यूज़\n• ईमेल: contact.chundanews@gmail.com"
+                content: "• शिकायत अधिकारी: संपादक\n• संस्थान: चूंडा क्षेत्र न्यूज़\n• ईमेल: ashokvvaishn@gmail.com"
             }
         };
 
