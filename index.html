@@ -394,7 +394,7 @@
                         <span class="text-[10px] text-emerald-500 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> ऑनलाइन</span>
                     </div>
                 </div>
-                <button onclick="toggleAIChatModal()" class="text-gray-400 hover:text-black dark:hover:text-white text-xl font-bold">&times;</button>
+                <button onclick="toggleAIChatModal()" class="text-gray-400 hover:text-black dark:hover:text-white text-xl font-bold cursor-pointer">&times;</button>
             </div>
             
             <div id="ai-chat-messages" class="flex-1 overflow-y-auto py-3 space-y-2.5 text-xs">
@@ -405,7 +405,7 @@
 
             <div class="pt-2 border-t dark:border-gray-800 flex gap-1.5">
                 <input type="text" id="ai-chat-input" onkeypress="if(event.key==='Enter') sendAIChatMessage()" placeholder="अपना सवाल पूछें..." class="flex-1 border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 text-xs outline-none text-gray-900 dark:text-gray-100">
-                <button onclick="sendAIChatMessage()" id="ai-send-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">
+                <button onclick="sendAIChatMessage()" id="ai-send-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -439,7 +439,7 @@
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] mt-0.5">होम</span>
         </button>
-        <a href="https://api.whatsapp.com/send?text=चूंडा%20क्षेत्र%20की%20ताज़ा%20खबरें%20पढ़ें:%20https://chundanews.github.io/chundanews/" target="_blank" class="flex flex-col items-center text-green-600 font-bold cursor-pointer">
+        <a href="https://api.whatsapp.com/send?text=चूंडा%20क्षेत्र%20की%20ताज़ा%20खबरें%20पढ़ें:%20https://chundanewslive.in" target="_blank" class="flex flex-col items-center text-green-600 font-bold cursor-pointer">
             <i class="fa-brands fa-whatsapp text-xl"></i>
             <span class="text-[10px] mt-0.5">शेयर करें</span>
         </a>
@@ -501,7 +501,7 @@
         </div>
     </div>
 
-    <!-- Post/Edit News Modal (Admin with AI Assistant) -->
+    <!-- Post/Edit News Modal (Admin with Reporter Field & AI Assistant) -->
     <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
@@ -513,22 +513,33 @@
             <form id="news-form" onsubmit="handleNewsSubmit(event)" class="space-y-4">
                 <input type="hidden" id="edit-doc-id">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">शीर्षक (Headline)</label>
-                    <input type="text" id="news-title" required class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 outline-none text-gray-900 dark:text-gray-100">
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">शीर्षक (Headline) *</label>
+                    <input type="text" id="news-title" required placeholder="आकर्षक मुख्य हेडलाइन लिखें..." class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-red-500 outline-none text-gray-900 dark:text-gray-100">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">श्रेणी (Category)</label>
-                    <select id="news-category" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100">
-                        <option value="क्षेत्रीय">क्षेत्रीय</option>
-                        <option value="तहसील समाचार">तहसील समाचार</option>
-                        <option value="ज़िला समाचार">ज़िला समाचार</option>
-                        <option value="देश-विदेश">देश-विदेश</option>
-                        <option value="खेल (Sports)">खेल (Sports)</option>
-                        <option value="राजनीति">राजनीति</option>
-                        <option value="शिक्षा व रोज़गार">शिक्षा व रोज़गार</option>
-                        <option value="अपराध व सुरक्षा">अपराध व सुरक्षा</option>
-                        <option value="कृषि व मौसम">कृषि व मौसम</option>
-                    </select>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">श्रेणी (Category) *</label>
+                        <select id="news-category" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100 font-medium">
+                            <option value="क्षेत्रीय">क्षेत्रीय</option>
+                            <option value="तहसील समाचार">तहसील समाचार</option>
+                            <option value="ज़िला समाचार">ज़िला समाचार</option>
+                            <option value="देश-विदेश">देश-विदेश</option>
+                            <option value="खेल (Sports)">खेल (Sports)</option>
+                            <option value="राजनीति">राजनीति</option>
+                            <option value="शिक्षा व रोज़गार">शिक्षा व रोज़गार</option>
+                            <option value="अपराध व सुरक्षा">अपराध व सुरक्षा</option>
+                            <option value="कृषि व मौसम">कृषि व मौसम</option>
+                        </select>
+                    </div>
+
+                    <!-- Reporter / Samvaddata Input Field -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-microphone-lines text-red-600"></i> संवाददाता (Reporter Name)
+                        </label>
+                        <input type="text" id="news-reporter" placeholder="उदा. विशेष संवाददाता / राहुल शर्मा" value="विशेष संवाददाता" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100 font-medium">
+                    </div>
                 </div>
                 
                 <!-- Multiple Image Upload with Auto Watermark Feature -->
@@ -561,7 +572,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">विस्तृत समाचार (Content)</label>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">विस्तृत समाचार (Content) *</label>
                     <textarea id="news-content" rows="4" required placeholder="यहाँ खबर का विवरण लिखें या कच्चा नोट्स लिखकर ऊपर 'AI से सुधारें' दबाएं..." class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100"></textarea>
                 </div>
 
@@ -591,7 +602,7 @@
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6 text-center shadow-xl">
             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">एडमिन सत्यापन</h3>
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">सुरक्षा पासवर्ड दर्ज करें</p>
-            <input type="password" id="admin-pin" placeholder="पासवर्ड दर्ज करें" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 text-center rounded px-3 py-2 text-base font-sans mb-4 outline-none text-gray-900 dark:text-gray-100">
+            <input type="password" id="admin-pin" placeholder="पासवर्ड दर्ज करें" onkeypress="if(event.key==='Enter') verifyAdminPin()" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 text-center rounded px-3 py-2 text-base font-sans mb-4 outline-none text-gray-900 dark:text-gray-100">
             <div class="flex justify-center gap-2">
                 <button type="button" onclick="toggleAdminModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">रद्द करें</button>
                 <button type="button" onclick="verifyAdminPin()" class="bg-black text-white px-5 py-2 rounded text-sm font-bold cursor-pointer">लॉगिन</button>
@@ -606,7 +617,14 @@
             
             <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-3">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
+                    <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded uppercase"></span>
+                    
+                    <!-- Reporter with Mic Badge in Full Modal -->
+                    <span id="read-reporter-badge" class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-xs font-bold text-slate-800 dark:text-slate-200">
+                        <i class="fa-solid fa-microphone-lines text-red-600"></i>
+                        <span id="read-reporter-name">विशेष संवाददाता</span>
+                    </span>
+
                     <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
                     <span id="read-time-badge" class="text-[11px] text-gray-400"><i class="fa-regular fa-clock mr-1"></i>1 मिनट</span>
                 </div>
@@ -634,7 +652,8 @@
                 </div>
             </div>
             
-            <h2 id="read-title" class="text-2xl font-bold mt-1 mb-2 text-gray-900 dark:text-gray-100 leading-snug"></h2>
+            <!-- High-Contrast Bold Modal Title -->
+            <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-3 text-gray-950 dark:text-white leading-tight tracking-tight"></h2>
             
             <div class="bg-red-50 dark:bg-red-950/40 border-l-4 border-red-600 p-3 my-3 rounded-r-lg">
                 <div class="flex items-center gap-1.5 text-xs font-bold text-red-700 dark:text-red-400 mb-1">
@@ -750,7 +769,7 @@
             </div>
 
             <div class="text-xs text-gray-500 pt-2">
-                &copy; 2026 CHUNDA KSHETRA NEWS. All Rights Reserved.
+                &copy; 2026 CHUNDA KSHETRA NEWS (chundanewslive.in). All Rights Reserved.
             </div>
         </div>
     </footer>
@@ -909,7 +928,8 @@
             const systemPrompt = `आप चूंडा क्षेत्र न्यूज़ (कल्याणपुर, ऋषभदेव, डूंगरपुर, उदयपुर क्षेत्र) के आधिकारिक AI न्यूज़ साथी हैं। पाठकों के प्रश्नों का संक्षिप्त, विनम्र व सटीक उत्तर हिंदी में दें।\nपोर्टल की ताज़ा हेडलाइन्स: ${portalHeadlines}\n\nपाठक का सवाल: ${query}`;
 
             const aiReply = await callGeminiAI(systemPrompt);
-            document.getElementById(loadingId).remove();
+            const loadingElem = document.getElementById(loadingId);
+            if (loadingElem) loadingElem.remove();
 
             if (aiReply) {
                 chatBox.innerHTML += `<div class="bg-purple-50 dark:bg-gray-800 p-2.5 rounded-xl max-w-[85%] text-gray-800 dark:text-gray-200 text-xs">${aiReply}</div>`;
@@ -919,7 +939,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Single Direct Admin Verification Function
+        // Admin Verification Function
         function verifyAdminPin() {
             const pin = document.getElementById('admin-pin').value.trim();
 
@@ -1262,12 +1282,6 @@
             });
         }
 
-        function castVote(choice) {
-            alert("आपकी राय दर्ज कर ली गई है। धन्यवाद!");
-            document.getElementById('poll-voted-msg').innerText = "✓ आपका मत सफलतापूर्वक दर्ज हो गया है।";
-            document.getElementById('poll-voted-msg').classList.add('text-emerald-600', 'font-bold');
-        }
-
         function initTheme() {
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
@@ -1434,6 +1448,7 @@
                 }
 
                 const viewsCount = leadItem.views || 0;
+                const leadReporter = leadItem.reporter || 'विशेष संवाददाता';
 
                 const isScheduledBadge = (leadItem.scheduledAt && new Date(leadItem.scheduledAt).getTime() > nowTime) ? `
                     <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">⏳ शेड्यूल्ड (${new Date(leadItem.scheduledAt).toLocaleDateString('hi-IN')})</span>
@@ -1459,15 +1474,26 @@
                             <span class="absolute bottom-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded shadow">बड़ी खबर / Lead Story</span>
                         </div>
                         <div class="p-5">
-                            <div class="flex justify-between items-center text-xs text-gray-400 mb-1">
+                            <div class="flex justify-between items-center text-xs text-gray-400 mb-2 gap-2 flex-wrap">
                                 <div class="flex items-center gap-2">
+                                    <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[11px]">${leadItem.category}</span>
+                                    
+                                    <!-- Mic & Reporter Badge -->
+                                    <span class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded text-[11px] font-bold border border-slate-200 dark:border-slate-700">
+                                        <i class="fa-solid fa-microphone-lines text-red-600"></i> ${leadReporter}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3">
                                     <span>${leadItem.date || ''}</span>
                                     ${isScheduledBadge}
+                                    <span class="font-semibold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount} Views</span>
                                 </div>
-                                <span class="font-semibold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount} Views</span>
                             </div>
-                            <h2 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-gray-100 leading-snug mt-1 group-hover:text-red-600 transition">${leadItem.title}</h2>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mt-2 line-clamp-3 leading-relaxed">${leadItem.content}</p>
+
+                            <!-- Prominent Bold Headline -->
+                            <h2 class="text-xl sm:text-2xl font-black text-gray-950 dark:text-white leading-tight mt-1 group-hover:text-red-600 transition tracking-tight">${leadItem.title}</h2>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mt-2.5 line-clamp-3 leading-relaxed font-normal">${leadItem.content}</p>
+                            
                             <div class="mt-4 flex justify-between items-center text-xs font-bold text-red-600">
                                 <span>विस्तार से पढ़ें &rarr;</span>
                             </div>
@@ -1503,7 +1529,8 @@
                 const dateStr = item.date || new Date().toLocaleDateString('hi-IN');
                 const viewsCount = item.views || 0;
                 const isBookmarked = savedBookmarks.includes(item.id);
-                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: ' + window.location.href)}`;
+                const reporterName = item.reporter || 'विशेष संवाददाता';
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: https://chundanewslive.in')}`;
 
                 const isScheduledBadge = (item.scheduledAt && new Date(item.scheduledAt).getTime() > nowTime) ? `
                     <span class="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">⏳ शेड्यूल्ड</span>
@@ -1525,20 +1552,28 @@
                     <div>
                         ${thumbnail}
                         <div class="p-4">
-                            <div class="flex justify-between items-center text-xs mb-2">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded">${item.category}</span>
+                            <div class="flex justify-between items-center text-xs mb-2 gap-1 flex-wrap">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase">${item.category}</span>
+                                    
+                                    <!-- Mic & Reporter Badge -->
+                                    <span class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-[10px] font-bold border border-gray-200 dark:border-gray-700">
+                                        <i class="fa-solid fa-microphone-lines text-red-600"></i> ${reporterName}
+                                    </span>
+
                                     ${isScheduledBadge}
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-400">${dateStr}</span>
+                                    <span class="text-gray-400 text-[10px]">${dateStr}</span>
                                     <button onclick="event.stopPropagation(); toggleBookmark('${item.id}')" class="text-gray-400 hover:text-red-600 cursor-pointer">
                                         <i class="${isBookmarked ? 'fa-solid text-red-600' : 'fa-regular'} fa-bookmark"></i>
                                     </button>
                                 </div>
                             </div>
-                            <h3 class="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-3">${item.content}</p>
+
+                            <!-- Bold Highlighted Card Headline -->
+                            <h3 class="font-black text-gray-950 dark:text-white text-base leading-snug line-clamp-2 hover:text-red-600 cursor-pointer transition tracking-tight" onclick="openReadModal('${item.id}')">${item.title}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-3 leading-relaxed font-normal">${item.content}</p>
                         </div>
                     </div>
                     <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col bg-gray-50 dark:bg-gray-900/50">
@@ -1562,7 +1597,7 @@
                 return i.isBreaking;
             });
             if (breaking.length > 0) {
-                document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('   ✦   ');
+                document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
             } else {
                 document.getElementById('breaking-ticker').innerText = "चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...";
             }
@@ -1635,6 +1670,7 @@
             document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
             document.getElementById('news-form').reset();
             document.getElementById('edit-doc-id').value = "";
+            document.getElementById('news-reporter').value = "विशेष संवाददाता";
             document.getElementById('news-schedule').value = "";
             document.getElementById('submit-btn').innerText = "पोस्ट करें";
             togglePostModal();
@@ -1648,6 +1684,7 @@
             document.getElementById('edit-doc-id').value = item.id;
             document.getElementById('news-title').value = item.title;
             document.getElementById('news-category').value = item.category;
+            document.getElementById('news-reporter').value = item.reporter || "विशेष संवाददाता";
             document.getElementById('news-content').value = item.content;
             document.getElementById('news-image').value = (item.image && typeof item.image === 'string' && item.image.startsWith('http')) ? item.image : '';
             document.getElementById('news-video-url').value = (item.video && typeof item.video === 'string' && item.video.startsWith('http')) ? item.video : '';
@@ -1698,9 +1735,10 @@
                 }
 
                 const postData = {
-                    title: document.getElementById('news-title').value,
+                    title: document.getElementById('news-title').value.trim(),
                     category: document.getElementById('news-category').value,
-                    content: document.getElementById('news-content').value,
+                    reporter: document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता',
+                    content: document.getElementById('news-content').value.trim(),
                     isBreaking: document.getElementById('news-breaking').checked,
                     video: videoData || null,
                     scheduledAt: scheduledVal || null,
@@ -1791,6 +1829,7 @@
 
             document.getElementById('read-title').innerText = item.title;
             document.getElementById('read-category').innerText = item.category;
+            document.getElementById('read-reporter-name').innerText = item.reporter || 'विशेष संवाददाता';
             document.getElementById('read-date').innerText = item.date;
             document.getElementById('read-content').innerText = item.content;
 
@@ -1925,7 +1964,8 @@
 
             ctx.font = 'bold 28px sans-serif';
             ctx.fillStyle = '#fbbf24';
-            ctx.fillText(`【 ${currentActiveItem.category || 'समाचार'} 】 • ${currentActiveItem.date || ''}`, 540, 190);
+            const rep = currentActiveItem.reporter ? `🎙️ ${currentActiveItem.reporter}` : '🎙️ विशेष संवाददाता';
+            ctx.fillText(`【 ${currentActiveItem.category || 'समाचार'} 】 • ${rep} • ${currentActiveItem.date || ''}`, 540, 190);
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 46px sans-serif';
@@ -1973,7 +2013,7 @@
             ctx.fillStyle = '#fbbf24';
             ctx.font = 'bold 30px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('पूरा समाचार पढ़ने के लिए विज़िट करें: chundanews.github.io/chundanews', 540, 1295);
+            ctx.fillText('पूरा समाचार पढ़ने के लिए विज़िट करें: chundanewslive.in', 540, 1295);
 
             const link = document.createElement('a');
             link.download = `ChundaNews_${currentActiveItem.id}.png`;
@@ -1996,5 +2036,3 @@
     </script>
 </body>
 </html>
-
-✕Merlin
