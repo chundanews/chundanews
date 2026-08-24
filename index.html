@@ -376,6 +376,27 @@
         </div>
     </main>
 
+    <!-- Auto Breaking News Popup Flash Card (Bottom-Right) -->
+    <div id="breaking-popup" class="fixed bottom-20 md:bottom-6 right-4 max-w-sm w-[90%] md:w-80 bg-white dark:bg-gray-900 border-2 border-red-600 rounded-xl shadow-2xl p-4 z-50 transform translate-y-32 opacity-0 transition-all duration-500 pointer-events-none">
+        <div class="flex items-center justify-between pb-2 border-b dark:border-gray-800">
+            <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded flex items-center gap-1 shadow">
+                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span> फ्लैश ब्रेकिंग
+            </span>
+            <button onclick="dismissBreakingPopup()" class="text-gray-400 hover:text-black dark:hover:text-white text-lg font-bold cursor-pointer leading-none">&times;</button>
+        </div>
+        <div class="pt-2.5">
+            <h4 id="breaking-popup-title" class="font-bold text-xs text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug"></h4>
+            <div class="mt-3 flex justify-between items-center">
+                <button onclick="openBreakingPopupNews()" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1 rounded transition shadow cursor-pointer">
+                    अभी पढ़ें &rarr;
+                </button>
+                <button onclick="dismissBreakingPopup()" class="text-gray-400 hover:text-gray-600 text-[11px] font-medium cursor-pointer">
+                    बंद करें
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile Sticky Floating Quick Action Bar (Bottom) -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-2 px-6 flex justify-between items-center z-40 shadow-lg">
         <button onclick="filterNews('all')" class="flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-red-600 cursor-pointer">
@@ -704,8 +725,43 @@
         let currentActiveNewsUrl = window.location.href;
         let currentActiveNewsId = null;
         let currentActiveItem = null;
+        let currentBreakingPopupId = null;
         let audioPlaySpeed = 1.0;
         let deferredPrompt;
+
+        // Auto Breaking News Flash Popup Logic
+        function checkAutoBreakingPopup() {
+            const nowTime = new Date().getTime();
+            const breakingItem = allNewsData.find(i => {
+                if (i.scheduledAt && new Date(i.scheduledAt).getTime() > nowTime) return false;
+                return i.isBreaking;
+            });
+
+            if (breakingItem && sessionStorage.getItem('dismissed_breaking') !== breakingItem.id) {
+                currentBreakingPopupId = breakingItem.id;
+                document.getElementById('breaking-popup-title').innerText = breakingItem.title;
+                const popup = document.getElementById('breaking-popup');
+                popup.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+                popup.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function dismissBreakingPopup() {
+            if (currentBreakingPopupId) {
+                sessionStorage.setItem('dismissed_breaking', currentBreakingPopupId);
+            }
+            const popup = document.getElementById('breaking-popup');
+            popup.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+            popup.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+        }
+
+        function openBreakingPopupNews() {
+            if (currentBreakingPopupId) {
+                const id = currentBreakingPopupId;
+                dismissBreakingPopup();
+                openReadModal(id);
+            }
+        }
 
         // Daily GK Quiz Logic
         function checkQuiz(selectedIndex) {
@@ -1105,6 +1161,7 @@
                 });
                 renderNews();
                 updateBreakingTicker();
+                checkAutoBreakingPopup();
             }, (error) => {
                 console.error("Firestore Error:", error);
                 document.getElementById('news-container').innerHTML = `<p class="col-span-2 text-center text-red-500">डेटा लोड करने में समस्या आई।</p>`;
@@ -1122,7 +1179,6 @@
             const savedBookmarks = getSavedBookmarks();
             const nowTime = new Date().getTime();
 
-            // Filter out scheduled posts for non-admins
             let rawList = allNewsData.filter(item => {
                 if (isAdminLoggedIn) return true;
                 if (item.scheduledAt) {
@@ -1312,7 +1368,6 @@
             renderNews();
         }
 
-        // Image Compressor + Auto Watermark Generator
         function processImageFileWithWatermark(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1332,7 +1387,6 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                        // DRAW WATERMARK BADGE IN BOTTOM RIGHT
                         const badgeWidth = 240;
                         const badgeHeight = 30;
                         const x = canvas.width - badgeWidth - 12;
@@ -1342,11 +1396,9 @@
                         ctx.roundRect ? ctx.roundRect(x, y, badgeWidth, badgeHeight, 5) : ctx.fillRect(x, y, badgeWidth, badgeHeight);
                         ctx.fill();
 
-                        // Watermark Red Accent Bar
                         ctx.fillStyle = '#dc2626';
                         ctx.fillRect(x, y, 6, badgeHeight);
 
-                        // Watermark Text
                         ctx.fillStyle = '#ffffff';
                         ctx.font = 'bold 12px sans-serif';
                         ctx.textAlign = 'left';
