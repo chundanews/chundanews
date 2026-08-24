@@ -919,12 +919,20 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Cryptographic Hash Function for Secure PIN Verification
-        async function hashText(text) {
-            const msgUint8 = new TextEncoder().encode(text);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        // Direct Clean Admin Login Verification (Admin@kpr)
+        function verifyAdminPin() {
+            const pin = document.getElementById('admin-pin').value.trim();
+
+            if (pin === "Admin@kpr") {
+                isAdminLoggedIn = true;
+                document.getElementById('admin-action-bar').classList.remove('hidden');
+                document.getElementById('admin-login-btn').classList.add('hidden');
+                toggleAdminModal();
+                renderNews();
+                alert("एडमिन लॉगिन सफल!");
+            } else {
+                alert("गलत पासवर्ड!");
+            }
         }
 
         // Auto Breaking News Flash Popup Logic
@@ -1735,23 +1743,6 @@
             const modal = document.getElementById('post-modal');
             modal.classList.toggle('hidden');
             modal.classList.toggle('flex');
-        }
-
-        async function verifyAdminPin() {
-            const pin = document.getElementById('admin-pin').value;
-            const hashedInput = await hashText(pin);
-            const secureHash = "e83818e69d7bdfaa3731174668ea466986e680a65fa63353597b4b3faadbfeb6";
-
-            if (hashedInput === secureHash) {
-                isAdminLoggedIn = true;
-                document.getElementById('admin-action-bar').classList.remove('hidden');
-                document.getElementById('admin-login-btn').classList.add('hidden');
-                toggleAdminModal();
-                renderNews();
-                alert("एडमिन लॉगिन सफल!");
-            } else {
-                alert("गलत पासवर्ड!");
-            }
         }
 
         function logoutAdmin() {
