@@ -52,7 +52,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col pb-16 md:pb-0 transition-colors duration-200">
 
     <!-- Top Reading Scroll Progress Bar -->
     <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width: 0%;"></div>
@@ -376,12 +376,27 @@
         </div>
     </main>
 
-    <!-- Floating WhatsApp Channel Follow Button -->
-    <a href="https://whatsapp.com/channel/..." target="_blank" class="fixed bottom-6 right-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2.5 shadow-2xl flex items-center gap-2 z-40 text-xs font-bold transition hover:scale-105 border-2 border-white">
-        <i class="fa-brands fa-whatsapp text-lg"></i> चैनल फॉलो करें
-    </a>
+    <!-- Mobile Sticky Floating Quick Action Bar (Bottom) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-2 px-6 flex justify-between items-center z-40 shadow-lg">
+        <button onclick="filterNews('all')" class="flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-red-600 cursor-pointer">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px] mt-0.5">होम</span>
+        </button>
+        <a href="https://api.whatsapp.com/send?text=चूंडा%20क्षेत्र%20की%20ताज़ा%20खबरें%20पढ़ें:%20https://chundanews.github.io/chundanews/" target="_blank" class="flex flex-col items-center text-green-600 font-bold cursor-pointer">
+            <i class="fa-brands fa-whatsapp text-xl"></i>
+            <span class="text-[10px] mt-0.5">शेयर करें</span>
+        </a>
+        <button onclick="openCitizenReportModal()" class="flex flex-col items-center text-red-600 font-bold cursor-pointer">
+            <i class="fa-solid fa-bullhorn text-lg"></i>
+            <span class="text-[10px] mt-0.5">खबर भेजें</span>
+        </button>
+        <button onclick="filterBookmarks()" class="flex flex-col items-center text-amber-500 font-bold cursor-pointer">
+            <i class="fa-solid fa-bookmark text-lg"></i>
+            <span class="text-[10px] mt-0.5">सेव</span>
+        </button>
+    </div>
 
-    <!-- Citizen Reporter News Submission Modal (With Direct Email to ashokvvaishn@gmail.com) -->
+    <!-- Citizen Reporter News Submission Modal -->
     <div id="citizen-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
@@ -429,7 +444,7 @@
         </div>
     </div>
 
-    <!-- Post/Edit News Modal (Admin) -->
+    <!-- Post/Edit News Modal (Admin with Watermark & Schedule) -->
     <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <h3 id="post-modal-title" class="text-lg font-bold border-b dark:border-gray-800 pb-2 mb-4 text-gray-800 dark:text-gray-100">नई खबर पोस्ट करें</h3>
@@ -454,10 +469,12 @@
                     </select>
                 </div>
                 
+                <!-- Multiple Image Upload with Auto Watermark Feature -->
                 <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-3">
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-images text-red-600"></i> फ़ोटो चुनें (Multiple Photos)
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center justify-between">
+                            <span><i class="fa-solid fa-images text-red-600 mr-1"></i> फ़ोटो चुनें (Multiple Photos)</span>
+                            <span class="text-[10px] bg-red-100 dark:bg-red-950 text-red-600 px-1.5 py-0.5 rounded font-semibold"><i class="fa-solid fa-stamp"></i> ऑटो वॉटरमार्क लागू</span>
                         </label>
                         <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950 file:text-red-700 dark:file:text-red-400 hover:file:bg-red-100">
                     </div>
@@ -467,6 +484,7 @@
                     </div>
                 </div>
 
+                <!-- Video Upload Section -->
                 <div class="p-3 bg-red-50/50 dark:bg-gray-800 rounded border border-red-200 dark:border-gray-700 space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-red-700 dark:text-red-400 mb-1 flex items-center gap-1">
@@ -484,6 +502,16 @@
                     <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">विस्तृत समाचार (Content)</label>
                     <textarea id="news-content" rows="4" required class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100"></textarea>
                 </div>
+
+                <!-- Scheduled Publishing Date Time Box -->
+                <div class="p-3 bg-blue-50/60 dark:bg-gray-800/80 rounded border border-blue-200 dark:border-gray-700">
+                    <label class="block text-xs font-bold text-blue-800 dark:text-blue-300 mb-1 flex items-center gap-1">
+                        <i class="fa-regular fa-clock text-blue-600"></i> पोस्टिंग समय तय करें (Scheduled Publishing - Optional)
+                    </label>
+                    <input type="datetime-local" id="news-schedule" class="w-full border dark:border-gray-700 rounded px-3 py-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    <p class="text-[10px] text-gray-500 mt-1">यदि तुरंत प्रकाशित करना है तो इसे खाली छोड़ दें।</p>
+                </div>
+
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="news-breaking" class="w-4 h-4 text-red-600 rounded">
                     <label for="news-breaking" class="text-sm font-semibold text-red-600 dark:text-red-400">ब्रेकिंग न्यूज़ बार में दिखाएं</label>
@@ -803,7 +831,7 @@
             renderNews();
         }
 
-        // Citizen Reporter Logic (Sends to ashokvvaishn@gmail.com & Firebase & WhatsApp)
+        // Citizen Reporter Logic
         function openCitizenReportModal() {
             document.getElementById('citizen-modal').classList.remove('hidden');
             document.getElementById('citizen-modal').classList.add('flex');
@@ -825,7 +853,6 @@
             const details = document.getElementById('citizen-details').value.trim();
 
             try {
-                // 1. Save to Firebase Firestore
                 await db.collection("citizen_reports").add({
                     name: name,
                     location: location,
@@ -834,7 +861,6 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // 2. Send Direct Email via FormSubmit API to ashokvvaishn@gmail.com
                 fetch("https://formsubmit.co/ajax/ashokvvaishn@gmail.com", {
                     method: "POST",
                     headers: { 
@@ -850,7 +876,6 @@
                     })
                 }).catch(err => console.log("Email background error", err));
 
-                // 3. Prompt Direct WhatsApp send to Admin
                 const waText = `📰 *नागरिक पत्रकार खबर (Chunda News)*\n\n👤 *नाम:* ${name}\n📍 *स्थान:* ${location}\n📝 *विवरण:* ${details}`;
                 const waUrl = `https://wa.me/918003577576?text=${encodeURIComponent(waText)}`;
 
@@ -865,7 +890,6 @@
             }
         }
 
-        // Admin Citizen Reports Modal Management
         async function openAdminCitizenReports() {
             const modal = document.getElementById('admin-reports-modal');
             const list = document.getElementById('admin-reports-list');
@@ -1096,14 +1120,24 @@
             const container = document.getElementById('news-container');
             const heroContainer = document.getElementById('hero-container');
             const savedBookmarks = getSavedBookmarks();
+            const nowTime = new Date().getTime();
+
+            // Filter out scheduled posts for non-admins
+            let rawList = allNewsData.filter(item => {
+                if (isAdminLoggedIn) return true;
+                if (item.scheduledAt) {
+                    return new Date(item.scheduledAt).getTime() <= nowTime;
+                }
+                return true;
+            });
 
             let filtered = [];
             if (currentFilter === 'all') {
-                filtered = allNewsData;
+                filtered = rawList;
             } else if (currentFilter === 'bookmarks') {
-                filtered = allNewsData.filter(item => savedBookmarks.includes(item.id));
+                filtered = rawList.filter(item => savedBookmarks.includes(item.id));
             } else {
-                filtered = allNewsData.filter(item => item.category === currentFilter);
+                filtered = rawList.filter(item => item.category === currentFilter);
             }
 
             if (searchQuery) {
@@ -1139,6 +1173,10 @@
 
                 const viewsCount = leadItem.views || 0;
 
+                const isScheduledBadge = (leadItem.scheduledAt && new Date(leadItem.scheduledAt).getTime() > nowTime) ? `
+                    <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">⏳ शेड्यूल्ड (${new Date(leadItem.scheduledAt).toLocaleDateString('hi-IN')})</span>
+                ` : '';
+
                 const leadAdminControls = isAdminLoggedIn ? `
                     <div class="flex gap-2 pt-3 border-t dark:border-gray-800 mt-3">
                         <button onclick="event.stopPropagation(); editNewsPost('${leadItem.id}')" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded font-bold hover:bg-blue-700 flex items-center gap-1 cursor-pointer">
@@ -1160,7 +1198,10 @@
                         </div>
                         <div class="p-5">
                             <div class="flex justify-between items-center text-xs text-gray-400 mb-1">
-                                <span>${leadItem.date || ''}</span>
+                                <div class="flex items-center gap-2">
+                                    <span>${leadItem.date || ''}</span>
+                                    ${isScheduledBadge}
+                                </div>
                                 <span class="font-semibold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount} Views</span>
                             </div>
                             <h2 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-gray-100 leading-snug mt-1 group-hover:text-red-600 transition">${leadItem.title}</h2>
@@ -1183,6 +1224,8 @@
 
         function renderCards(items, container) {
             const savedBookmarks = getSavedBookmarks();
+            const nowTime = new Date().getTime();
+
             container.innerHTML = items.map(item => {
                 let thumbnail = '';
                 const hasVideoBadge = item.video ? `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-play"></i> वीडियो</span>` : '';
@@ -1199,6 +1242,10 @@
                 const viewsCount = item.views || 0;
                 const isBookmarked = savedBookmarks.includes(item.id);
                 const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('📰 *' + item.title + '*\n\nपूरी खबर पढ़ें: ' + window.location.href)}`;
+
+                const isScheduledBadge = (item.scheduledAt && new Date(item.scheduledAt).getTime() > nowTime) ? `
+                    <span class="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">⏳ शेड्यूल्ड</span>
+                ` : '';
 
                 const adminControls = isAdminLoggedIn ? `
                     <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
@@ -1217,7 +1264,10 @@
                         ${thumbnail}
                         <div class="p-4">
                             <div class="flex justify-between items-center text-xs mb-2">
-                                <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded">${item.category}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded">${item.category}</span>
+                                    ${isScheduledBadge}
+                                </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-gray-400">${dateStr}</span>
                                     <button onclick="event.stopPropagation(); toggleBookmark('${item.id}')" class="text-gray-400 hover:text-red-600 cursor-pointer">
@@ -1244,7 +1294,11 @@
         }
 
         function updateBreakingTicker() {
-            const breaking = allNewsData.filter(i => i.isBreaking);
+            const nowTime = new Date().getTime();
+            const breaking = allNewsData.filter(i => {
+                if (i.scheduledAt && new Date(i.scheduledAt).getTime() > nowTime) return false;
+                return i.isBreaking;
+            });
             if (breaking.length > 0) {
                 document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('   ✦   ');
             } else {
@@ -1258,7 +1312,8 @@
             renderNews();
         }
 
-        function processImageFile(file) {
+        // Image Compressor + Auto Watermark Generator
+        function processImageFileWithWatermark(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -1276,7 +1331,28 @@
                         canvas.height = targetHeight;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.70));
+
+                        // DRAW WATERMARK BADGE IN BOTTOM RIGHT
+                        const badgeWidth = 240;
+                        const badgeHeight = 30;
+                        const x = canvas.width - badgeWidth - 12;
+                        const y = canvas.height - badgeHeight - 12;
+
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                        ctx.roundRect ? ctx.roundRect(x, y, badgeWidth, badgeHeight, 5) : ctx.fillRect(x, y, badgeWidth, badgeHeight);
+                        ctx.fill();
+
+                        // Watermark Red Accent Bar
+                        ctx.fillStyle = '#dc2626';
+                        ctx.fillRect(x, y, 6, badgeHeight);
+
+                        // Watermark Text
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 12px sans-serif';
+                        ctx.textAlign = 'left';
+                        ctx.fillText('CHUNDA KSHETRA NEWS', x + 14, y + 19);
+
+                        resolve(canvas.toDataURL('image/jpeg', 0.72));
                     };
                     img.onerror = error => reject(error);
                 };
@@ -1301,6 +1377,7 @@
             document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
             document.getElementById('news-form').reset();
             document.getElementById('edit-doc-id').value = "";
+            document.getElementById('news-schedule').value = "";
             document.getElementById('submit-btn').innerText = "पोस्ट करें";
             togglePostModal();
         }
@@ -1316,6 +1393,7 @@
             document.getElementById('news-content').value = item.content;
             document.getElementById('news-image').value = (item.image && typeof item.image === 'string' && item.image.startsWith('http')) ? item.image : '';
             document.getElementById('news-video-url').value = (item.video && typeof item.video === 'string' && item.video.startsWith('http')) ? item.video : '';
+            document.getElementById('news-schedule').value = item.scheduledAt || "";
             document.getElementById('news-breaking').checked = !!item.isBreaking;
             document.getElementById('submit-btn').innerText = "अपडेट करें";
             
@@ -1337,19 +1415,20 @@
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "प्रोसेसिंग व सेविंग...";
+            submitBtn.innerText = "वॉटरमार्क व पोस्टिंग प्रोसेसिंग...";
 
             const editId = document.getElementById('edit-doc-id').value;
             const fileInput = document.getElementById('news-files');
             const videoFileInput = document.getElementById('news-video-file');
+            const scheduledVal = document.getElementById('news-schedule').value;
             let imagesArray = [];
             let videoData = document.getElementById('news-video-url').value.trim();
 
             try {
                 if (fileInput.files && fileInput.files.length > 0) {
                     for (let i = 0; i < fileInput.files.length; i++) {
-                        const compressedBase64 = await processImageFile(fileInput.files[i]);
-                        imagesArray.push(compressedBase64);
+                        const watermarkedBase64 = await processImageFileWithWatermark(fileInput.files[i]);
+                        imagesArray.push(watermarkedBase64);
                     }
                 }
 
@@ -1366,6 +1445,7 @@
                     content: document.getElementById('news-content').value,
                     isBreaking: document.getElementById('news-breaking').checked,
                     video: videoData || null,
+                    scheduledAt: scheduledVal || null,
                     date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' })
                 };
 
@@ -1382,7 +1462,7 @@
                     postData.reactions = { like: 0, love: 0, clap: 0 };
                     postData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection("news_posts").add(postData);
-                    alert("खबर सफलतापूर्वक पोस्ट हो गई!");
+                    alert(scheduledVal ? "खबर शेड्यूल्ड कर दी गई है!" : "खबर सफलतापूर्वक पोस्ट हो गई!");
                 }
 
                 document.getElementById('news-form').reset();
