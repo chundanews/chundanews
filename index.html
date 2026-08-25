@@ -88,7 +88,7 @@
         </span>
         <div class="overflow-hidden whitespace-nowrap w-full relative">
             <div id="live-mandi-ticker" class="animate-mandi font-medium tracking-wide">
-                लोड हो रहा है...
+                पेट्रोल: ₹104.80/L &nbsp;|&nbsp; डीज़ल: ₹90.30/L &nbsp;|&nbsp; LPG: ₹810 &nbsp;|&nbsp; गेहूं: ₹2,450 - ₹2,780/क्विं.
             </div>
         </div>
     </div>
@@ -101,7 +101,7 @@
                     <i class="fa-solid fa-calendar-day text-amber-400"></i> लोड हो रहा है...
                 </span>
                 <span id="live-weather" class="flex items-center gap-1.5 font-medium border-l border-gray-600 pl-3">
-                    <i class="fa-solid fa-spinner fa-spin text-yellow-400"></i> मौसम लोड हो रहा है...
+                    <i class="fa-solid fa-cloud-sun text-amber-300"></i> क्षेत्र मौसम: 29°C (साफ)
                 </span>
             </div>
             <div class="flex items-center gap-3">
@@ -212,7 +212,28 @@
         </div>
     </main>
 
-    <!-- Post / Edit News Modal (Admin with Multiple Image Upload) -->
+    <!-- Auto Breaking News Popup Flash Card -->
+    <div id="breaking-popup" class="fixed bottom-6 right-4 max-w-sm w-[90%] md:w-80 bg-white dark:bg-gray-900 border-2 border-red-600 rounded-xl shadow-2xl p-4 z-50 transform translate-y-32 opacity-0 transition-all duration-500 pointer-events-none">
+        <div class="flex items-center justify-between pb-2 border-b dark:border-gray-800">
+            <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded flex items-center gap-1 shadow">
+                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span> फ्लैश ब्रेकिंग
+            </span>
+            <button onclick="dismissBreakingPopup()" class="text-gray-400 hover:text-black dark:hover:text-white text-lg font-bold cursor-pointer leading-none">&times;</button>
+        </div>
+        <div class="pt-2.5">
+            <h4 id="breaking-popup-title" class="font-bold text-xs text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug"></h4>
+            <div class="mt-3 flex justify-between items-center">
+                <button onclick="openBreakingPopupNews()" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1 rounded transition shadow cursor-pointer">
+                    अभी पढ़ें &rarr;
+                </button>
+                <button onclick="dismissBreakingPopup()" class="text-gray-400 hover:text-gray-600 text-[11px] font-medium cursor-pointer">
+                    बंद करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post / Edit News Modal (Admin) -->
     <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
@@ -247,11 +268,10 @@
                     </div>
                 </div>
                 
-                <!-- Multiple Images with Auto 50-100KB Compression Notice -->
                 <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-2">
                     <div class="flex justify-between items-center">
                         <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">
-                            <i class="fa-solid fa-images text-red-600 mr-1"></i> तस्वीरें चुनें (एक साथ कई फ़ोटो चुन सकते हैं)
+                            <i class="fa-solid fa-images text-red-600 mr-1"></i> तस्वीरें चुनें (मल्टीपल इमेज सपोर्ट)
                         </label>
                         <span class="text-[10px] bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400 font-bold px-1.5 py-0.5 rounded">
                             ऑटो कंप्रेस (50-100KB)
@@ -268,7 +288,7 @@
 
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="news-breaking" class="w-4 h-4 text-red-600 rounded">
-                    <label for="news-breaking" class="text-sm font-semibold text-red-600 dark:text-red-400">ब्रेकिंग न्यूज़ बार में दिखाएं</label>
+                    <label for="news-breaking" class="text-sm font-semibold text-red-600 dark:text-red-400">ब्रेकिंग न्यूज़ बार में दिखाएं (Flash Alert)</label>
                 </div>
                 <div class="flex justify-end gap-2 pt-3 border-t dark:border-gray-800">
                     <button type="button" onclick="togglePostModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">रद्द करें</button>
@@ -310,7 +330,6 @@
             <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-3 text-gray-950 dark:text-white leading-tight tracking-tight"></h2>
             <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
             
-            <!-- Dynamic Multiple Images Gallery -->
             <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
             <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
             
@@ -348,8 +367,10 @@
         let isAdminLoggedIn = false;
         let currentActiveNewsId = null;
         let currentActiveItem = null;
+        let currentBreakingPopupId = null;
         let initialDirectLinkHandled = false;
 
+        // SINGLE NEWS LINK & SHARING
         function getSingleNewsLink(newsId) {
             const baseUrl = window.location.origin + window.location.pathname;
             return `${baseUrl}#news-${newsId}`;
@@ -397,6 +418,47 @@
             });
         }
 
+        // BREAKING NEWS TICKER & POPUP ENGINE
+        function updateBreakingTicker() {
+            const breaking = allNewsData.filter(i => i.isBreaking);
+            const tickerElem = document.getElementById('breaking-ticker');
+            if (breaking.length > 0) {
+                tickerElem.innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
+            } else {
+                tickerElem.innerText = "चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...";
+            }
+        }
+
+        function checkAutoBreakingPopup() {
+            const breakingItem = allNewsData.find(i => i.isBreaking);
+
+            if (breakingItem && sessionStorage.getItem('dismissed_breaking') !== breakingItem.id) {
+                currentBreakingPopupId = breakingItem.id;
+                document.getElementById('breaking-popup-title').innerText = breakingItem.title;
+                const popup = document.getElementById('breaking-popup');
+                popup.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+                popup.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function dismissBreakingPopup() {
+            if (currentBreakingPopupId) {
+                sessionStorage.setItem('dismissed_breaking', currentBreakingPopupId);
+            }
+            const popup = document.getElementById('breaking-popup');
+            popup.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+            popup.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+        }
+
+        function openBreakingPopupNews() {
+            if (currentBreakingPopupId) {
+                const id = currentBreakingPopupId;
+                dismissBreakingPopup();
+                openReadModal(id);
+            }
+        }
+
+        // DEEP LINKING
         function checkUrlHashForNews() {
             const hash = window.location.hash;
             if (hash && hash.startsWith('#news-')) {
@@ -410,12 +472,15 @@
 
         function initApp() {
             initTheme();
+            initPanchang();
             db.collection("news_posts").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
                 allNewsData = [];
                 snapshot.forEach(doc => {
                     allNewsData.push({ id: doc.id, ...doc.data() });
                 });
                 renderNews();
+                updateBreakingTicker();
+                checkAutoBreakingPopup();
                 
                 if (!initialDirectLinkHandled && allNewsData.length > 0) {
                     checkUrlHashForNews();
@@ -579,7 +644,6 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        // Scale to max 720px width to ensure size stays around 50-80 KB
                         const maxWidth = 720;
                         const scaleSize = maxWidth / img.width;
                         const targetWidth = (img.width > maxWidth) ? maxWidth : img.width;
@@ -607,7 +671,6 @@
                         ctx.textAlign = 'left';
                         ctx.fillText('CHUNDA KSHETRA NEWS', x + 10, y + 17);
 
-                        // Quality 0.58 balances sharpness and guarantees 50-90 KB payload
                         resolve(canvas.toDataURL('image/jpeg', 0.58));
                     };
                     img.onerror = error => reject(error);
@@ -665,7 +728,6 @@
             let imagesArray = [];
 
             try {
-                // Multi-image compression loop
                 if (fileInput.files && fileInput.files.length > 0) {
                     for (let i = 0; i < fileInput.files.length; i++) {
                         const compressedBase64 = await processImageFileWithWatermark(fileInput.files[i]);
@@ -721,7 +783,6 @@
                 history.pushState(null, null, `#news-${id}`);
             }
 
-            // Real-time Views Increment in Firestore
             try {
                 db.collection("news_posts").doc(id).update({
                     views: firebase.firestore.FieldValue.increment(1)
@@ -739,7 +800,6 @@
             document.getElementById('read-reporter-name').innerText = item.reporter || 'विशेष संवाददाता';
             document.getElementById('read-date').innerText = item.date || '';
             
-            // Render all uploaded images in gallery
             const gallery = document.getElementById('read-images-gallery');
             let imgs = item.images || (item.image ? [item.image] : []);
             if (imgs.length > 0) {
@@ -798,6 +858,13 @@
             currentFilter = cat;
             document.getElementById('current-category-title').innerText = cat === 'all' ? 'ताज़ा समाचार' : cat;
             renderNews();
+        }
+
+        function initPanchang() {
+            const today = new Date();
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const dateFormatted = today.toLocaleDateString('hi-IN', options);
+            document.getElementById('live-panchang').innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${dateFormatted}`;
         }
 
         function initTheme() {
