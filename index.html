@@ -145,51 +145,7 @@
             </div>
         </div>
 
-        <!-- Visual Web Stories Row -->
-        <div class="bg-gray-50 dark:bg-gray-950 border-t border-b dark:border-gray-800 py-2.5 px-4 overflow-x-auto flex gap-4 no-scrollbar max-w-7xl mx-auto">
-            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('क्षेत्रीय')">
-                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
-                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-red-600 font-bold text-lg border-2 border-white dark:border-gray-900">
-                        <i class="fa-solid fa-mountain-sun"></i>
-                    </div>
-                </div>
-                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">क्षेत्रीय</span>
-            </div>
-            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('खेल (Sports)')">
-                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
-                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-blue-600 font-bold text-lg border-2 border-white dark:border-gray-900">
-                        <i class="fa-solid fa-trophy"></i>
-                    </div>
-                </div>
-                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">खेल</span>
-            </div>
-            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('शिक्षा व रोज़गार')">
-                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
-                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-emerald-600 font-bold text-lg border-2 border-white dark:border-gray-900">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                </div>
-                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">रोज़गार</span>
-            </div>
-            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('कृषि व मौसम')">
-                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
-                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-amber-600 font-bold text-lg border-2 border-white dark:border-gray-900">
-                        <i class="fa-solid fa-wheat-awn"></i>
-                    </div>
-                </div>
-                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">कृषि</span>
-            </div>
-            <div class="flex flex-col items-center shrink-0 cursor-pointer group" onclick="filterNews('राजनीति')">
-                <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-yellow-400 to-red-600 group-hover:scale-105 transition">
-                    <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-purple-600 font-bold text-lg border-2 border-white dark:border-gray-900">
-                        <i class="fa-solid fa-landmark"></i>
-                    </div>
-                </div>
-                <span class="text-[11px] font-semibold mt-1 text-gray-700 dark:text-gray-300">राजनीति</span>
-            </div>
-        </div>
-
-        <!-- Navigation Categories -->
+        <!-- Categories Nav -->
         <nav class="bg-gray-900 text-gray-200 border-t border-gray-800">
             <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-6 py-2 text-sm font-medium">
                 <button onclick="filterNews('all')" class="hover:text-red-400 whitespace-nowrap cursor-pointer">सभी खबरें</button>
@@ -234,9 +190,6 @@
     <div id="admin-action-bar" class="hidden bg-emerald-700 text-white px-4 py-2 text-sm flex justify-between items-center shadow-inner">
         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> एडमिन मोड सक्रिय है</span>
         <div class="flex gap-2">
-            <button onclick="openAdminCitizenReports()" class="bg-blue-600 text-white px-3 py-1 rounded font-bold hover:bg-blue-700 cursor-pointer shadow">
-                <i class="fa-solid fa-inbox"></i> प्राप्त खबरें देखें
-            </button>
             <button onclick="openNewPostModal()" class="bg-white text-emerald-800 px-3 py-1 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow">
                 <i class="fa-solid fa-plus"></i> नई खबर जोड़ें
             </button>
@@ -253,22 +206,7 @@
             <!-- News Feed Column -->
             <div class="md:col-span-2 space-y-6">
                 
-                <!-- Daily 2-Min Audio Podcast Bar -->
-                <div class="bg-gradient-to-r from-red-600 to-rose-700 rounded-xl p-3.5 text-white flex items-center justify-between shadow-md">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl shrink-0">
-                            <i class="fa-solid fa-podcast"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-sm">आज का 2-मिनट ऑडियो न्यूज़ बुलेटिन</h4>
-                            <p class="text-[11px] text-red-100">दिनभर की प्रमुख 5 बड़ी खबरें एक साथ सुनें</p>
-                        </div>
-                    </div>
-                    <button onclick="playTop5AudioBulletin()" class="bg-white text-red-700 hover:bg-red-50 text-xs font-black px-3.5 py-1.5 rounded-lg shadow cursor-pointer transition flex items-center gap-1">
-                        <i class="fa-solid fa-circle-play"></i> बुलेटिन सुनें
-                    </button>
-                </div>
-
+                <!-- Lead News (Hero Container) -->
                 <div id="hero-container" class="hidden"></div>
 
                 <div class="flex justify-between items-center border-b-2 border-red-600 pb-2">
@@ -286,44 +224,7 @@
 
             <!-- Sidebar -->
             <aside class="space-y-6">
-                <!-- Daily Student GK -->
-                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 p-4 rounded-xl border border-purple-200 dark:border-purple-900 text-xs shadow-sm">
-                    <div class="flex items-center justify-between border-b dark:border-gray-700 pb-2 mb-2">
-                        <span class="font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1.5 uppercase tracking-wide">
-                            <i class="fa-solid fa-brain"></i> आज का प्रतियोगी क्विज़ (GK)
-                        </span>
-                        <span class="bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">Daily GK</span>
-                    </div>
-                    <p class="font-bold text-gray-800 dark:text-gray-200 mb-2.5" id="quiz-question">राजस्थान में ऋषभदेव जी का प्रसिद्ध मंदिर किस नदी के तट पर स्थित है?</p>
-                    <div class="space-y-1.5" id="quiz-options">
-                        <button onclick="checkQuiz(0)" class="w-full text-left p-2 rounded border dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-gray-700 transition cursor-pointer">A. कोयल नदी</button>
-                        <button onclick="checkQuiz(1)" class="w-full text-left p-2 rounded border dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-gray-700 transition cursor-pointer">B. बनास नदी</button>
-                        <button onclick="checkQuiz(2)" class="w-full text-left p-2 rounded border dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-gray-700 transition cursor-pointer">C. सोम नदी</button>
-                    </div>
-                    <div id="quiz-result" class="mt-2 font-bold hidden text-center"></div>
-                </div>
-
-                <!-- Mandi Calculator -->
-                <div class="bg-amber-50/70 dark:bg-gray-900 p-4 rounded-xl border border-amber-200 dark:border-amber-900 text-xs shadow-sm">
-                    <div class="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-400 border-b dark:border-gray-800 pb-2 mb-2">
-                        <i class="fa-solid fa-calculator text-amber-600"></i> किसान मंडी भाव कैलकुलेटर
-                    </div>
-                    <div class="space-y-2">
-                        <div>
-                            <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-0.5">उपज का वज़न (क्विंटल में):</label>
-                            <input type="number" id="calc-weight" placeholder="जैसे: 15" oninput="calcMandiTotal()" class="w-full border dark:border-gray-700 rounded p-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-0.5">मंडी भाव दर (₹ प्रति क्विंटल):</label>
-                            <input type="number" id="calc-rate" placeholder="जैसे: 2550" oninput="calcMandiTotal()" class="w-full border dark:border-gray-700 rounded p-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none">
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700 text-center font-bold text-amber-700 dark:text-amber-400">
-                            अनुमानित कुल मूल्य: <span id="calc-total">₹0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Emergency Directory -->
+                <!-- Mandi Bhav & Emergency Info -->
                 <div class="bg-red-50 dark:bg-gray-900 p-4 rounded-xl border border-red-200 dark:border-red-900 text-xs shadow-sm">
                     <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-2">
                         <span class="font-bold text-red-700 dark:text-red-400 flex items-center gap-1.5">
@@ -340,40 +241,6 @@
         </div>
     </main>
 
-    <!-- Floating AI Assistant Button -->
-    <button onclick="toggleAIChatModal()" class="fixed bottom-20 md:bottom-6 right-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full p-3.5 shadow-2xl z-40 transition-transform duration-200 hover:scale-110 flex items-center justify-center border-2 border-white/80" title="AI न्यूज़ सहायक से बात करें">
-        <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
-    </button>
-
-    <!-- AI Chatbot Modal -->
-    <div id="ai-chat-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-purple-200 dark:border-gray-800 flex flex-col h-[500px]">
-            <div class="flex justify-between items-center pb-2 border-b dark:border-gray-800">
-                <div class="flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center text-sm shadow">
-                        <i class="fa-solid fa-robot"></i>
-                    </span>
-                    <div>
-                        <h4 class="font-bold text-xs text-gray-900 dark:text-gray-100">चूंडा AI न्यूज़ सहायक</h4>
-                        <span class="text-[10px] text-emerald-500 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> ऑनलाइन</span>
-                    </div>
-                </div>
-                <button onclick="toggleAIChatModal()" class="text-gray-400 hover:text-black dark:hover:text-white text-xl font-bold cursor-pointer">&times;</button>
-            </div>
-            <div id="ai-chat-messages" class="flex-1 overflow-y-auto py-3 space-y-2.5 text-xs">
-                <div class="bg-purple-50 dark:bg-gray-800 p-2.5 rounded-xl max-w-[85%] text-gray-800 dark:text-gray-200">
-                    नमस्ते! मैं चूंडा क्षेत्र न्यूज़ का AI सहायक हूँ। आप मुझसे क्षेत्र की खबरों, मौसम या किसी भी विषय पर पूछ सकते हैं!
-                </div>
-            </div>
-            <div class="pt-2 border-t dark:border-gray-800 flex gap-1.5">
-                <input type="text" id="ai-chat-input" onkeypress="if(event.key==='Enter') sendAIChatMessage()" placeholder="अपना सवाल पूछें..." class="flex-1 border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 text-xs outline-none text-gray-900 dark:text-gray-100">
-                <button onclick="sendAIChatMessage()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition cursor-pointer">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Read Full News Modal -->
     <div id="read-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
@@ -387,56 +254,10 @@
                         <span id="read-reporter-name">विशेष संवाददाता</span>
                     </span>
                     <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
-                    <span id="read-time-badge" class="text-[11px] text-gray-400"><i class="fa-regular fa-clock mr-1"></i>1 मिनट</span>
-                </div>
-
-                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs no-print">
-                    <button onclick="window.print()" class="px-1.5 py-0.5 hover:text-red-600 text-gray-600 dark:text-gray-300 mr-2 font-bold flex items-center gap-1" title="प्रिंट करें">
-                        <i class="fa-solid fa-print"></i> प्रिंट
-                    </button>
-                    <span class="text-gray-500 text-[10px] mr-1">फॉन्ट:</span>
-                    <button onclick="changeFontSize('small')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A-</button>
-                    <button onclick="changeFontSize('normal')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A</button>
-                    <button onclick="changeFontSize('large')" class="px-1.5 py-0.5 hover:bg-white dark:hover:bg-gray-700 rounded font-bold">A+</button>
-                </div>
-            </div>
-
-            <!-- Language Translation Bar -->
-            <div class="flex items-center justify-between bg-purple-50 dark:bg-purple-950/40 p-2 rounded-lg my-2 border border-purple-200 dark:border-purple-900 text-xs no-print">
-                <span class="font-bold text-purple-800 dark:text-purple-300 flex items-center gap-1">
-                    <i class="fa-solid fa-language text-purple-600"></i> भाषा बदलें (AI Translate):
-                </span>
-                <div class="flex gap-1.5">
-                    <button onclick="translateCurrentNews('hindi')" class="px-2 py-1 bg-white dark:bg-gray-800 hover:bg-purple-100 rounded font-semibold border dark:border-gray-700">मूल हिंदी</button>
-                    <button onclick="translateCurrentNews('mewari')" class="px-2 py-1 bg-white dark:bg-gray-800 hover:bg-purple-100 rounded font-semibold border dark:border-gray-700">मेवाड़ी / वागड़ी</button>
-                    <button onclick="translateCurrentNews('english')" class="px-2 py-1 bg-white dark:bg-gray-800 hover:bg-purple-100 rounded font-semibold border dark:border-gray-700">English</button>
                 </div>
             </div>
             
             <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-3 text-gray-950 dark:text-white leading-tight tracking-tight"></h2>
-            
-            <div class="bg-red-50 dark:bg-red-950/40 border-l-4 border-red-600 p-3 my-3 rounded-r-lg">
-                <div class="flex items-center gap-1.5 text-xs font-bold text-red-700 dark:text-red-400 mb-1">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> 30 सेकंड में समझें (AI Summary)
-                </div>
-                <div id="read-summary" class="text-xs text-gray-700 dark:text-gray-300 space-y-1"></div>
-            </div>
-
-            <!-- Audio Player Bar -->
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 my-3 flex items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 no-print flex-wrap">
-                <div class="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-gray-200">
-                    <i class="fa-solid fa-volume-high text-red-600 text-sm"></i> खबर सुनें (Audio News)
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="playNewsAudio()" id="audio-play-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded font-bold flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-play"></i> सुनें
-                    </button>
-                    <button onclick="stopNewsAudio()" id="audio-stop-btn" class="bg-gray-700 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded font-bold hidden flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-stop"></i> रोकें
-                    </button>
-                </div>
-            </div>
-
             <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
             
             <div id="read-video-container" class="mb-4 hidden rounded-lg overflow-hidden bg-black aspect-video flex items-center justify-center"></div>
@@ -452,16 +273,11 @@
                     <button onclick="copyCurrentNewsLink()" class="bg-gray-800 hover:bg-black text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
                         <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
                     </button>
-                    <button onclick="generateStatusCard()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-image"></i> स्टेटस कार्ड
-                    </button>
                 </div>
                 <button onclick="toggleBookmarkCurrentNews()" id="modal-bookmark-btn" class="text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-red-600 flex items-center gap-1 cursor-pointer">
                     <i class="fa-regular fa-bookmark" id="modal-bm-icon"></i> बाद में पढ़ें
                 </button>
             </div>
-
-            <canvas id="status-card-canvas" class="hidden"></canvas>
         </div>
     </div>
 
@@ -535,7 +351,7 @@
         </div>
     </div>
 
-    <!-- Firebase & Logic -->
+    <!-- Firebase Configuration & Application Logic -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
@@ -558,7 +374,7 @@
         let currentActiveItem = null;
         let initialDirectLinkHandled = false;
 
-        // SINGLE NEWS SHARING LOGIC
+        // SINGLE NEWS SHARING LINK GENERATOR
         function getSingleNewsLink(newsId) {
             const baseUrl = window.location.origin + window.location.pathname;
             return `${baseUrl}#news-${newsId}`;
@@ -572,7 +388,7 @@
             const shareTitle = item.title;
             const shareText = `📰 *${item.title}*\n\nपूरा समाचार व तस्वीरें देखने के लिए नीचे दिए गए लिंक पर क्लिक करें:\n${shareUrl}`;
 
-            // Check if Native Web Share is available (Mobile WhatsApp, Telegram, etc.)
+            // Check if Native Web Share is available (Mobile WhatsApp, Apps)
             if (navigator.share) {
                 try {
                     await navigator.share({
@@ -582,11 +398,11 @@
                     });
                     return;
                 } catch (err) {
-                    console.log("Web Share cancelled/failed, falling back to WhatsApp link");
+                    console.log("Web Share fallback");
                 }
             }
 
-            // Fallback directly to WhatsApp
+            // WhatsApp Direct Fallback
             const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
             window.open(waUrl, '_blank');
         }
@@ -603,8 +419,10 @@
             const directUrl = getSingleNewsLink(currentActiveNewsId);
             navigator.clipboard.writeText(directUrl).then(() => {
                 const textSpan = document.getElementById('copy-btn-text');
-                textSpan.innerText = "कॉपी हो गया! ✓";
-                setTimeout(() => { textSpan.innerText = "लिंक कॉपी"; }, 2000);
+                if (textSpan) {
+                    textSpan.innerText = "कॉपी हो गया! ✓";
+                    setTimeout(() => { textSpan.innerText = "लिंक कॉपी"; }, 2000);
+                }
             });
         }
 
@@ -629,7 +447,7 @@
                 });
                 renderNews();
                 
-                // Deep link check only once after data loads
+                // Deep link handler for direct URLs
                 if (!initialDirectLinkHandled && allNewsData.length > 0) {
                     checkUrlHashForNews();
                     initialDirectLinkHandled = true;
@@ -650,12 +468,78 @@
 
             if (filtered.length === 0) {
                 heroContainer.classList.add('hidden');
+                heroContainer.innerHTML = '';
                 container.innerHTML = `<div class="col-span-2 text-center py-8 text-gray-500">कोई खबर नहीं मिली।</div>`;
                 return;
             }
 
-            // Cards Render
-            container.innerHTML = filtered.map(item => {
+            // LEAD NEWS (HERO CONTAINER) HANDLING
+            if (currentFilter === 'all' && !searchQuery && filtered.length > 0) {
+                const leadItem = filtered[0];
+                const regularItems = filtered.slice(1);
+
+                let leadThumbnail = '';
+                if (leadItem.images && leadItem.images.length > 0) {
+                    leadThumbnail = `<img src="${leadItem.images[0]}" class="h-64 sm:h-80 w-full object-cover group-hover:scale-105 transition duration-300">`;
+                } else if (leadItem.image) {
+                    leadThumbnail = `<img src="${leadItem.image}" class="h-64 sm:h-80 w-full object-cover group-hover:scale-105 transition duration-300">`;
+                } else {
+                    leadThumbnail = `<div class="h-64 sm:h-80 w-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400"><i class="fa-solid fa-newspaper text-5xl"></i></div>`;
+                }
+
+                const viewsCount = leadItem.views || 0;
+                const leadReporter = leadItem.reporter || 'विशेष संवाददाता';
+
+                heroContainer.classList.remove('hidden');
+                heroContainer.innerHTML = `
+                    <div class="relative bg-white dark:bg-gray-900 rounded-xl shadow-md border border-gray-200 dark:border-gray-800 overflow-hidden group cursor-pointer" onclick="openReadModal('${leadItem.id}')">
+                        <div class="relative overflow-hidden">
+                            ${leadThumbnail}
+                            <span class="absolute bottom-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded shadow">बड़ी खबर / Lead Story</span>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-center text-xs text-gray-400 mb-2 gap-2 flex-wrap">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[11px]">${leadItem.category}</span>
+                                    <span class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded text-[11px] font-bold border border-slate-200 dark:border-slate-700">
+                                        <i class="fa-solid fa-microphone-lines text-red-600"></i> ${leadReporter}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span>${leadItem.date || ''}</span>
+                                    <span class="font-semibold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount} Views</span>
+                                </div>
+                            </div>
+
+                            <h2 class="text-xl sm:text-2xl font-black text-gray-950 dark:text-white leading-tight mt-1 group-hover:text-red-600 transition tracking-tight">${leadItem.title}</h2>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mt-2.5 line-clamp-3 leading-relaxed font-normal">${leadItem.content}</p>
+                            
+                            <!-- Lead Story Share & Direct Actions -->
+                            <div class="mt-4 pt-3 border-t dark:border-gray-800 flex justify-between items-center" onclick="event.stopPropagation()">
+                                <button onclick="openReadModal('${leadItem.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">विस्तार से पढ़ें &rarr;</button>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="shareDirectNews('${leadItem.id}')" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 shadow-sm cursor-pointer transition">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i> लीड खबर शेयर करें
+                                    </button>
+                                    <button onclick="copySingleNewsLink('${leadItem.id}')" title="डायरेक्ट लिंक कॉपी करें" class="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-1.5 rounded flex items-center gap-1 cursor-pointer transition">
+                                        <i class="fa-solid fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                renderCards(regularItems, container);
+            } else {
+                heroContainer.classList.add('hidden');
+                heroContainer.innerHTML = '';
+                renderCards(filtered, container);
+            }
+        }
+
+        function renderCards(items, container) {
+            container.innerHTML = items.map(item => {
                 const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
                 return `
                 <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
@@ -668,12 +552,12 @@
                         </div>
                     </div>
                     <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex justify-between items-center">
-                        <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline">पूरा पढ़ें &rarr;</button>
-                        <div class="flex gap-2">
-                            <button onclick="shareDirectNews('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1">
+                        <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="shareDirectNews('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer">
                                 <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
                             </button>
-                            <button onclick="copySingleNewsLink('${item.id}')" title="लिंक कॉपी करें" class="text-gray-500 hover:text-gray-800 text-xs">
+                            <button onclick="copySingleNewsLink('${item.id}')" title="लिंक कॉपी करें" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 text-xs cursor-pointer">
                                 <i class="fa-solid fa-link"></i>
                             </button>
                         </div>
@@ -696,6 +580,7 @@
             document.getElementById('read-category').innerText = item.category;
             document.getElementById('read-content').innerText = item.content;
             document.getElementById('read-reporter-name').innerText = item.reporter || 'विशेष संवाददाता';
+            document.getElementById('read-date').innerText = item.date || '';
             
             const gallery = document.getElementById('read-images-gallery');
             let imgs = item.images || (item.image ? [item.image] : []);
