@@ -111,9 +111,6 @@
                 <button onclick="filterBookmarks()" class="text-amber-400 hover:text-white flex items-center gap-1 font-semibold cursor-pointer border-l border-gray-600 pl-3">
                     <i class="fa-solid fa-bookmark text-red-500"></i> सेव खबरें (<span id="bookmark-count">0</span>)
                 </button>
-                <button onclick="installPWA()" id="pwa-install-btn" class="hidden text-amber-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
-                    <i class="fa-solid fa-mobile-screen-button"></i> ऐप इंस्टॉल
-                </button>
             </div>
         </div>
     </div>
@@ -125,7 +122,7 @@
                 <h1 class="text-3xl font-extrabold text-red-600 tracking-tight flex items-center gap-2 cursor-pointer" onclick="filterNews('all')">
                     <i class="fa-solid fa-newspaper"></i> CHUNDA KSHETRA NEWS
                 </h1>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">आपका अपना स्वतंत्र डिजिटल न्यूज़ पोर्टल <span class="bg-purple-100 dark:bg-purple-950 text-purple-600 text-[10px] font-black px-1.5 py-0.5 rounded ml-1">AI Powered</span></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">आपका अपना स्वतंत्र डिजिटल न्यूज़ पोर्टल</p>
             </div>
 
             <!-- Live Search Box -->
@@ -162,36 +159,12 @@
         </nav>
     </header>
 
-    <!-- Top Banner Ad -->
-    <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
-        <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-xl p-3.5 shadow-lg border border-blue-700/50 flex flex-col md:flex-row items-center justify-between gap-3">
-            <div class="flex items-center gap-3 text-left w-full md:w-auto">
-                <div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center text-yellow-400 text-2xl shrink-0 border border-white/20">
-                    <i class="fa-solid fa-laptop-code"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[10px] bg-yellow-400 text-black font-extrabold px-1.5 py-0.5 rounded tracking-wide uppercase">विशेष सेवा</span>
-                        <h3 class="font-black text-base sm:text-lg tracking-wide text-white">MD CSC & DIGITAL SEVA CENTER</h3>
-                    </div>
-                    <p class="text-xs text-blue-200 mt-0.5">ई-मित्र, ऑनलाइन फॉर्म, AEPS नकद निकासी, PVC कार्ड प्रिंटिंग व सभी डिजिटल सेवाएं उपलब्ध</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                <span class="text-xs text-gray-300 font-medium hidden sm:inline"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i>कल्याणपुर</span>
-                <a href="https://wa.me/918003577576?text=नमस्ते,%20मुझे%20MD%20CSC%20Center%20की%20सेवाओं%20की%20जानकारी%20चाहिए।" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow flex items-center gap-1.5 whitespace-nowrap">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> संपर्क करें
-                </a>
-            </div>
-        </div>
-    </div>
-
     <!-- Admin Action Bar -->
-    <div id="admin-action-bar" class="hidden bg-emerald-700 text-white px-4 py-2 text-sm flex justify-between items-center shadow-inner">
+    <div id="admin-action-bar" class="hidden bg-emerald-700 text-white px-4 py-2.5 text-sm flex justify-between items-center shadow-inner">
         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> एडमिन मोड सक्रिय है</span>
         <div class="flex gap-2">
-            <button onclick="openNewPostModal()" class="bg-white text-emerald-800 px-3 py-1 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow">
-                <i class="fa-solid fa-plus"></i> नई खबर जोड़ें
+            <button onclick="openNewPostModal()" class="bg-white text-emerald-800 px-3 py-1 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-plus text-emerald-700"></i> नई खबर जोड़ें
             </button>
             <button onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-700 cursor-pointer shadow">
                 लॉगआउट
@@ -205,7 +178,6 @@
             
             <!-- News Feed Column -->
             <div class="md:col-span-2 space-y-6">
-                
                 <!-- Lead News (Hero Container) -->
                 <div id="hero-container" class="hidden"></div>
 
@@ -224,11 +196,10 @@
 
             <!-- Sidebar -->
             <aside class="space-y-6">
-                <!-- Mandi Bhav & Emergency Info -->
                 <div class="bg-red-50 dark:bg-gray-900 p-4 rounded-xl border border-red-200 dark:border-red-900 text-xs shadow-sm">
                     <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-2">
                         <span class="font-bold text-red-700 dark:text-red-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-droplet text-red-600 animate-pulse"></i> इमरजेंसी मेडिकल डायरेक्टरी
+                            <i class="fa-solid fa-droplet text-red-600 animate-pulse"></i> इमरजेंसी डायरेक्टरी
                         </span>
                     </div>
                     <ul class="space-y-2 text-gray-700 dark:text-gray-300">
@@ -241,64 +212,12 @@
         </div>
     </main>
 
-    <!-- Read Full News Modal -->
-    <div id="read-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
-        <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
-            <button onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer no-print">&times;</button>
-            
-            <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-3">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded uppercase"></span>
-                    <span id="read-reporter-badge" class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-xs font-bold text-slate-800 dark:text-slate-200">
-                        <i class="fa-solid fa-microphone-lines text-red-600"></i>
-                        <span id="read-reporter-name">विशेष संवाददाता</span>
-                    </span>
-                    <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
-                </div>
-            </div>
-            
-            <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-3 text-gray-950 dark:text-white leading-tight tracking-tight"></h2>
-            <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
-            
-            <div id="read-video-container" class="mb-4 hidden rounded-lg overflow-hidden bg-black aspect-video flex items-center justify-center"></div>
-            <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
-            <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
-            
-            <!-- Share & Action Buttons -->
-            <div class="mt-4 pt-3 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3 no-print">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="shareDirectNews(currentActiveNewsId)" class="bg-green-600 text-white px-3.5 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-green-700 shadow-sm cursor-pointer">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> यह खबर शेयर करें
-                    </button>
-                    <button onclick="copyCurrentNewsLink()" class="bg-gray-800 hover:bg-black text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
-                    </button>
-                </div>
-                <button onclick="toggleBookmarkCurrentNews()" id="modal-bookmark-btn" class="text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-red-600 flex items-center gap-1 cursor-pointer">
-                    <i class="fa-regular fa-bookmark" id="modal-bm-icon"></i> बाद में पढ़ें
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Login Modal -->
-    <div id="admin-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6 text-center shadow-xl">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">एडमिन सत्यापन</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">सुरक्षा पासवर्ड दर्ज करें</p>
-            <input type="password" id="admin-pin" placeholder="पासवर्ड दर्ज करें" onkeypress="if(event.key==='Enter') verifyAdminPin()" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 text-center rounded px-3 py-2 text-base font-sans mb-4 outline-none text-gray-900 dark:text-gray-100">
-            <div class="flex justify-center gap-2">
-                <button type="button" onclick="toggleAdminModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">रद्द करें</button>
-                <button type="button" onclick="verifyAdminPin()" class="bg-black text-white px-5 py-2 rounded text-sm font-bold cursor-pointer">लॉगिन</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Post News Modal -->
+    <!-- Post / Edit News Modal (Admin) -->
     <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
                 <h3 id="post-modal-title" class="text-lg font-bold text-gray-800 dark:text-gray-100">नई खबर पोस्ट करें</h3>
+                <button onclick="togglePostModal()" class="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <form id="news-form" onsubmit="handleNewsSubmit(event)" class="space-y-4">
                 <input type="hidden" id="edit-doc-id">
@@ -329,14 +248,14 @@
                 </div>
                 
                 <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-2">
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">फ़ोटो चुनें</label>
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">फ़ोटो चुनें (Auto Watermark)</label>
                     <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400">
-                    <input type="url" id="news-image" placeholder="या इमेज URL" class="w-full border dark:border-gray-700 rounded px-3 py-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded px-3 py-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">विस्तृत समाचार (Content) *</label>
-                    <textarea id="news-content" rows="4" required class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100"></textarea>
+                    <textarea id="news-content" rows="4" required placeholder="समाचार का पूरा विवरण लिखें..." class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100"></textarea>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -351,7 +270,55 @@
         </div>
     </div>
 
-    <!-- Firebase Configuration & Application Logic -->
+    <!-- Admin Login Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6 text-center shadow-xl">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-2">एडमिन सत्यापन</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">सुरक्षा पासवर्ड दर्ज करें</p>
+            <input type="password" id="admin-pin" placeholder="पासवर्ड दर्ज करें" onkeypress="if(event.key==='Enter') verifyAdminPin()" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 text-center rounded px-3 py-2 text-base font-sans mb-4 outline-none text-gray-900 dark:text-gray-100">
+            <div class="flex justify-center gap-2">
+                <button type="button" onclick="toggleAdminModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">रद्द करें</button>
+                <button type="button" onclick="verifyAdminPin()" class="bg-black text-white px-5 py-2 rounded text-sm font-bold cursor-pointer">लॉगिन</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Read Full News Modal -->
+    <div id="read-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
+            <button onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer no-print">&times;</button>
+            
+            <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-3">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded uppercase"></span>
+                    <span id="read-reporter-badge" class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded text-xs font-bold text-slate-800 dark:text-slate-200">
+                        <i class="fa-solid fa-microphone-lines text-red-600"></i>
+                        <span id="read-reporter-name">विशेष संवाददाता</span>
+                    </span>
+                    <span id="read-views" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"><i class="fa-solid fa-eye text-red-500"></i> 0 Views</span>
+                </div>
+            </div>
+            
+            <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-3 text-gray-950 dark:text-white leading-tight tracking-tight"></h2>
+            <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
+            
+            <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
+            <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
+            
+            <div class="mt-4 pt-3 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-3 no-print">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="shareDirectNews(currentActiveNewsId)" class="bg-green-600 text-white px-3.5 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 hover:bg-green-700 shadow-sm cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> यह खबर शेयर करें
+                    </button>
+                    <button onclick="copyCurrentNewsLink()" class="bg-gray-800 hover:bg-black text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Script & Logic -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
@@ -374,7 +341,6 @@
         let currentActiveItem = null;
         let initialDirectLinkHandled = false;
 
-        // SINGLE NEWS SHARING LINK GENERATOR
         function getSingleNewsLink(newsId) {
             const baseUrl = window.location.origin + window.location.pathname;
             return `${baseUrl}#news-${newsId}`;
@@ -385,24 +351,19 @@
             if (!item) return;
 
             const shareUrl = getSingleNewsLink(newsId);
-            const shareTitle = item.title;
-            const shareText = `📰 *${item.title}*\n\nपूरा समाचार व तस्वीरें देखने के लिए नीचे दिए गए लिंक पर क्लिक करें:\n${shareUrl}`;
+            const shareText = `📰 *${item.title}*\n\nपूरा समाचार व तस्वीरें देखने के लिए लिंक पर क्लिक करें:\n${shareUrl}`;
 
-            // Check if Native Web Share is available (Mobile WhatsApp, Apps)
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: shareTitle,
+                        title: item.title,
                         text: shareText,
                         url: shareUrl
                     });
                     return;
-                } catch (err) {
-                    console.log("Web Share fallback");
-                }
+                } catch (err) {}
             }
 
-            // WhatsApp Direct Fallback
             const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
             window.open(waUrl, '_blank');
         }
@@ -426,7 +387,6 @@
             });
         }
 
-        // DEEP LINKING: Check URL Hash on Load
         function checkUrlHashForNews() {
             const hash = window.location.hash;
             if (hash && hash.startsWith('#news-')) {
@@ -447,7 +407,6 @@
                 });
                 renderNews();
                 
-                // Deep link handler for direct URLs
                 if (!initialDirectLinkHandled && allNewsData.length > 0) {
                     checkUrlHashForNews();
                     initialDirectLinkHandled = true;
@@ -473,7 +432,7 @@
                 return;
             }
 
-            // LEAD NEWS (HERO CONTAINER) HANDLING
+            // Lead Story / Hero Section
             if (currentFilter === 'all' && !searchQuery && filtered.length > 0) {
                 const leadItem = filtered[0];
                 const regularItems = filtered.slice(1);
@@ -489,6 +448,17 @@
 
                 const viewsCount = leadItem.views || 0;
                 const leadReporter = leadItem.reporter || 'विशेष संवाददाता';
+
+                const leadAdminControls = isAdminLoggedIn ? `
+                    <div class="flex gap-2 pt-2 border-t dark:border-gray-800 mt-2">
+                        <button onclick="event.stopPropagation(); editNewsPost('${leadItem.id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold hover:bg-blue-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i> एडिट
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteNewsPost('${leadItem.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold hover:bg-red-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> डिलीट
+                        </button>
+                    </div>
+                ` : '';
 
                 heroContainer.classList.remove('hidden');
                 heroContainer.innerHTML = `
@@ -514,7 +484,6 @@
                             <h2 class="text-xl sm:text-2xl font-black text-gray-950 dark:text-white leading-tight mt-1 group-hover:text-red-600 transition tracking-tight">${leadItem.title}</h2>
                             <p class="text-gray-600 dark:text-gray-400 text-sm mt-2.5 line-clamp-3 leading-relaxed font-normal">${leadItem.content}</p>
                             
-                            <!-- Lead Story Share & Direct Actions -->
                             <div class="mt-4 pt-3 border-t dark:border-gray-800 flex justify-between items-center" onclick="event.stopPropagation()">
                                 <button onclick="openReadModal('${leadItem.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">विस्तार से पढ़ें &rarr;</button>
                                 <div class="flex items-center gap-2">
@@ -526,6 +495,7 @@
                                     </button>
                                 </div>
                             </div>
+                            ${leadAdminControls}
                         </div>
                     </div>
                 `;
@@ -541,29 +511,185 @@
         function renderCards(items, container) {
             container.innerHTML = items.map(item => {
                 const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
+                const reporterName = item.reporter || 'विशेष संवाददाता';
+                const adminControls = isAdminLoggedIn ? `
+                    <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
+                        <button onclick="event.stopPropagation(); editNewsPost('${item.id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold hover:bg-blue-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i> एडिट
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold hover:bg-red-700 flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> डिलीट
+                        </button>
+                    </div>
+                ` : '';
+
                 return `
                 <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
                     <div>
                         <img src="${img}" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${item.id}')">
                         <div class="p-4">
-                            <span class="bg-red-50 text-red-600 font-bold px-2 py-0.5 rounded text-[10px]">${item.category}</span>
-                            <h3 class="font-black text-gray-950 dark:text-white text-base mt-2 hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-red-50 text-red-600 font-bold px-2 py-0.5 rounded text-[10px]">${item.category}</span>
+                                <span class="text-gray-500 text-[10px] font-semibold"><i class="fa-solid fa-microphone-lines text-red-600"></i> ${reporterName}</span>
+                            </div>
+                            <h3 class="font-black text-gray-950 dark:text-white text-base hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-2">${item.content}</p>
                         </div>
                     </div>
-                    <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex justify-between items-center">
-                        <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
-                        <div class="flex items-center gap-2">
-                            <button onclick="shareDirectNews('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer">
-                                <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
-                            </button>
-                            <button onclick="copySingleNewsLink('${item.id}')" title="लिंक कॉपी करें" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 text-xs cursor-pointer">
-                                <i class="fa-solid fa-link"></i>
-                            </button>
+                    <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col">
+                        <div class="flex justify-between items-center w-full">
+                            <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                            <div class="flex gap-2">
+                                <button onclick="shareDirectNews('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
+                                </button>
+                                <button onclick="copySingleNewsLink('${item.id}')" title="लिंक कॉपी करें" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 text-xs cursor-pointer">
+                                    <i class="fa-solid fa-link"></i>
+                                </button>
+                            </div>
                         </div>
+                        ${adminControls}
                     </div>
                 </div>`;
             }).join('');
+        }
+
+        // AUTO WATERMARKING & RESIZING
+        function processImageFileWithWatermark(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxWidth = 800;
+                        const scaleSize = maxWidth / img.width;
+                        const targetWidth = (img.width > maxWidth) ? maxWidth : img.width;
+                        const targetHeight = (img.width > maxWidth) ? (img.height * scaleSize) : img.height;
+                        
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // Watermark Badge
+                        const badgeWidth = 220;
+                        const badgeHeight = 28;
+                        const x = canvas.width - badgeWidth - 10;
+                        const y = canvas.height - badgeHeight - 10;
+
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                        ctx.fillRect(x, y, badgeWidth, badgeHeight);
+
+                        ctx.fillStyle = '#dc2626';
+                        ctx.fillRect(x, y, 5, badgeHeight);
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 12px sans-serif';
+                        ctx.textAlign = 'left';
+                        ctx.fillText('CHUNDA KSHETRA NEWS', x + 12, y + 18);
+
+                        resolve(canvas.toDataURL('image/jpeg', 0.75));
+                    };
+                    img.onerror = error => reject(error);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // ADMIN POST/EDIT FUNCTIONS (FIXED)
+        function openNewPostModal() {
+            document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
+            document.getElementById('news-form').reset();
+            document.getElementById('edit-doc-id').value = "";
+            document.getElementById('news-reporter').value = "विशेष संवाददाता";
+            document.getElementById('submit-btn').innerText = "पोस्ट करें";
+            togglePostModal();
+        }
+
+        function editNewsPost(id) {
+            const item = allNewsData.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('post-modal-title').innerText = "खबर एडिट / अपडेट करें";
+            document.getElementById('edit-doc-id').value = item.id;
+            document.getElementById('news-title').value = item.title;
+            document.getElementById('news-category').value = item.category;
+            document.getElementById('news-reporter').value = item.reporter || "विशेष संवाददाता";
+            document.getElementById('news-content').value = item.content;
+            document.getElementById('news-image').value = (item.image && typeof item.image === 'string' && item.image.startsWith('http')) ? item.image : '';
+            document.getElementById('news-breaking').checked = !!item.isBreaking;
+            document.getElementById('submit-btn').innerText = "अपडेट करें";
+            
+            togglePostModal();
+        }
+
+        async function deleteNewsPost(id) {
+            if (confirm("क्या आप वाकई इस खबर को हटाना चाहते हैं?")) {
+                try {
+                    await db.collection("news_posts").doc(id).delete();
+                    alert("खबर डिलीट कर दी गई है!");
+                } catch (err) {
+                    alert("एरर: " + err.message);
+                }
+            }
+        }
+
+        async function handleNewsSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "प्रोसेसिंग व अपलोडिंग...";
+
+            const editId = document.getElementById('edit-doc-id').value;
+            const fileInput = document.getElementById('news-files');
+            let imagesArray = [];
+
+            try {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        const watermarkedBase64 = await processImageFileWithWatermark(fileInput.files[i]);
+                        imagesArray.push(watermarkedBase64);
+                    }
+                }
+
+                const manualUrl = document.getElementById('news-image').value.trim();
+                if (manualUrl) imagesArray.push(manualUrl);
+
+                const postData = {
+                    title: document.getElementById('news-title').value.trim(),
+                    category: document.getElementById('news-category').value,
+                    reporter: document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता',
+                    content: document.getElementById('news-content').value.trim(),
+                    isBreaking: document.getElementById('news-breaking').checked,
+                    date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                };
+
+                if (imagesArray.length > 0) {
+                    postData.images = imagesArray;
+                    postData.image = imagesArray[0];
+                }
+
+                if (editId) {
+                    await db.collection("news_posts").doc(editId).update(postData);
+                    alert("खबर सफलतापूर्वक अपडेट हो गई!");
+                } else {
+                    postData.views = 0;
+                    postData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection("news_posts").add(postData);
+                    alert("खबर सफलतापूर्वक पोस्ट हो गई!");
+                }
+
+                document.getElementById('news-form').reset();
+                togglePostModal();
+            } catch (err) {
+                alert("एरर: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = editId ? "अपडेट करें" : "पोस्ट करें";
+            }
         }
 
         function openReadModal(id, updateHash = true) {
@@ -605,26 +731,6 @@
             history.pushState(null, null, window.location.pathname);
         }
 
-        window.addEventListener('popstate', () => {
-            if (!window.location.hash.startsWith('#news-')) {
-                const modal = document.getElementById('read-modal');
-                if (!modal.classList.contains('hidden')) closeReadModal();
-            } else {
-                checkUrlHashForNews();
-            }
-        });
-
-        function initTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            }
-        }
-
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-        }
-
         function toggleAdminModal() {
             document.getElementById('admin-modal').classList.toggle('hidden');
             document.getElementById('admin-modal').classList.toggle('flex');
@@ -648,10 +754,29 @@
             }
         }
 
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-action-bar').classList.add('hidden');
+            document.getElementById('admin-login-btn').classList.remove('hidden');
+            document.getElementById('admin-pin').value = '';
+            renderNews();
+        }
+
         function filterNews(cat) {
             currentFilter = cat;
             document.getElementById('current-category-title').innerText = cat === 'all' ? 'ताज़ा समाचार' : cat;
             renderNews();
+        }
+
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
         }
 
         window.onload = initApp;
