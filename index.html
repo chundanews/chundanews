@@ -212,7 +212,7 @@
         </div>
     </main>
 
-    <!-- Post / Edit News Modal (Admin) -->
+    <!-- Post / Edit News Modal (Admin with Multiple Image Upload) -->
     <div id="post-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
@@ -247,9 +247,17 @@
                     </div>
                 </div>
                 
+                <!-- Multiple Images with Auto 50-100KB Compression Notice -->
                 <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-2">
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">फ़ोटो चुनें (Auto Watermark)</label>
-                    <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                            <i class="fa-solid fa-images text-red-600 mr-1"></i> तस्वीरें चुनें (एक साथ कई फ़ोटो चुन सकते हैं)
+                        </label>
+                        <span class="text-[10px] bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400 font-bold px-1.5 py-0.5 rounded">
+                            ऑटो कंप्रेस (50-100KB)
+                        </span>
+                    </div>
+                    <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950 file:text-red-700 dark:file:text-red-400 hover:file:bg-red-100">
                     <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded px-3 py-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                 </div>
 
@@ -302,6 +310,7 @@
             <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-3 text-gray-950 dark:text-white leading-tight tracking-tight"></h2>
             <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
             
+            <!-- Dynamic Multiple Images Gallery -->
             <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
             <div id="read-content" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 whitespace-pre-line text-sm transition-all duration-150"></div>
             
@@ -351,12 +360,13 @@
             if (!item) return;
 
             const shareUrl = getSingleNewsLink(newsId);
+            const shareTitle = item.title;
             const shareText = `📰 *${item.title}*\n\nपूरा समाचार व तस्वीरें देखने के लिए लिंक पर क्लिक करें:\n${shareUrl}`;
 
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: item.title,
+                        title: shareTitle,
                         text: shareText,
                         url: shareUrl
                     });
@@ -477,7 +487,7 @@
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span>${leadItem.date || ''}</span>
-                                    <span class="font-semibold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500"></i> ${viewsCount} Views</span>
+                                    <span class="font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded"><i class="fa-solid fa-eye text-red-500 mr-1"></i>${viewsCount} Views</span>
                                 </div>
                             </div>
 
@@ -512,6 +522,7 @@
             container.innerHTML = items.map(item => {
                 const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
                 const reporterName = item.reporter || 'विशेष संवाददाता';
+                const viewsCount = item.views || 0;
                 const adminControls = isAdminLoggedIn ? `
                     <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
                         <button onclick="event.stopPropagation(); editNewsPost('${item.id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold hover:bg-blue-700 flex items-center gap-1 cursor-pointer">
@@ -526,9 +537,12 @@
                 return `
                 <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
                     <div>
-                        <img src="${img}" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${item.id}')">
+                        <div class="relative">
+                            <img src="${img}" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${item.id}')">
+                            ${item.images && item.images.length > 1 ? `<span class="absolute bottom-2 right-2 bg-black/75 text-white text-[10px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-images mr-1"></i>+${item.images.length}</span>` : ''}
+                        </div>
                         <div class="p-4">
-                            <div class="flex items-center gap-2 mb-2">
+                            <div class="flex items-center justify-between gap-2 mb-2">
                                 <span class="bg-red-50 text-red-600 font-bold px-2 py-0.5 rounded text-[10px]">${item.category}</span>
                                 <span class="text-gray-500 text-[10px] font-semibold"><i class="fa-solid fa-microphone-lines text-red-600"></i> ${reporterName}</span>
                             </div>
@@ -539,6 +553,7 @@
                     <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col">
                         <div class="flex justify-between items-center w-full">
                             <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                            <span class="text-[11px] font-bold text-gray-500"><i class="fa-solid fa-eye text-red-500 mr-1"></i>${viewsCount}</span>
                             <div class="flex gap-2">
                                 <button onclick="shareDirectNews('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer">
                                     <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
@@ -554,7 +569,7 @@
             }).join('');
         }
 
-        // AUTO WATERMARKING & RESIZING
+        // SMART 50-100 KB IMAGE COMPRESSOR WITH WATERMARK
         function processImageFileWithWatermark(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -564,7 +579,8 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const maxWidth = 800;
+                        // Scale to max 720px width to ensure size stays around 50-80 KB
+                        const maxWidth = 720;
                         const scaleSize = maxWidth / img.width;
                         const targetWidth = (img.width > maxWidth) ? maxWidth : img.width;
                         const targetHeight = (img.width > maxWidth) ? (img.height * scaleSize) : img.height;
@@ -575,10 +591,10 @@
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                         // Watermark Badge
-                        const badgeWidth = 220;
-                        const badgeHeight = 28;
-                        const x = canvas.width - badgeWidth - 10;
-                        const y = canvas.height - badgeHeight - 10;
+                        const badgeWidth = Math.min(220, targetWidth * 0.5);
+                        const badgeHeight = 26;
+                        const x = canvas.width - badgeWidth - 8;
+                        const y = canvas.height - badgeHeight - 8;
 
                         ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
                         ctx.fillRect(x, y, badgeWidth, badgeHeight);
@@ -587,11 +603,12 @@
                         ctx.fillRect(x, y, 5, badgeHeight);
 
                         ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 12px sans-serif';
+                        ctx.font = 'bold 11px sans-serif';
                         ctx.textAlign = 'left';
-                        ctx.fillText('CHUNDA KSHETRA NEWS', x + 12, y + 18);
+                        ctx.fillText('CHUNDA KSHETRA NEWS', x + 10, y + 17);
 
-                        resolve(canvas.toDataURL('image/jpeg', 0.75));
+                        // Quality 0.58 balances sharpness and guarantees 50-90 KB payload
+                        resolve(canvas.toDataURL('image/jpeg', 0.58));
                     };
                     img.onerror = error => reject(error);
                 };
@@ -599,7 +616,7 @@
             });
         }
 
-        // ADMIN POST/EDIT FUNCTIONS (FIXED)
+        // ADMIN POST / EDIT FUNCTIONS
         function openNewPostModal() {
             document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
             document.getElementById('news-form').reset();
@@ -641,17 +658,18 @@
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "प्रोसेसिंग व अपलोडिंग...";
+            submitBtn.innerText = "फ़ोटो कंप्रेस व पोस्टिंग जारी...";
 
             const editId = document.getElementById('edit-doc-id').value;
             const fileInput = document.getElementById('news-files');
             let imagesArray = [];
 
             try {
+                // Multi-image compression loop
                 if (fileInput.files && fileInput.files.length > 0) {
                     for (let i = 0; i < fileInput.files.length; i++) {
-                        const watermarkedBase64 = await processImageFileWithWatermark(fileInput.files[i]);
-                        imagesArray.push(watermarkedBase64);
+                        const compressedBase64 = await processImageFileWithWatermark(fileInput.files[i]);
+                        imagesArray.push(compressedBase64);
                     }
                 }
 
@@ -692,7 +710,8 @@
             }
         }
 
-        function openReadModal(id, updateHash = true) {
+        // OPEN READ MODAL & INCREMENT VIEWS IN FIRESTORE
+        async function openReadModal(id, updateHash = true) {
             const item = allNewsData.find(i => i.id === id);
             if (!item) return;
             currentActiveNewsId = id;
@@ -702,17 +721,30 @@
                 history.pushState(null, null, `#news-${id}`);
             }
 
+            // Real-time Views Increment in Firestore
+            try {
+                db.collection("news_posts").doc(id).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+            } catch (err) {
+                console.log("Views increment error:", err);
+            }
+
+            const currentViews = (item.views || 0) + 1;
+            document.getElementById('read-views').innerHTML = `<i class="fa-solid fa-eye text-red-500 mr-1"></i> ${currentViews} Views`;
+
             document.getElementById('read-title').innerText = item.title;
             document.getElementById('read-category').innerText = item.category;
             document.getElementById('read-content').innerText = item.content;
             document.getElementById('read-reporter-name').innerText = item.reporter || 'विशेष संवाददाता';
             document.getElementById('read-date').innerText = item.date || '';
             
+            // Render all uploaded images in gallery
             const gallery = document.getElementById('read-images-gallery');
             let imgs = item.images || (item.image ? [item.image] : []);
             if (imgs.length > 0) {
                 gallery.classList.remove('hidden');
-                gallery.innerHTML = imgs.map(src => `<img src="${src}" class="w-full h-56 object-cover rounded-lg shadow-sm">`).join('');
+                gallery.innerHTML = imgs.map(src => `<img src="${src}" class="w-full h-56 object-cover rounded-lg shadow-sm border border-gray-100 dark:border-gray-800">`).join('');
             } else {
                 gallery.classList.add('hidden');
             }
