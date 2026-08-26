@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार</title>
     
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#dc2626">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
@@ -25,11 +28,10 @@
             display: inline-block;
             white-space: nowrap;
             padding-left: 100%;
-            animation: tickerMotion 45s linear infinite;
+            animation: tickerMotion 35s linear infinite;
         }
         .animate-ticker:hover { animation-play-state: paused; }
 
-        /* Full Control Modal Layer */
         .portal-modal {
             display: none;
             position: fixed;
@@ -50,10 +52,13 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
 
+    <!-- Top Reading Scroll Progress Bar -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width: 0%;"></div>
+
     <!-- Top Breaking News Bar -->
     <div class="bg-red-700 text-white py-1.5 px-4 text-sm flex items-center shadow-md overflow-hidden">
-        <span class="bg-black text-xs font-bold uppercase px-2 py-0.5 rounded mr-3 flex items-center shrink-0 shadow">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping mr-1"></span> ब्रेकिंग
+        <span class="bg-black text-xs font-bold uppercase px-2.5 py-0.5 rounded mr-3 flex items-center shrink-0 shadow z-10">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping mr-1.5"></span> ब्रेकिंग
         </span>
         <div class="overflow-hidden whitespace-nowrap w-full relative">
             <div id="breaking-ticker" class="animate-ticker font-medium tracking-wide">
@@ -62,14 +67,14 @@
         </div>
     </div>
 
-    <!-- Live Rates Bar -->
+    <!-- Live Market Rates Bar -->
     <div class="bg-amber-600 text-white py-1 px-4 text-xs flex items-center shadow-sm overflow-hidden border-b border-amber-700">
-        <span class="bg-amber-950 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2 flex items-center shrink-0">
+        <span class="bg-amber-950 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2 flex items-center shrink-0 z-10">
             <i class="fa-solid fa-chart-line mr-1"></i> लाइव दरें
         </span>
         <div class="overflow-hidden whitespace-nowrap w-full relative">
             <div id="live-mandi-ticker" class="animate-ticker font-medium tracking-wide">
-                पेट्रोल: ₹104.80/L | डीज़ल: ₹90.30/L | गेहूं: ₹2,450 - ₹2,780/क्विं. | मक्का: ₹2,100 - ₹2,350/क्विं.
+                पेट्रोल: ₹104.80/L | डीज़ल: ₹90.30/L | गेहूं: ₹2,450 - ₹2,780/क्विं. | मक्का: ₹2,100 - ₹2,350/क्विं. | सरसों: ₹5,100 - ₹5,450/क्विं.
             </div>
         </div>
     </div>
@@ -79,13 +84,13 @@
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-4">
                 <span id="live-panchang" class="flex items-center gap-1.5 font-medium">
-                    <i class="fa-solid fa-calendar-day text-amber-400"></i> आज
+                    <i class="fa-solid fa-calendar-day text-amber-400"></i> आज लोड हो रहा है...
                 </span>
-                <span class="flex items-center gap-1.5 font-medium border-l border-gray-600 pl-3">
+                <span id="live-weather" class="flex items-center gap-1.5 font-medium border-l border-gray-600 pl-3">
                     <i class="fa-solid fa-sun text-yellow-400"></i> मौसम: 29°C साफ
                 </span>
             </div>
-            <div>
+            <div class="flex items-center gap-3">
                 <button type="button" onclick="openPortalModal('citizen-modal')" class="text-yellow-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
                     <i class="fa-solid fa-bullhorn text-red-500"></i> खबर भेजें
                 </button>
@@ -103,14 +108,14 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">आपका अपना स्वतंत्र डिजिटल न्यूज़ पोर्टल</p>
             </div>
 
-            <!-- Search -->
+            <!-- Live Search -->
             <div class="relative flex-1 max-w-xs min-w-[200px]">
                 <input type="text" id="search-input" oninput="handleLiveSearch()" placeholder="खबर खोजें..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full pl-9 pr-4 py-1.5 text-xs focus:ring-2 focus:ring-red-500 outline-none text-gray-800 dark:text-gray-200">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
             </div>
 
             <div class="flex items-center gap-2">
-                <button type="button" onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 transition cursor-pointer text-sm">
+                <button type="button" onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 transition cursor-pointer text-sm" title="डार्क/लाइट मोड">
                     <i class="fa-solid fa-moon"></i>
                 </button>
                 <button type="button" id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-800 hover:bg-black text-white px-3 py-2 rounded font-semibold transition flex items-center gap-1 cursor-pointer">
@@ -135,7 +140,7 @@
         </nav>
     </header>
 
-    <!-- Top Banner Ad -->
+    <!-- Top Banner Ad: MD CSC CENTER -->
     <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
         <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-xl p-3.5 shadow-lg border border-blue-700/50 flex flex-col md:flex-row items-center justify-between gap-3">
             <div class="flex items-center gap-3 text-left w-full md:w-auto">
@@ -147,7 +152,7 @@
                         <span class="text-[10px] bg-yellow-400 text-black font-extrabold px-1.5 py-0.5 rounded tracking-wide uppercase">विशेष सेवा</span>
                         <h3 class="font-black text-base sm:text-lg tracking-wide text-white">MD CSC & DIGITAL SEVA CENTER</h3>
                     </div>
-                    <p class="text-xs text-blue-200 mt-0.5">ई-मित्र, सरकारी फॉर्म, AEPS नकद निकासी, PVC कार्ड प्रिंटिंग व सभी डिजिटल सेवाएं उपलब्ध</p>
+                    <p class="text-xs text-blue-200 mt-0.5">ई-मित्र, सरकारी भर्ती फॉर्म, AEPS नकद निकासी, PVC कार्ड प्रिंटिंग व सभी डिजिटल सेवाएं</p>
                 </div>
             </div>
             <div class="flex items-center gap-2 w-full md:w-auto justify-end">
@@ -237,11 +242,11 @@
         </div>
     </main>
 
-    <!-- ================= HIGH-PRIORITY MODALS ================= -->
+    <!-- ================= MODALS ================= -->
 
-    <!-- 1. Post News Modal -->
+    <!-- 1. Post / Edit News Modal with Multiple Image Support & Auto-Compress Watermark Badge -->
     <div id="post-modal" class="portal-modal">
-        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
                 <h3 id="post-modal-title" class="text-lg font-bold text-gray-800 dark:text-gray-100">नई खबर पोस्ट करें</h3>
                 <button type="button" onclick="closePortalModal('post-modal')" class="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
@@ -255,7 +260,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">श्रेणी *</label>
-                        <select id="news-category" class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100">
+                        <select id="news-category" class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100 font-medium">
                             <option value="क्षेत्रीय">क्षेत्रीय</option>
                             <option value="शिक्षा व रोज़गार">शिक्षा व रोज़गार</option>
                             <option value="तहसील समाचार">तहसील समाचार</option>
@@ -271,22 +276,38 @@
                         <input type="text" id="news-reporter" value="विशेष संवाददाता" class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100">
                     </div>
                 </div>
-                <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-1.5">
-                    <label class="block font-bold text-gray-700 dark:text-gray-300">तस्वीरें चुनें</label>
-                    <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400">
-                    <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded p-1.5 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+                <!-- Multiple Image Upload with Watermark Info Badge -->
+                <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="block font-bold text-gray-700 dark:text-gray-300">
+                            <i class="fa-solid fa-images text-red-600 mr-1"></i> तस्वीरें चुनें (मल्टीपल इमेज सपोर्ट)
+                        </label>
+                        <span class="text-[10px] bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400 font-bold px-1.5 py-0.5 rounded border border-green-300 dark:border-green-900">
+                            ऑटो कंप्रेस (50-100KB) + वॉटरमार्क
+                        </span>
+                    </div>
+                    <input type="file" id="news-files" accept="image/*" multiple onchange="previewSelectedImages(event)" class="w-full text-xs text-gray-600 dark:text-gray-400 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950 file:text-red-700 dark:file:text-red-400 hover:file:bg-red-100">
+                    
+                    <!-- Dynamic Image Thumbnails Preview -->
+                    <div id="image-preview-box" class="flex gap-2 flex-wrap pt-1 hidden"></div>
+
+                    <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded p-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                 </div>
+
                 <div>
                     <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">विस्तृत समाचार *</label>
-                    <textarea id="news-content" rows="4" required class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100"></textarea>
+                    <textarea id="news-content" rows="4" required placeholder="समाचार का पूरा विवरण लिखें..." class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100"></textarea>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 p-1.5 bg-red-50 dark:bg-red-950/40 rounded border border-red-200 dark:border-red-900">
                     <input type="checkbox" id="news-breaking" class="w-4 h-4 text-red-600 rounded">
-                    <label for="news-breaking" class="font-semibold text-red-600">ब्रेकिंग बार में दिखाएं</label>
+                    <label for="news-breaking" class="font-bold text-red-700 dark:text-red-400 cursor-pointer">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block mr-1"></span> ब्रेकिंग न्यूज़ बार में दिखाएं
+                    </label>
                 </div>
                 <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
                     <button type="button" onclick="closePortalModal('post-modal')" class="px-3 py-1.5 text-gray-600 cursor-pointer">रद्द करें</button>
-                    <button type="submit" id="submit-btn" class="bg-red-600 text-white px-4 py-1.5 rounded font-bold hover:bg-red-700 cursor-pointer">पोस्ट करें</button>
+                    <button type="submit" id="submit-btn" class="bg-red-600 text-white px-5 py-1.5 rounded font-bold hover:bg-red-700 cursor-pointer">पोस्ट करें</button>
                 </div>
             </form>
         </div>
@@ -319,15 +340,15 @@
             <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">भर्ती / परीक्षा का नाम *</label>
-                    <input type="text" id="job-title" required placeholder="जैसे: RPSC RAS, Rajasthan CET" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100 font-bold">
+                    <input type="text" id="job-title" required placeholder="जैसे: RPSC RAS, Rajasthan CET, SSC GD" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100 font-bold">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">पद / योग्यता</label>
-                        <input type="text" id="job-posts" placeholder="जैसे: 1050 पद" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
+                        <input type="text" id="job-posts" placeholder="जैसे: 1050 पद / स्नातक" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1 text-red-600 dark:text-red-400 font-bold">अंतिम तिथि *</label>
+                        <label class="block font-semibold mb-1 text-red-600 dark:text-red-400 font-bold">अंतिम तिथि (Last Date) *</label>
                         <input type="text" id="job-last-date" required placeholder="जैसे: 15 सितंबर 2026" class="w-full border border-red-300 dark:border-red-900 rounded p-2 bg-red-50/50 dark:bg-red-950/30 outline-none text-gray-900 dark:text-gray-100 font-bold">
                     </div>
                 </div>
@@ -380,8 +401,11 @@
     <div id="read-modal" class="portal-modal">
         <div class="bg-white dark:bg-gray-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl border dark:border-gray-800">
             <button type="button" onclick="closePortalModal('read-modal')" class="absolute top-4 right-4 text-gray-500 text-2xl font-bold cursor-pointer">&times;</button>
-            <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
-            <h2 id="read-title" class="text-2xl font-black mt-2 mb-2 text-gray-950 dark:text-white"></h2>
+            <div class="flex items-center gap-2 mb-2">
+                <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
+                <span id="read-reporter" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"></span>
+            </div>
+            <h2 id="read-title" class="text-2xl font-black mt-2 mb-2 text-gray-950 dark:text-white leading-tight"></h2>
             <p id="read-date" class="text-xs text-gray-500 mb-4"></p>
             <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
             <div id="read-content" class="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-line leading-relaxed"></div>
@@ -410,19 +434,15 @@
         let searchQuery = '';
         let isAdminLoggedIn = false;
 
-        // Rock-Solid Modal Handlers
+        // Modal Controllers
         window.openPortalModal = function(id) {
             const el = document.getElementById(id);
-            if (el) {
-                el.style.setProperty('display', 'flex', 'important');
-            }
+            if (el) el.style.setProperty('display', 'flex', 'important');
         };
 
         window.closePortalModal = function(id) {
             const el = document.getElementById(id);
-            if (el) {
-                el.style.setProperty('display', 'none', 'important');
-            }
+            if (el) el.style.setProperty('display', 'none', 'important');
         };
 
         window.triggerOpenNewPostModal = function() {
@@ -430,7 +450,12 @@
             document.getElementById('edit-doc-id').value = "";
             document.getElementById('news-title').value = "";
             document.getElementById('news-content').value = "";
+            document.getElementById('news-files').value = "";
+            document.getElementById('news-image').value = "";
+            document.getElementById('news-breaking').checked = false;
             document.getElementById('news-reporter').value = "विशेष संवाददाता";
+            document.getElementById('image-preview-box').innerHTML = "";
+            document.getElementById('image-preview-box').classList.add('hidden');
             document.getElementById('submit-btn').innerText = "पोस्ट करें";
             openPortalModal('post-modal');
         };
@@ -448,7 +473,29 @@
             loadCitizenReports();
         };
 
-        // Image Compressor
+        // Live Thumbnail Preview
+        function previewSelectedImages(event) {
+            const previewBox = document.getElementById('image-preview-box');
+            previewBox.innerHTML = '';
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                previewBox.classList.remove('hidden');
+                for (let i = 0; i < files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-14 h-14 object-cover rounded border border-red-300';
+                        previewBox.appendChild(img);
+                    };
+                    reader.readAsDataURL(files[i]);
+                }
+            } else {
+                previewBox.classList.add('hidden');
+            }
+        }
+
+        // Image Compressor (50-100KB) with Auto-Watermark
         function processImageFileWithWatermark(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -458,7 +505,7 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const maxWidth = 720;
+                        const maxWidth = 750;
                         const scaleSize = maxWidth / img.width;
                         const targetWidth = (img.width > maxWidth) ? maxWidth : img.width;
                         const targetHeight = (img.width > maxWidth) ? (img.height * scaleSize) : img.height;
@@ -467,7 +514,29 @@
                         canvas.height = targetHeight;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+
+                        // Official Branding Watermark Badge
+                        const badgeWidth = Math.min(230, targetWidth * 0.55);
+                        const badgeHeight = 26;
+                        const x = canvas.width - badgeWidth - 10;
+                        const y = canvas.height - badgeHeight - 10;
+
+                        // Dark Background
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                        ctx.fillRect(x, y, badgeWidth, badgeHeight);
+
+                        // Red Accent Line
+                        ctx.fillStyle = '#dc2626';
+                        ctx.fillRect(x, y, 5, badgeHeight);
+
+                        // Watermark Text
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 11px sans-serif';
+                        ctx.textAlign = 'left';
+                        ctx.fillText('CHUNDA KSHETRA NEWS', x + 10, y + 17);
+
+                        // Compress Output (JPEG 0.55 Quality ~ 50-80KB)
+                        resolve(canvas.toDataURL('image/jpeg', 0.55));
                     };
                     img.onerror = err => reject(err);
                 };
@@ -475,7 +544,7 @@
             });
         }
 
-        // Submit News
+        // Submit News Post
         async function handleNewsSubmit(e) {
             e.preventDefault();
             if (!auth.currentUser) {
@@ -486,13 +555,14 @@
 
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "पोस्ट हो रहा है...";
+            submitBtn.innerText = "तस्वीरें कंप्रेस व पोस्ट जारी...";
 
             const editId = document.getElementById('edit-doc-id').value;
             const fileInput = document.getElementById('news-files');
             let imagesArray = [];
 
             try {
+                // Compress Multiple Images
                 if (fileInput && fileInput.files && fileInput.files.length > 0) {
                     for (let i = 0; i < fileInput.files.length; i++) {
                         const compressed = await processImageFileWithWatermark(fileInput.files[i]);
@@ -520,7 +590,7 @@
 
                 if (editId) {
                     await db.collection("news_posts").doc(editId).update(postData);
-                    alert("खबर अपडेट हो गई!");
+                    alert("खबर सफलतापूर्वक अपडेट हो गई!");
                 } else {
                     postData.views = 0;
                     postData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -530,6 +600,7 @@
 
                 closePortalModal('post-modal');
             } catch (err) {
+                console.error(err);
                 alert("एरर: " + err.message);
             } finally {
                 submitBtn.disabled = false;
@@ -565,6 +636,148 @@
             } finally {
                 btn.disabled = false;
                 btn.innerText = "सेव करें";
+            }
+        }
+
+        // Update Breaking News Ticker
+        function updateBreakingTicker() {
+            const ticker = document.getElementById('breaking-ticker');
+            const breakingItems = allNewsData.filter(i => i.isBreaking === true);
+            if (breakingItems.length > 0) {
+                ticker.innerHTML = breakingItems.map(item => `🔴 <span class="font-bold cursor-pointer hover:underline" onclick="openReadModal('${item.id}')">${item.title}</span>`).join('&nbsp;&nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp;&nbsp;');
+            } else {
+                ticker.innerHTML = "चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...";
+            }
+        }
+
+        // Render News Cards
+        function renderNews() {
+            const container = document.getElementById('news-container');
+            let filtered = currentFilter === 'all' ? allNewsData : allNewsData.filter(i => i.category === currentFilter);
+            if (searchQuery) {
+                filtered = filtered.filter(i => i.title.toLowerCase().includes(searchQuery) || i.content.toLowerCase().includes(searchQuery));
+            }
+
+            document.getElementById('news-count').innerText = `${filtered.length} खबरें`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-8 text-gray-500">कोई खबर नहीं मिली।</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => {
+                const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
+                const multiImgBadge = (item.images && item.images.length > 1) ? `<span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-images mr-1"></i>+${item.images.length}</span>` : '';
+
+                const adminControls = isAdminLoggedIn ? `
+                    <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
+                        <button onclick="editNewsPost('${item.id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i> एडिट
+                        </button>
+                        <button onclick="deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> डिलीट
+                        </button>
+                    </div>
+                ` : '';
+
+                return `
+                <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="relative">
+                            <img src="${img}" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${item.id}')">
+                            ${multiImgBadge}
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[10px]">${item.category}</span>
+                                <span class="text-gray-500 text-[10px] font-semibold">${item.reporter || 'विशेष संवाददाता'}</span>
+                            </div>
+                            <h3 class="font-black text-gray-950 dark:text-white text-base hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-2">${item.content}</p>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                            <span class="text-[10px] text-gray-400">${item.date || ''}</span>
+                        </div>
+                        ${adminControls}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // Render Job Alerts
+        function renderJobAlerts() {
+            const container = document.getElementById('job-alerts-list');
+            if (allJobAlerts.length === 0) {
+                container.innerHTML = '<p class="text-center text-xs text-gray-400 py-3">कोई सक्रिय फॉर्म नहीं है।</p>';
+                return;
+            }
+
+            container.innerHTML = allJobAlerts.map(job => `
+                <div class="bg-gray-50 dark:bg-gray-800/80 p-3 rounded-lg border border-indigo-100 dark:border-gray-800">
+                    <div class="flex justify-between items-start gap-2">
+                        <h4 class="font-bold text-xs text-gray-900 dark:text-gray-100 leading-snug flex-1">${job.title}</h4>
+                        <span class="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 text-[10px] font-black px-2 py-0.5 rounded shrink-0">
+                            अंतिम तिथि: ${job.lastDate}
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-gray-600 dark:text-gray-400 mt-1">${job.posts}</p>
+                    <div class="mt-2.5 pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <a href="${job.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded">
+                            अप्लाई करें
+                        </a>
+                        ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </div>
+                </div>`).join('');
+        }
+
+        function openReadModal(id) {
+            const item = allNewsData.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('read-title').innerText = item.title;
+            document.getElementById('read-category').innerText = item.category;
+            document.getElementById('read-reporter').innerText = item.reporter || 'विशेष संवाददाता';
+            document.getElementById('read-content').innerText = item.content;
+            document.getElementById('read-date').innerText = item.date || '';
+
+            const gallery = document.getElementById('read-images-gallery');
+            let imgs = item.images || (item.image ? [item.image] : []);
+            if (imgs.length > 0) {
+                gallery.classList.remove('hidden');
+                gallery.innerHTML = imgs.map(src => `<img src="${src}" class="w-full h-56 object-cover rounded-lg border border-gray-200 dark:border-gray-700">`).join('');
+            } else {
+                gallery.classList.add('hidden');
+            }
+
+            openPortalModal('read-modal');
+        }
+
+        function editNewsPost(id) {
+            const item = allNewsData.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('post-modal-title').innerText = "खबर एडिट / अपडेट करें";
+            document.getElementById('edit-doc-id').value = item.id;
+            document.getElementById('news-title').value = item.title;
+            document.getElementById('news-category').value = item.category;
+            document.getElementById('news-reporter').value = item.reporter || "विशेष संवाददाता";
+            document.getElementById('news-content').value = item.content;
+            document.getElementById('news-image').value = (item.image && item.image.startsWith('http')) ? item.image : '';
+            document.getElementById('news-breaking').checked = !!item.isBreaking;
+            document.getElementById('submit-btn').innerText = "अपडेट करें";
+            openPortalModal('post-modal');
+        }
+
+        async function deleteNewsPost(id) {
+            if (confirm("क्या आप इस खबर को हटाना चाहते हैं?")) {
+                await db.collection("news_posts").doc(id).delete();
+            }
+        }
+
+        async function deleteJobAlert(id) {
+            if (confirm("क्या आप इस भर्ती अपडेट को हटाना चाहते हैं?")) {
+                await db.collection("job_alerts").doc(id).delete();
             }
         }
 
@@ -640,110 +853,6 @@
             alert("लॉगआउट सफल!");
         }
 
-        // Render News
-        function renderNews() {
-            const container = document.getElementById('news-container');
-            let filtered = currentFilter === 'all' ? allNewsData : allNewsData.filter(i => i.category === currentFilter);
-            if (searchQuery) {
-                filtered = filtered.filter(i => i.title.toLowerCase().includes(searchQuery) || i.content.toLowerCase().includes(searchQuery));
-            }
-
-            document.getElementById('news-count').innerText = `${filtered.length} खबरें`;
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-2 text-center py-8 text-gray-500">कोई खबर नहीं मिली।</div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(item => {
-                const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
-                const adminControls = isAdminLoggedIn ? `
-                    <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
-                        <button type="button" onclick="deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
-                            <i class="fa-solid fa-trash"></i> डिलीट
-                        </button>
-                    </div>
-                ` : '';
-
-                return `
-                <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
-                    <div>
-                        <img src="${img}" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${item.id}')">
-                        <div class="p-4">
-                            <div class="flex items-center justify-between gap-2 mb-2">
-                                <span class="bg-red-50 text-red-600 font-bold px-2 py-0.5 rounded text-[10px]">${item.category}</span>
-                                <span class="text-gray-500 text-[10px]">${item.reporter || 'विशेष संवाददाता'}</span>
-                            </div>
-                            <h3 class="font-black text-gray-950 dark:text-white text-base hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-2">${item.content}</p>
-                        </div>
-                    </div>
-                    <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex justify-between items-center">
-                        <button type="button" onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
-                        ${adminControls}
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        // Render Job Alerts
-        function renderJobAlerts() {
-            const container = document.getElementById('job-alerts-list');
-            if (allJobAlerts.length === 0) {
-                container.innerHTML = '<p class="text-center text-xs text-gray-400 py-3">कोई सक्रिय फॉर्म नहीं है।</p>';
-                return;
-            }
-
-            container.innerHTML = allJobAlerts.map(job => `
-                <div class="bg-gray-50 dark:bg-gray-800/80 p-3 rounded-lg border border-indigo-100 dark:border-gray-800">
-                    <div class="flex justify-between items-start gap-2">
-                        <h4 class="font-bold text-xs text-gray-900 dark:text-gray-100 leading-snug flex-1">${job.title}</h4>
-                        <span class="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 text-[10px] font-black px-2 py-0.5 rounded shrink-0">
-                            अंतिम तिथि: ${job.lastDate}
-                        </span>
-                    </div>
-                    <p class="text-[11px] text-gray-600 dark:text-gray-400 mt-1">${job.posts}</p>
-                    <div class="mt-2.5 pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <a href="${job.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded">
-                            अप्लाई करें
-                        </a>
-                        ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
-                    </div>
-                </div>`).join('');
-        }
-
-        function openReadModal(id) {
-            const item = allNewsData.find(i => i.id === id);
-            if (!item) return;
-            document.getElementById('read-title').innerText = item.title;
-            document.getElementById('read-category').innerText = item.category;
-            document.getElementById('read-content').innerText = item.content;
-            document.getElementById('read-date').innerText = item.date || '';
-
-            const gallery = document.getElementById('read-images-gallery');
-            let imgs = item.images || (item.image ? [item.image] : []);
-            if (imgs.length > 0) {
-                gallery.classList.remove('hidden');
-                gallery.innerHTML = imgs.map(src => `<img src="${src}" class="w-full h-56 object-cover rounded-lg">`).join('');
-            } else {
-                gallery.classList.add('hidden');
-            }
-
-            openPortalModal('read-modal');
-        }
-
-        async function deleteNewsPost(id) {
-            if (confirm("क्या आप इस खबर को हटाना चाहते हैं?")) {
-                await db.collection("news_posts").doc(id).delete();
-            }
-        }
-
-        async function deleteJobAlert(id) {
-            if (confirm("क्या आप इस अलर्ट को हटाना चाहते हैं?")) {
-                await db.collection("job_alerts").doc(id).delete();
-            }
-        }
-
         function filterNews(cat) {
             currentFilter = cat;
             document.getElementById('current-category-title').innerText = cat === 'all' ? 'ताज़ा समाचार' : cat;
@@ -775,10 +884,7 @@
 
         // App Initializer
         function initApp() {
-            const panchang = document.getElementById('live-panchang');
-            if (panchang) {
-                panchang.innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${new Date().toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
-            }
+            document.getElementById('live-panchang').innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${new Date().toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
 
             // Real-time News Listener
             db.collection("news_posts").onSnapshot(snapshot => {
@@ -786,6 +892,7 @@
                 snapshot.forEach(doc => allNewsData.push({ id: doc.id, ...doc.data() }));
                 allNewsData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 renderNews();
+                updateBreakingTicker();
             }, err => console.log("News Error:", err));
 
             // Real-time Job Alerts Listener
