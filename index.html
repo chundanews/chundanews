@@ -28,6 +28,24 @@
             animation: tickerMotion 45s linear infinite;
         }
         .animate-ticker:hover { animation-play-state: paused; }
+
+        /* Full Control Modal Layer */
+        .portal-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            z-index: 999999 !important;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
@@ -51,7 +69,7 @@
         </span>
         <div class="overflow-hidden whitespace-nowrap w-full relative">
             <div id="live-mandi-ticker" class="animate-ticker font-medium tracking-wide">
-                पेट्रोल: ₹104.80/L | डीज़ल: ₹90.30/L | गेहूं: ₹2,450 - ₹2,780/क्विं.
+                पेट्रोल: ₹104.80/L | डीज़ल: ₹90.30/L | गेहूं: ₹2,450 - ₹2,780/क्विं. | मक्का: ₹2,100 - ₹2,350/क्विं.
             </div>
         </div>
     </div>
@@ -61,14 +79,14 @@
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-4">
                 <span id="live-panchang" class="flex items-center gap-1.5 font-medium">
-                    <i class="fa-solid fa-calendar-day text-amber-400"></i> लोड हो रहा है...
+                    <i class="fa-solid fa-calendar-day text-amber-400"></i> आज
                 </span>
                 <span class="flex items-center gap-1.5 font-medium border-l border-gray-600 pl-3">
                     <i class="fa-solid fa-sun text-yellow-400"></i> मौसम: 29°C साफ
                 </span>
             </div>
             <div>
-                <button type="button" onclick="openModal('citizen-modal')" class="text-yellow-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
+                <button type="button" onclick="openPortalModal('citizen-modal')" class="text-yellow-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
                     <i class="fa-solid fa-bullhorn text-red-500"></i> खबर भेजें
                 </button>
             </div>
@@ -76,7 +94,7 @@
     </div>
 
     <!-- Main Header -->
-    <header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-40 shadow-sm transition-colors duration-200">
+    <header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-30 shadow-sm transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-red-600 tracking-tight flex items-center gap-2 cursor-pointer" onclick="filterNews('all')">
@@ -95,7 +113,7 @@
                 <button type="button" onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-yellow-400 hover:bg-gray-200 transition cursor-pointer text-sm">
                     <i class="fa-solid fa-moon"></i>
                 </button>
-                <button type="button" id="admin-login-btn" onclick="openModal('admin-modal')" class="text-xs bg-gray-800 hover:bg-black text-white px-3 py-2 rounded font-semibold transition flex items-center gap-1 cursor-pointer">
+                <button type="button" id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-800 hover:bg-black text-white px-3 py-2 rounded font-semibold transition flex items-center gap-1 cursor-pointer">
                     <i class="fa-solid fa-lock"></i> एडमिन लॉगिन
                 </button>
             </div>
@@ -145,13 +163,13 @@
     <div id="admin-action-bar" style="display: none;" class="bg-emerald-700 text-white px-4 py-2.5 text-sm flex flex-wrap justify-between items-center gap-2 shadow-inner">
         <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> एडमिन मोड (<span id="admin-user-email" class="text-xs font-normal"></span>)</span>
         <div class="flex flex-wrap gap-2">
-            <button type="button" onclick="openJobModal()" class="bg-amber-500 text-gray-950 px-3 py-1.5 rounded font-bold hover:bg-amber-400 cursor-pointer shadow flex items-center gap-1.5">
+            <button type="button" onclick="triggerOpenJobModal()" class="bg-amber-500 text-gray-950 px-3 py-1.5 rounded font-bold hover:bg-amber-400 cursor-pointer shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-briefcase"></i> नया भर्ती फॉर्म जोड़ें
             </button>
-            <button type="button" onclick="openAdminCitizenReports()" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold hover:bg-blue-700 cursor-pointer shadow flex items-center gap-1.5">
+            <button type="button" onclick="triggerOpenReportsModal()" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold hover:bg-blue-700 cursor-pointer shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-inbox"></i> प्राप्त खबरें देखें
             </button>
-            <button type="button" onclick="openNewPostModal()" class="bg-white text-emerald-800 px-3 py-1.5 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow flex items-center gap-1.5">
+            <button type="button" onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-800 px-3 py-1.5 rounded font-bold hover:bg-emerald-50 cursor-pointer shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-plus text-emerald-700"></i> नई खबर जोड़ें
             </button>
             <button type="button" onclick="logoutAdmin()" class="bg-red-600 text-white px-3 py-1.5 rounded font-bold hover:bg-red-700 cursor-pointer shadow">
@@ -219,25 +237,25 @@
         </div>
     </main>
 
-    <!-- ================= MODALS ================= -->
+    <!-- ================= HIGH-PRIORITY MODALS ================= -->
 
     <!-- 1. Post News Modal -->
-    <div id="post-modal" style="display: none;" class="fixed inset-0 bg-black/75 z-50 items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div id="post-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
                 <h3 id="post-modal-title" class="text-lg font-bold text-gray-800 dark:text-gray-100">नई खबर पोस्ट करें</h3>
-                <button type="button" onclick="closeModal('post-modal')" class="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold">&times;</button>
+                <button type="button" onclick="closePortalModal('post-modal')" class="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
             </div>
-            <form onsubmit="handleNewsSubmit(event)" class="space-y-4">
+            <form onsubmit="handleNewsSubmit(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="edit-doc-id">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">शीर्षक (Headline) *</label>
-                    <input type="text" id="news-title" required placeholder="मुख्य हेडलाइन लिखें..." class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm font-bold outline-none text-gray-900 dark:text-gray-100">
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">शीर्षक (Headline) *</label>
+                    <input type="text" id="news-title" required placeholder="मुख्य हेडलाइन लिखें..." class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 text-sm font-bold outline-none text-gray-900 dark:text-gray-100">
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">श्रेणी *</label>
-                        <select id="news-category" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100">
+                        <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">श्रेणी *</label>
+                        <select id="news-category" class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100">
                             <option value="क्षेत्रीय">क्षेत्रीय</option>
                             <option value="शिक्षा व रोज़गार">शिक्षा व रोज़गार</option>
                             <option value="तहसील समाचार">तहसील समाचार</option>
@@ -249,59 +267,59 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">संवाददाता</label>
-                        <input type="text" id="news-reporter" value="विशेष संवाददाता" class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100">
+                        <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">संवाददाता</label>
+                        <input type="text" id="news-reporter" value="विशेष संवाददाता" class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100">
                     </div>
                 </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-2">
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">तस्वीरें चुनें</label>
+                <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 space-y-1.5">
+                    <label class="block font-bold text-gray-700 dark:text-gray-300">तस्वीरें चुनें</label>
                     <input type="file" id="news-files" accept="image/*" multiple class="w-full text-xs text-gray-600 dark:text-gray-400">
-                    <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded px-3 py-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+                    <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded p-1.5 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">विस्तृत समाचार *</label>
-                    <textarea id="news-content" rows="4" required class="w-full border dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2 text-sm outline-none text-gray-900 dark:text-gray-100"></textarea>
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">विस्तृत समाचार *</label>
+                    <textarea id="news-content" rows="4" required class="w-full border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded p-2 outline-none text-gray-900 dark:text-gray-100"></textarea>
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="news-breaking" class="w-4 h-4 text-red-600 rounded">
-                    <label for="news-breaking" class="text-sm font-semibold text-red-600">ब्रेकिंग बार में दिखाएं</label>
+                    <label for="news-breaking" class="font-semibold text-red-600">ब्रेकिंग बार में दिखाएं</label>
                 </div>
-                <div class="flex justify-end gap-2 pt-3 border-t dark:border-gray-800">
-                    <button type="button" onclick="closeModal('post-modal')" class="px-4 py-2 text-sm text-gray-600 cursor-pointer">रद्द करें</button>
-                    <button type="submit" id="submit-btn" class="bg-red-600 text-white px-5 py-2 rounded text-sm font-bold hover:bg-red-700 cursor-pointer">पोस्ट करें</button>
+                <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
+                    <button type="button" onclick="closePortalModal('post-modal')" class="px-3 py-1.5 text-gray-600 cursor-pointer">रद्द करें</button>
+                    <button type="submit" id="submit-btn" class="bg-red-600 text-white px-4 py-1.5 rounded font-bold hover:bg-red-700 cursor-pointer">पोस्ट करें</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- 2. Admin Citizen Reports Modal -->
-    <div id="admin-reports-modal" style="display: none;" class="fixed inset-0 bg-black/75 z-50 items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div id="admin-reports-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                     <i class="fa-solid fa-inbox text-blue-600"></i> पाठकों द्वारा भेजी गई खबरें
                 </h3>
-                <button type="button" onclick="closeModal('admin-reports-modal')" class="text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+                <button type="button" onclick="closePortalModal('admin-reports-modal')" class="text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
             </div>
-            <div id="admin-reports-list" class="space-y-3 text-xs">
+            <div id="admin-reports-list" class="space-y-3 text-xs max-h-[60vh] overflow-y-auto">
                 <p class="text-center text-gray-400 py-6">खबरें लोड हो रही हैं...</p>
             </div>
         </div>
     </div>
 
     <!-- 3. Add Job Alert Modal -->
-    <div id="job-modal" style="display: none;" class="fixed inset-0 bg-black/75 z-50 items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-md w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div id="job-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                     <i class="fa-solid fa-briefcase text-indigo-600"></i> नया भर्ती फॉर्म जोड़ें
                 </h3>
-                <button type="button" onclick="closeModal('job-modal')" class="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
+                <button type="button" onclick="closePortalModal('job-modal')" class="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">भर्ती / परीक्षा का नाम *</label>
-                    <input type="text" id="job-title" required placeholder="जैसे: RPSC RAS, Rajasthan CET" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
+                    <input type="text" id="job-title" required placeholder="जैसे: RPSC RAS, Rajasthan CET" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100 font-bold">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -310,15 +328,15 @@
                     </div>
                     <div>
                         <label class="block font-semibold mb-1 text-red-600 dark:text-red-400 font-bold">अंतिम तिथि *</label>
-                        <input type="text" id="job-last-date" required placeholder="जैसे: 15 सितंबर 2026" class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100 font-bold">
+                        <input type="text" id="job-last-date" required placeholder="जैसे: 15 सितंबर 2026" class="w-full border border-red-300 dark:border-red-900 rounded p-2 bg-red-50/50 dark:bg-red-950/30 outline-none text-gray-900 dark:text-gray-100 font-bold">
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">अप्लाई लिंक</label>
+                    <label class="block font-semibold mb-1 text-gray-700 dark:text-gray-300">ऑनलाइन अप्लाई लिंक</label>
                     <input type="url" id="job-link" placeholder="https://..." class="w-full border dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800 outline-none text-gray-900 dark:text-gray-100">
                 </div>
-                <div class="flex justify-end gap-2 pt-3 border-t dark:border-gray-800">
-                    <button type="button" onclick="closeModal('job-modal')" class="px-3 py-1.5 text-gray-500 cursor-pointer">रद्द करें</button>
+                <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
+                    <button type="button" onclick="closePortalModal('job-modal')" class="px-3 py-1.5 text-gray-500 cursor-pointer">रद्द करें</button>
                     <button type="submit" id="job-submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-1.5 rounded cursor-pointer">सेव करें</button>
                 </div>
             </form>
@@ -326,32 +344,32 @@
     </div>
 
     <!-- 4. Citizen Report Modal -->
-    <div id="citizen-modal" style="display: none;" class="fixed inset-0 bg-black/75 z-50 items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div id="citizen-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                     <i class="fa-solid fa-camera text-red-600"></i> नागरिक पत्रकार बनें
                 </h3>
-                <button type="button" onclick="closeModal('citizen-modal')" class="text-gray-500 text-2xl font-bold cursor-pointer">&times;</button>
+                <button type="button" onclick="closePortalModal('citizen-modal')" class="text-gray-500 text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
                 <input type="text" id="citizen-name" required placeholder="नाम व संपर्क नंबर" class="w-full border rounded p-2 bg-gray-50 dark:bg-gray-800">
                 <input type="text" id="citizen-location" required placeholder="स्थान / गांव" class="w-full border rounded p-2 bg-gray-50 dark:bg-gray-800">
                 <textarea id="citizen-details" rows="4" required placeholder="समाचार विवरण लिखें..." class="w-full border rounded p-2 bg-gray-50 dark:bg-gray-800"></textarea>
-                <button type="submit" id="citizen-submit-btn" class="w-full bg-red-600 text-white font-bold py-2.5 rounded cursor-pointer">संपादक को भेजें</button>
+                <button type="submit" id="citizen-submit-btn" class="w-full bg-red-600 text-white font-bold py-2 rounded cursor-pointer">संपादक को भेजें</button>
             </form>
         </div>
     </div>
 
     <!-- 5. Admin Login Modal -->
-    <div id="admin-modal" style="display: none;" class="fixed inset-0 bg-black/75 z-50 items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6 shadow-xl">
+    <div id="admin-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-sm w-full p-6 shadow-xl border dark:border-gray-800">
             <h3 class="text-lg font-bold mb-3 text-gray-800 dark:text-gray-100">एडमिन लॉगिन</h3>
             <form onsubmit="handleSecureAdminLogin(event)" class="space-y-3 text-xs">
                 <input type="email" id="admin-email" required placeholder="admin@example.com" class="w-full border rounded p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                 <input type="password" id="admin-password" required placeholder="पासवर्ड" class="w-full border rounded p-2 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeModal('admin-modal')" class="px-3 py-1.5 text-gray-500 cursor-pointer">रद्द करें</button>
+                    <button type="button" onclick="closePortalModal('admin-modal')" class="px-3 py-1.5 text-gray-500 cursor-pointer">रद्द करें</button>
                     <button type="submit" id="login-submit-btn" class="bg-black text-white px-4 py-1.5 rounded font-bold cursor-pointer">लॉगिन</button>
                 </div>
             </form>
@@ -359,9 +377,9 @@
     </div>
 
     <!-- 6. Read News Modal -->
-    <div id="read-modal" style="display: none;" class="fixed inset-0 bg-black/75 z-50 items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
-            <button type="button" onclick="closeModal('read-modal')" class="absolute top-4 right-4 text-gray-500 text-2xl font-bold cursor-pointer">&times;</button>
+    <div id="read-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl border dark:border-gray-800">
+            <button type="button" onclick="closePortalModal('read-modal')" class="absolute top-4 right-4 text-gray-500 text-2xl font-bold cursor-pointer">&times;</button>
             <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
             <h2 id="read-title" class="text-2xl font-black mt-2 mb-2 text-gray-950 dark:text-white"></h2>
             <p id="read-date" class="text-xs text-gray-500 mb-4"></p>
@@ -392,39 +410,43 @@
         let searchQuery = '';
         let isAdminLoggedIn = false;
 
-        // Modal Open / Close
-        function openModal(id) {
+        // Rock-Solid Modal Handlers
+        window.openPortalModal = function(id) {
             const el = document.getElementById(id);
-            if (el) el.style.display = 'flex';
-        }
+            if (el) {
+                el.style.setProperty('display', 'flex', 'important');
+            }
+        };
 
-        function closeModal(id) {
+        window.closePortalModal = function(id) {
             const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-        }
+            if (el) {
+                el.style.setProperty('display', 'none', 'important');
+            }
+        };
 
-        function openNewPostModal() {
+        window.triggerOpenNewPostModal = function() {
             document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
             document.getElementById('edit-doc-id').value = "";
             document.getElementById('news-title').value = "";
             document.getElementById('news-content').value = "";
             document.getElementById('news-reporter').value = "विशेष संवाददाता";
             document.getElementById('submit-btn').innerText = "पोस्ट करें";
-            openModal('post-modal');
-        }
+            openPortalModal('post-modal');
+        };
 
-        function openJobModal() {
+        window.triggerOpenJobModal = function() {
             document.getElementById('job-title').value = "";
             document.getElementById('job-posts').value = "";
             document.getElementById('job-last-date').value = "";
             document.getElementById('job-link').value = "";
-            openModal('job-modal');
-        }
+            openPortalModal('job-modal');
+        };
 
-        function openAdminCitizenReports() {
-            openModal('admin-reports-modal');
+        window.triggerOpenReportsModal = function() {
+            openPortalModal('admin-reports-modal');
             loadCitizenReports();
-        }
+        };
 
         // Image Compressor
         function processImageFileWithWatermark(file) {
@@ -458,7 +480,7 @@
             e.preventDefault();
             if (!auth.currentUser) {
                 alert("कृपया पहले एडमिन लॉगिन करें!");
-                openModal('admin-modal');
+                openPortalModal('admin-modal');
                 return;
             }
 
@@ -506,7 +528,7 @@
                     alert("खबर सफलतापूर्वक पोस्ट हो गई!");
                 }
 
-                closeModal('post-modal');
+                closePortalModal('post-modal');
             } catch (err) {
                 alert("एरर: " + err.message);
             } finally {
@@ -537,7 +559,7 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 alert("नया भर्ती फॉर्म अलर्ट लाइव हो गया!");
-                closeModal('job-modal');
+                closePortalModal('job-modal');
             } catch (err) {
                 alert("एरर: " + err.message);
             } finally {
@@ -586,7 +608,7 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 alert("आपकी खबर संपादक को भेज दी गई है!");
-                closeModal('citizen-modal');
+                closePortalModal('citizen-modal');
             } catch (err) {
                 alert("एरर: " + err.message);
             } finally {
@@ -604,7 +626,7 @@
                     document.getElementById('admin-email').value.trim(), 
                     document.getElementById('admin-password').value.trim()
                 );
-                closeModal('admin-modal');
+                closePortalModal('admin-modal');
                 alert("एडमिन लॉगिन सफल!");
             } catch (err) {
                 alert("लॉगिन असफल: " + err.message);
@@ -637,7 +659,7 @@
                 const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
                 const adminControls = isAdminLoggedIn ? `
                     <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
-                        <button onclick="deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
+                        <button type="button" onclick="deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
                             <i class="fa-solid fa-trash"></i> डिलीट
                         </button>
                     </div>
@@ -657,7 +679,7 @@
                         </div>
                     </div>
                     <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex justify-between items-center">
-                        <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                        <button type="button" onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
                         ${adminControls}
                     </div>
                 </div>`;
@@ -685,7 +707,7 @@
                         <a href="${job.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded">
                             अप्लाई करें
                         </a>
-                        ${isAdminLoggedIn ? `<button onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </div>
                 </div>`).join('');
         }
@@ -707,7 +729,7 @@
                 gallery.classList.add('hidden');
             }
 
-            openModal('read-modal');
+            openPortalModal('read-modal');
         }
 
         async function deleteNewsPost(id) {
@@ -740,31 +762,36 @@
         // Auth Observer
         auth.onAuthStateChanged(user => {
             isAdminLoggedIn = !!user;
-            document.getElementById('admin-action-bar').style.display = user ? 'flex' : 'none';
-            document.getElementById('admin-login-btn').style.display = user ? 'none' : 'flex';
+            const bar = document.getElementById('admin-action-bar');
+            const btn = document.getElementById('admin-login-btn');
+            
+            if (bar) bar.style.display = user ? 'flex' : 'none';
+            if (btn) btn.style.display = user ? 'none' : 'flex';
             if (user) document.getElementById('admin-user-email').innerText = user.email;
+            
             renderNews();
             renderJobAlerts();
         });
 
         // App Initializer
         function initApp() {
-            document.getElementById('live-panchang').innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${new Date().toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+            const panchang = document.getElementById('live-panchang');
+            if (panchang) {
+                panchang.innerHTML = `<i class="fa-solid fa-calendar-day text-amber-400"></i> आज: ${new Date().toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+            }
 
-            // News Listener
+            // Real-time News Listener
             db.collection("news_posts").onSnapshot(snapshot => {
                 allNewsData = [];
                 snapshot.forEach(doc => allNewsData.push({ id: doc.id, ...doc.data() }));
-                // Sort client-side
                 allNewsData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 renderNews();
             }, err => console.log("News Error:", err));
 
-            // Job Alerts Listener
+            // Real-time Job Alerts Listener
             db.collection("job_alerts").onSnapshot(snapshot => {
                 allJobAlerts = [];
                 snapshot.forEach(doc => allJobAlerts.push({ id: doc.id, ...doc.data() }));
-                // Sort client-side
                 allJobAlerts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 renderJobAlerts();
             }, err => console.log("Jobs Error:", err));
