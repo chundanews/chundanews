@@ -48,6 +48,12 @@
             padding: 1rem;
             overflow-y: auto;
         }
+        @media print {
+            body * { visibility: hidden; }
+            #read-modal-card, #read-modal-card * { visibility: visible; }
+            #read-modal-card { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col transition-colors duration-200">
@@ -244,7 +250,7 @@
 
     <!-- ================= MODALS ================= -->
 
-    <!-- 1. Post / Edit News Modal with Multiple Image Support & Auto-Compress Watermark Badge -->
+    <!-- 1. Post / Edit News Modal -->
     <div id="post-modal" class="portal-modal">
         <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b dark:border-gray-800 pb-2 mb-4">
@@ -289,7 +295,6 @@
                     </div>
                     <input type="file" id="news-files" accept="image/*" multiple onchange="previewSelectedImages(event)" class="w-full text-xs text-gray-600 dark:text-gray-400 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 dark:file:bg-red-950 file:text-red-700 dark:file:text-red-400 hover:file:bg-red-100">
                     
-                    <!-- Dynamic Image Thumbnails Preview -->
                     <div id="image-preview-box" class="flex gap-2 flex-wrap pt-1 hidden"></div>
 
                     <input type="url" id="news-image" placeholder="या इमेज URL (वैकल्पिक)" class="w-full border dark:border-gray-700 rounded p-1.5 text-xs outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -397,18 +402,41 @@
         </div>
     </div>
 
-    <!-- 6. Read News Modal -->
+    <!-- 6. Read News Modal with Views & Social Share -->
     <div id="read-modal" class="portal-modal">
-        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl border dark:border-gray-800">
-            <button type="button" onclick="closePortalModal('read-modal')" class="absolute top-4 right-4 text-gray-500 text-2xl font-bold cursor-pointer">&times;</button>
-            <div class="flex items-center gap-2 mb-2">
-                <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded"></span>
-                <span id="read-reporter" class="text-xs text-gray-500 dark:text-gray-400 font-semibold"></span>
+        <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl border dark:border-gray-800">
+            <button type="button" onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold cursor-pointer no-print">&times;</button>
+            
+            <div class="flex items-center justify-between border-b dark:border-gray-800 pb-2 mb-3">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span id="read-category" class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded uppercase"></span>
+                    <span id="read-reporter" class="text-xs text-gray-600 dark:text-gray-300 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-microphone-lines text-red-600"></i> <span id="read-reporter-name">विशेष संवाददाता</span>
+                    </span>
+                    <span id="read-views" class="text-xs text-red-600 dark:text-red-400 font-bold bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded flex items-center gap-1">
+                        <i class="fa-solid fa-eye"></i> 0 Views
+                    </span>
+                </div>
             </div>
-            <h2 id="read-title" class="text-2xl font-black mt-2 mb-2 text-gray-950 dark:text-white leading-tight"></h2>
-            <p id="read-date" class="text-xs text-gray-500 mb-4"></p>
+
+            <h2 id="read-title" class="text-2xl sm:text-3xl font-black mt-2 mb-2 text-gray-950 dark:text-white leading-tight"></h2>
+            <p id="read-date" class="text-xs text-gray-500 dark:text-gray-400 mb-4"></p>
+            
             <div id="read-images-gallery" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 hidden"></div>
+            
             <div id="read-content" class="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-line leading-relaxed"></div>
+            
+            <!-- WhatsApp & Copy Link Footer Bar -->
+            <div class="mt-5 pt-3 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2 no-print">
+                <div class="flex items-center gap-2">
+                    <button type="button" id="read-whatsapp-btn" onclick="shareCurrentNewsWhatsApp()" class="bg-green-600 hover:bg-green-700 text-white px-3.5 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp पर शेयर करें
+                    </button>
+                    <button type="button" onclick="copyCurrentNewsLink()" class="bg-gray-800 hover:bg-black text-white px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm transition">
+                        <i class="fa-solid fa-link"></i> <span id="copy-btn-text">लिंक कॉपी</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -433,6 +461,7 @@
         let currentFilter = 'all';
         let searchQuery = '';
         let isAdminLoggedIn = false;
+        let currentActiveNewsId = null;
 
         // Modal Controllers
         window.openPortalModal = function(id) {
@@ -472,6 +501,46 @@
             openPortalModal('admin-reports-modal');
             loadCitizenReports();
         };
+
+        // Deep Linking Helpers
+        function getSingleNewsLink(newsId) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            return `${baseUrl}#news-${newsId}`;
+        }
+
+        function shareNewsWhatsApp(newsId) {
+            const item = allNewsData.find(i => i.id === newsId);
+            if (!item) return;
+            const shareUrl = getSingleNewsLink(newsId);
+            const text = `📰 *${item.title}*\n\nपूरा समाचार व तस्वीरें देखने के लिए लिंक पर क्लिक करें:\n${shareUrl}`;
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function shareCurrentNewsWhatsApp() {
+            if (currentActiveNewsId) {
+                shareNewsWhatsApp(currentActiveNewsId);
+            }
+        }
+
+        function copyNewsLink(newsId) {
+            const url = getSingleNewsLink(newsId);
+            navigator.clipboard.writeText(url).then(() => {
+                alert("खबर का लिंक कॉपी हो गया है!");
+            });
+        }
+
+        function copyCurrentNewsLink() {
+            if (!currentActiveNewsId) return;
+            const url = getSingleNewsLink(currentActiveNewsId);
+            navigator.clipboard.writeText(url).then(() => {
+                const btnText = document.getElementById('copy-btn-text');
+                if (btnText) {
+                    btnText.innerText = "कॉपी हो गया! ✓";
+                    setTimeout(() => { btnText.innerText = "लिंक कॉपी"; }, 2000);
+                }
+            });
+        }
 
         // Live Thumbnail Preview
         function previewSelectedImages(event) {
@@ -535,7 +604,6 @@
                         ctx.textAlign = 'left';
                         ctx.fillText('CHUNDA KSHETRA NEWS', x + 10, y + 17);
 
-                        // Compress Output (JPEG 0.55 Quality ~ 50-80KB)
                         resolve(canvas.toDataURL('image/jpeg', 0.55));
                     };
                     img.onerror = err => reject(err);
@@ -562,7 +630,6 @@
             let imagesArray = [];
 
             try {
-                // Compress Multiple Images
                 if (fileInput && fileInput.files && fileInput.files.length > 0) {
                     for (let i = 0; i < fileInput.files.length; i++) {
                         const compressed = await processImageFileWithWatermark(fileInput.files[i]);
@@ -668,6 +735,7 @@
             container.innerHTML = filtered.map(item => {
                 const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
                 const multiImgBadge = (item.images && item.images.length > 1) ? `<span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-images mr-1"></i>+${item.images.length}</span>` : '';
+                const viewsCount = item.views || 0;
 
                 const adminControls = isAdminLoggedIn ? `
                     <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
@@ -697,9 +765,17 @@
                         </div>
                     </div>
                     <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center w-full">
                             <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
-                            <span class="text-[10px] text-gray-400">${item.date || ''}</span>
+                            <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500 mr-1"></i>${viewsCount}</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="shareNewsWhatsApp('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer" title="WhatsApp पर शेयर करें">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
+                                </button>
+                                <button onclick="copyNewsLink('${item.id}')" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 text-xs cursor-pointer" title="लिंक कॉपी करें">
+                                    <i class="fa-solid fa-link"></i>
+                                </button>
+                            </div>
                         </div>
                         ${adminControls}
                     </div>
@@ -715,7 +791,10 @@
                 return;
             }
 
-            container.innerHTML = allJobAlerts.map(job => `
+            container.innerHTML = allJobAlerts.map(job => {
+                const waShareText = `📢 *सरकारी भर्ती / परीक्षा अलर्ट (Chunda News)*\n\n🎯 *${job.title}*\n📋 *विवरण:* ${job.posts}\n⏳ *अंतिम तिथि:* ${job.lastDate}\n🔗 *अप्लाई लिंक:* ${job.link}`;
+
+                return `
                 <div class="bg-gray-50 dark:bg-gray-800/80 p-3 rounded-lg border border-indigo-100 dark:border-gray-800">
                     <div class="flex justify-between items-start gap-2">
                         <h4 class="font-bold text-xs text-gray-900 dark:text-gray-100 leading-snug flex-1">${job.title}</h4>
@@ -728,17 +807,41 @@
                         <a href="${job.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded">
                             अप्लाई करें
                         </a>
-                        ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        <div class="flex items-center gap-2">
+                            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(waShareText)}" target="_blank" class="text-emerald-600 hover:text-emerald-700 text-xs font-semibold flex items-center gap-1">
+                                <i class="fa-brands fa-whatsapp"></i> शेयर
+                            </a>
+                            ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
         }
 
-        function openReadModal(id) {
+        async function openReadModal(id, updateHash = true) {
             const item = allNewsData.find(i => i.id === id);
             if (!item) return;
+            currentActiveNewsId = id;
+
+            if (updateHash) {
+                history.pushState(null, null, `#news-${id}`);
+            }
+
+            // Realtime Views Increment in Firestore
+            try {
+                db.collection("news_posts").doc(id).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+            } catch (err) {
+                console.log("Views increment error:", err);
+            }
+
+            const currentViews = (item.views || 0) + 1;
+            document.getElementById('read-views').innerHTML = `<i class="fa-solid fa-eye mr-1"></i> ${currentViews} Views`;
+
             document.getElementById('read-title').innerText = item.title;
             document.getElementById('read-category').innerText = item.category;
-            document.getElementById('read-reporter').innerText = item.reporter || 'विशेष संवाददाता';
+            document.getElementById('read-reporter-name').innerText = item.reporter || 'विशेष संवाददाता';
             document.getElementById('read-content').innerText = item.content;
             document.getElementById('read-date').innerText = item.date || '';
 
@@ -752,6 +855,12 @@
             }
 
             openPortalModal('read-modal');
+        }
+
+        function closeReadModal() {
+            closePortalModal('read-modal');
+            currentActiveNewsId = null;
+            history.pushState(null, null, window.location.pathname);
         }
 
         function editNewsPost(id) {
@@ -868,6 +977,24 @@
             document.documentElement.classList.toggle('dark');
         }
 
+        // Direct URL News Opener (#news-id)
+        function checkUrlHash() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#news-')) {
+                const id = hash.replace('#news-', '');
+                openReadModal(id, false);
+            }
+        }
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const bar = document.getElementById("scroll-progress");
+            if (bar) bar.style.width = scrolled + "%";
+        });
+
         // Auth Observer
         auth.onAuthStateChanged(user => {
             isAdminLoggedIn = !!user;
@@ -893,6 +1020,7 @@
                 allNewsData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 renderNews();
                 updateBreakingTicker();
+                checkUrlHash();
             }, err => console.log("News Error:", err));
 
             // Real-time Job Alerts Listener
