@@ -462,6 +462,24 @@
         let searchQuery = '';
         let isAdminLoggedIn = false;
         let currentActiveNewsId = null;
+        const viewedNewsIds = new Set();
+
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>\"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[ch]));
+        }
+
+        function safeUrl(value, fallback = '') {
+            const raw = String(value ?? '').trim();
+            if (!raw) return fallback;
+            if (/^data:image\/(png|jpe?g|webp|gif);base64,/i.test(raw)) return raw;
+            try {
+                const url = new URL(raw, window.location.href);
+                if (url.protocol === 'https:' || url.protocol === 'http:') return url.href;
+            } catch (_) {}
+            return fallback;
+        }
 
         // Modal Controllers
         window.openPortalModal = function(id) {
@@ -523,23 +541,39 @@
             }
         }
 
-        function copyNewsLink(newsId) {
-            const url = getSingleNewsLink(newsId);
-            navigator.clipboard.writeText(url).then(() => {
-                alert("खबर का लिंक कॉपी हो गया है!");
-            });
+        async function copyTextFallback(text) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                const ok = document.execCommand('copy');
+                ta.remove();
+                return ok;
+            } catch (_) { return false; }
         }
 
-        function copyCurrentNewsLink() {
+        async function copyNewsLink(newsId) {
+            const url = getSingleNewsLink(newsId);
+            alert(await copyTextFallback(url) ? "खबर का लिंक कॉपी हो गया है!" : "लिंक कॉपी नहीं हो सका।");
+        }
+
+        async function copyCurrentNewsLink() {
             if (!currentActiveNewsId) return;
             const url = getSingleNewsLink(currentActiveNewsId);
-            navigator.clipboard.writeText(url).then(() => {
-                const btnText = document.getElementById('copy-btn-text');
-                if (btnText) {
-                    btnText.innerText = "कॉपी हो गया! ✓";
-                    setTimeout(() => { btnText.innerText = "लिंक कॉपी"; }, 2000);
-                }
-            });
+            const ok = await copyTextFallback(url);
+            const btnText = document.getElementById('copy-btn-text');
+            if (btnText) {
+                btnText.innerText = ok ? "कॉपी हो गया! ✓" : "कॉपी असफल";
+                setTimeout(() => { btnText.innerText = "लिंक कॉपी"; }, 2000);
+            }
         }
 
         // Live Thumbnail Preview
@@ -639,6 +673,11 @@
 
                 const manualUrl = document.getElementById('news-image').value.trim();
                 if (manualUrl) imagesArray.push(manualUrl);
+                if (editId && imagesArray.length === 0) {
+                    const existing = allNewsData.find(i => i.id === editId);
+                    const existingImages = existing?.images || (existing?.image ? [existing.image] : []);
+                    imagesArray = existingImages.filter(Boolean);
+                }
 
                 const postData = {
                     title: document.getElementById('news-title').value.trim(),
@@ -711,9 +750,9 @@
             const ticker = document.getElementById('breaking-ticker');
             const breakingItems = allNewsData.filter(i => i.isBreaking === true);
             if (breakingItems.length > 0) {
-                ticker.innerHTML = breakingItems.map(item => `🔴 <span class="font-bold cursor-pointer hover:underline" onclick="openReadModal('${item.id}')">${item.title}</span>`).join('&nbsp;&nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp;&nbsp;');
+                ticker.innerHTML = breakingItems.map(item => `🔴 <span class="font-bold cursor-pointer hover:underline" onclick="openReadModal('${escapeHTML(item.id)}')">${escapeHTML(item.title)}</span>`).join('&nbsp;&nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp;&nbsp;');
             } else {
-                ticker.innerHTML = "चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...";
+                ticker.textContent = "चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है - ताज़ा और निष्पक्ष खबरों के लिए जुड़े रहें...";
             }
         }
 
@@ -722,59 +761,48 @@
             const container = document.getElementById('news-container');
             let filtered = currentFilter === 'all' ? allNewsData : allNewsData.filter(i => i.category === currentFilter);
             if (searchQuery) {
-                filtered = filtered.filter(i => i.title.toLowerCase().includes(searchQuery) || i.content.toLowerCase().includes(searchQuery));
+                filtered = filtered.filter(i => String(i.title || '').toLowerCase().includes(searchQuery) || String(i.content || '').toLowerCase().includes(searchQuery));
             }
 
             document.getElementById('news-count').innerText = `${filtered.length} खबरें`;
-
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="col-span-2 text-center py-8 text-gray-500">कोई खबर नहीं मिली।</div>`;
                 return;
             }
 
             container.innerHTML = filtered.map(item => {
-                const img = item.images && item.images.length ? item.images[0] : (item.image || 'https://via.placeholder.com/600x400?text=Chunda+News');
+                const img = safeUrl(item.images?.length ? item.images[0] : item.image, 'https://via.placeholder.com/600x400?text=Chunda+News');
                 const multiImgBadge = (item.images && item.images.length > 1) ? `<span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-images mr-1"></i>+${item.images.length}</span>` : '';
-                const viewsCount = item.views || 0;
-
+                const viewsCount = Number(item.views) || 0;
+                const id = escapeHTML(item.id);
                 const adminControls = isAdminLoggedIn ? `
                     <div class="flex gap-2 pt-2 border-t dark:border-gray-700 mt-2">
-                        <button onclick="editNewsPost('${item.id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
-                            <i class="fa-solid fa-pen-to-square"></i> एडिट
-                        </button>
-                        <button onclick="deleteNewsPost('${item.id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer">
-                            <i class="fa-solid fa-trash"></i> डिलीट
-                        </button>
-                    </div>
-                ` : '';
-
+                        <button type="button" onclick="editNewsPost('${id}')" class="text-xs bg-blue-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer"><i class="fa-solid fa-pen-to-square"></i> एडिट</button>
+                        <button type="button" onclick="deleteNewsPost('${id}')" class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold cursor-pointer"><i class="fa-solid fa-trash"></i> डिलीट</button>
+                    </div>` : '';
                 return `
                 <div class="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
                     <div>
                         <div class="relative">
-                            <img src="${img}" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${item.id}')">
+                            <img src="${escapeHTML(img)}" alt="${escapeHTML(item.title)}" loading="lazy" class="h-44 w-full object-cover cursor-pointer" onclick="openReadModal('${id}')">
                             ${multiImgBadge}
                         </div>
                         <div class="p-4">
                             <div class="flex items-center justify-between gap-2 mb-2">
-                                <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[10px]">${item.category}</span>
-                                <span class="text-gray-500 text-[10px] font-semibold">${item.reporter || 'विशेष संवाददाता'}</span>
+                                <span class="bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2 py-0.5 rounded text-[10px]">${escapeHTML(item.category)}</span>
+                                <span class="text-gray-500 text-[10px] font-semibold">${escapeHTML(item.reporter || 'विशेष संवाददाता')}</span>
                             </div>
-                            <h3 class="font-black text-gray-950 dark:text-white text-base hover:text-red-600 cursor-pointer" onclick="openReadModal('${item.id}')">${item.title}</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-2">${item.content}</p>
+                            <h3 class="font-black text-gray-950 dark:text-white text-base hover:text-red-600 cursor-pointer" onclick="openReadModal('${id}')">${escapeHTML(item.title)}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-xs mt-2 line-clamp-2">${escapeHTML(item.content)}</p>
                         </div>
                     </div>
                     <div class="px-4 pb-4 pt-2 border-t dark:border-gray-800 flex flex-col">
                         <div class="flex justify-between items-center w-full">
-                            <button onclick="openReadModal('${item.id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
+                            <button type="button" onclick="openReadModal('${id}')" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">पूरा पढ़ें &rarr;</button>
                             <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400"><i class="fa-solid fa-eye text-red-500 mr-1"></i>${viewsCount}</span>
                             <div class="flex items-center gap-2">
-                                <button onclick="shareNewsWhatsApp('${item.id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer" title="WhatsApp पर शेयर करें">
-                                    <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
-                                </button>
-                                <button onclick="copyNewsLink('${item.id}')" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 text-xs cursor-pointer" title="लिंक कॉपी करें">
-                                    <i class="fa-solid fa-link"></i>
-                                </button>
+                                <button type="button" onclick="shareNewsWhatsApp('${id}')" class="text-green-600 hover:text-green-700 text-xs font-bold flex items-center gap-1 cursor-pointer" title="WhatsApp पर शेयर करें"><i class="fa-brands fa-whatsapp text-sm"></i> शेयर</button>
+                                <button type="button" onclick="copyNewsLink('${id}')" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 text-xs cursor-pointer" title="लिंक कॉपी करें"><i class="fa-solid fa-link"></i></button>
                             </div>
                         </div>
                         ${adminControls}
@@ -790,28 +818,30 @@
                 container.innerHTML = '<p class="text-center text-xs text-gray-400 py-3">कोई सक्रिय फॉर्म नहीं है।</p>';
                 return;
             }
-
             container.innerHTML = allJobAlerts.map(job => {
-                const waShareText = `📢 *सरकारी भर्ती / परीक्षा अलर्ट (Chunda News)*\n\n🎯 *${job.title}*\n📋 *विवरण:* ${job.posts}\n⏳ *अंतिम तिथि:* ${job.lastDate}\n🔗 *अप्लाई लिंक:* ${job.link}`;
+                const id = escapeHTML(job.id);
+                const title = escapeHTML(job.title);
+                const posts = escapeHTML(job.posts);
+                const lastDate = escapeHTML(job.lastDate);
+                const link = safeUrl(job.link, '#');
+                const waShareText = `📢 *सरकारी भर्ती / परीक्षा अलर्ट (Chunda News)*
 
+🎯 *${job.title || ''}*
+📋 *विवरण:* ${job.posts || ''}
+⏳ *अंतिम तिथि:* ${job.lastDate || ''}
+🔗 *अप्लाई लिंक:* ${job.link || ''}`;
                 return `
                 <div class="bg-gray-50 dark:bg-gray-800/80 p-3 rounded-lg border border-indigo-100 dark:border-gray-800">
                     <div class="flex justify-between items-start gap-2">
-                        <h4 class="font-bold text-xs text-gray-900 dark:text-gray-100 leading-snug flex-1">${job.title}</h4>
-                        <span class="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 text-[10px] font-black px-2 py-0.5 rounded shrink-0">
-                            अंतिम तिथि: ${job.lastDate}
-                        </span>
+                        <h4 class="font-bold text-xs text-gray-900 dark:text-gray-100 leading-snug flex-1">${title}</h4>
+                        <span class="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 text-[10px] font-black px-2 py-0.5 rounded shrink-0">अंतिम तिथि: ${lastDate}</span>
                     </div>
-                    <p class="text-[11px] text-gray-600 dark:text-gray-400 mt-1">${job.posts}</p>
+                    <p class="text-[11px] text-gray-600 dark:text-gray-400 mt-1">${posts}</p>
                     <div class="mt-2.5 pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <a href="${job.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded">
-                            अप्लाई करें
-                        </a>
+                        <a href="${escapeHTML(link)}" target="_blank" rel="noopener noreferrer" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded">अप्लाई करें</a>
                         <div class="flex items-center gap-2">
-                            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(waShareText)}" target="_blank" class="text-emerald-600 hover:text-emerald-700 text-xs font-semibold flex items-center gap-1">
-                                <i class="fa-brands fa-whatsapp"></i> शेयर
-                            </a>
-                            ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${job.id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(waShareText)}" target="_blank" rel="noopener noreferrer" class="text-emerald-600 hover:text-emerald-700 text-xs font-semibold flex items-center gap-1"><i class="fa-brands fa-whatsapp"></i> शेयर</a>
+                            ${isAdminLoggedIn ? `<button type="button" onclick="deleteJobAlert('${id}')" class="text-red-600 text-xs font-bold cursor-pointer"><i class="fa-solid fa-trash"></i></button>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -822,38 +852,35 @@
             const item = allNewsData.find(i => i.id === id);
             if (!item) return;
             currentActiveNewsId = id;
+            if (updateHash && window.location.hash !== `#news-${id}`) history.pushState(null, null, `#news-${id}`);
 
-            if (updateHash) {
-                history.pushState(null, null, `#news-${id}`);
+            if (!viewedNewsIds.has(id)) {
+                viewedNewsIds.add(id);
+                try {
+                    await db.collection("news_posts").doc(id).update({ views: firebase.firestore.FieldValue.increment(1) });
+                } catch (err) {
+                    viewedNewsIds.delete(id);
+                    console.log("Views increment error:", err);
+                }
             }
 
-            // Realtime Views Increment in Firestore
-            try {
-                db.collection("news_posts").doc(id).update({
-                    views: firebase.firestore.FieldValue.increment(1)
-                });
-            } catch (err) {
-                console.log("Views increment error:", err);
-            }
-
-            const currentViews = (item.views || 0) + 1;
+            const currentViews = (Number(item.views) || 0) + (viewedNewsIds.has(id) ? 1 : 0);
             document.getElementById('read-views').innerHTML = `<i class="fa-solid fa-eye mr-1"></i> ${currentViews} Views`;
-
-            document.getElementById('read-title').innerText = item.title;
-            document.getElementById('read-category').innerText = item.category;
+            document.getElementById('read-title').innerText = item.title || '';
+            document.getElementById('read-category').innerText = item.category || '';
             document.getElementById('read-reporter-name').innerText = item.reporter || 'विशेष संवाददाता';
-            document.getElementById('read-content').innerText = item.content;
+            document.getElementById('read-content').innerText = item.content || '';
             document.getElementById('read-date').innerText = item.date || '';
 
             const gallery = document.getElementById('read-images-gallery');
-            let imgs = item.images || (item.image ? [item.image] : []);
+            const imgs = (item.images || (item.image ? [item.image] : [])).map(src => safeUrl(src)).filter(Boolean);
             if (imgs.length > 0) {
                 gallery.classList.remove('hidden');
-                gallery.innerHTML = imgs.map(src => `<img src="${src}" class="w-full h-56 object-cover rounded-lg border border-gray-200 dark:border-gray-700">`).join('');
+                gallery.innerHTML = imgs.map(src => `<img src="${escapeHTML(src)}" alt="${escapeHTML(item.title)}" loading="lazy" class="w-full h-56 object-cover rounded-lg border border-gray-200 dark:border-gray-700">`).join('');
             } else {
                 gallery.classList.add('hidden');
+                gallery.innerHTML = '';
             }
-
             openPortalModal('read-modal');
         }
 
@@ -905,14 +932,14 @@
                     return `
                     <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700">
                         <div class="flex justify-between font-bold text-gray-500 mb-1">
-                            <span>${data.name || 'अज्ञात'} (📍 ${data.location || ''})</span>
-                            <span>${data.date || ''}</span>
+                            <span>${escapeHTML(data.name || 'अज्ञात')} (📍 ${escapeHTML(data.location || '')})</span>
+                            <span>${escapeHTML(data.date || '')}</span>
                         </div>
-                        <p class="text-gray-800 dark:text-gray-200 text-xs">${data.details || ''}</p>
+                        <p class="text-gray-800 dark:text-gray-200 text-xs whitespace-pre-line">${escapeHTML(data.details || '')}</p>
                     </div>`;
                 }).join('');
             } catch (err) {
-                list.innerHTML = `<p class="text-red-500 text-center py-4">एरर: ${err.message}</p>`;
+                list.innerHTML = `<p class="text-red-500 text-center py-4">एरर: ${escapeHTML(err.message)}</p>`;
             }
         }
 
@@ -990,7 +1017,7 @@
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
+            const scrolled = height > 0 ? Math.min(100, Math.max(0, (winScroll / height) * 100)) : 0;
             const bar = document.getElementById("scroll-progress");
             if (bar) bar.style.width = scrolled + "%";
         });
