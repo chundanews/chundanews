@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------
+    // Admin authorization
+    // Requires Firebase Auth custom claim: { admin: true }
+    // ------------------------------
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.admin == true;
+    }
+
+    // ------------------------------
+    // News posts
+    // Public: read only
+    // Admin: create/update/delete
+    // ------------------------------
+    match /news_posts/{docId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+
+      // Admin can edit posts. Prevent clients from changing the view count.
+      allow update: if isAdmin()
+        && request.resource.data.views == resource.data.views;
+    }
+
+    // ------------------------------
+    // Job alerts
+    // Public: read only
+    // Admin: create/update/delete
+    // ------------------------------
+    match /job_alerts/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ------------------------------
+    // Citizen reports
+    // Public: submit only
+    // Admin: read/update/delete
+    // ------------------------------
+    match /citizen_reports/{docId} {
+      allow create: if true
+        && request.resource.data.keys().hasOnly([
+          'name', 'location', 'details', 'date', 'phone', 'createdAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.location is string
+        && request.resource.data.location.size() <= 200
+        && request.resource.data.details is string
+        && request.resource.data.details.size() <= 5000;
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ------------------------------
+    // Deny everything not explicitly allowed above.
+    // ------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
