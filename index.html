@@ -76,15 +76,20 @@ const db=firebase.firestore(),auth=firebase.auth();
 const ADMIN_UID='q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 let allNewsData=[],allJobAlerts=[],currentFilter='all',searchQuery='',isAdminLoggedIn=false,adminCheckInProgress=false,currentActiveNewsId=null;
 
-function getLocalViewedNews() {
+// Anti-Fraud Unique View Tracker
+const viewedThisSession = new Set();
+function hasUserViewed(id) {
+    if (viewedThisSession.has(id)) return true;
     try {
-        return JSON.parse(localStorage.getItem('cn_viewed_news') || '[]');
-    } catch (_) { return []; }
+        const list = JSON.parse(localStorage.getItem('cn_viewed_news') || '[]');
+        return list.includes(id);
+    } catch (_) { return false; }
 }
-function setLocalViewedNews(id) {
+function markUserViewed(id) {
+    viewedThisSession.add(id);
     try {
-        const list = getLocalViewedNews();
-        if(!list.includes(id)) {
+        const list = JSON.parse(localStorage.getItem('cn_viewed_news') || '[]');
+        if (!list.includes(id)) {
             list.push(id);
             localStorage.setItem('cn_viewed_news', JSON.stringify(list));
         }
@@ -336,17 +341,18 @@ async function openReadModal(id,hash=true){
     currentActiveNewsId=id;
     if(hash)history.pushState(null,null,'#news-'+encodeURIComponent(id));
     
-    const viewedList = getLocalViewedNews();
-    let justIncremented = false;
-    if(!viewedList.includes(id)){
-        setLocalViewedNews(id);
-        justIncremented = true;
+    // Strict Single-View Counter
+    if(!hasUserViewed(id)){
+        markUserViewed(id);
         n.views = (Number(n.views) || 0) + 1;
-        try {
-            await db.collection('news_posts').doc(id).set({
-                views: firebase.firestore.FieldValue.increment(1)
-            }, { merge: true });
-        } catch(_) {}
+        renderNews();
+        
+        // सुरक्षित Firestore अपडेट
+        db.collection('news_posts').doc(id).update({
+            views: firebase.firestore.FieldValue.increment(1)
+        }).catch(err => {
+            console.error("Firestore Views Permission Error:", err);
+        });
     }
 
     document.getElementById('read-title').innerText=n.title||'';
