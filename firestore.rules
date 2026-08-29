@@ -2,9 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Only the designated Firebase Auth UID has admin privileges.
+    // This replaces the previous dependency on the custom `admin` claim.
     function isAdmin() {
       return request.auth != null
-        && request.auth.token.admin == true;
+        && request.auth.uid == 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     }
 
     match /news_posts/{docId} {
