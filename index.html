@@ -39,13 +39,11 @@
 <div id="citizen-modal" class="portal-modal"><div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6"><h3 class="text-lg font-bold">नागरिक पत्रकार बनें</h3><form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs"><input type="text" id="citizen-name" required placeholder="नाम व संपर्क नंबर" class="w-full border rounded p-2"><input type="text" id="citizen-location" required placeholder="स्थान / गांव" class="w-full border rounded p-2"><textarea id="citizen-details" rows="4" required placeholder="समाचार विवरण" class="w-full border rounded p-2"></textarea><button type="submit" id="citizen-submit-btn" class="w-full bg-red-600 text-white font-bold py-2 rounded">संपादक को भेजें</button></form></div></div>
 <div id="admin-modal" class="portal-modal"><div class="bg-white dark:bg-gray-900 rounded-xl max-w-sm w-full p-6"><h3 class="text-lg font-bold mb-3">एडमिन लॉगिन</h3><form onsubmit="handleSecureAdminLogin(event)" class="space-y-3 text-xs"><input type="email" id="admin-email" required placeholder="admin@example.com" class="w-full border rounded p-2"><input type="password" id="admin-password" required placeholder="पासवर्ड" class="w-full border rounded p-2"><button type="submit" id="login-submit-btn" class="bg-black text-white px-4 py-1.5 rounded font-bold">लॉगिन</button></form></div></div>
 
-<!-- READ MODAL -->
 <div id="read-modal" class="portal-modal">
     <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative">
         <button onclick="closeReadModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">✕</button>
         <div class="flex items-center gap-2 mb-2">
             <span id="read-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs px-2.5 py-0.5 rounded font-bold"></span>
-            <span id="read-views" class="text-xs text-gray-500"></span>
         </div>
         <h2 id="read-title" class="text-2xl font-black text-gray-900 dark:text-white leading-tight mb-2"></h2>
         <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-b pb-3 mb-4">
@@ -75,26 +73,6 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore(),auth=firebase.auth();
 const ADMIN_UID='q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 let allNewsData=[],allJobAlerts=[],currentFilter='all',searchQuery='',isAdminLoggedIn=false,adminCheckInProgress=false,currentActiveNewsId=null;
-
-// Anti-Fraud Unique View Tracker
-const viewedThisSession = new Set();
-function hasUserViewed(id) {
-    if (viewedThisSession.has(id)) return true;
-    try {
-        const list = JSON.parse(localStorage.getItem('cn_viewed_news') || '[]');
-        return list.includes(id);
-    } catch (_) { return false; }
-}
-function markUserViewed(id) {
-    viewedThisSession.add(id);
-    try {
-        const list = JSON.parse(localStorage.getItem('cn_viewed_news') || '[]');
-        if (!list.includes(id)) {
-            list.push(id);
-            localStorage.setItem('cn_viewed_news', JSON.stringify(list));
-        }
-    } catch (_) {}
-}
 
 async function verifyAdmin(user){return !!user&&user.uid===ADMIN_UID;}
 function requireAdmin(){if(isAdminLoggedIn&&auth.currentUser&&auth.currentUser.uid===ADMIN_UID)return true;alert('इस सुविधा के लिए एडमिन अधिकार आवश्यक हैं।');return false;}
@@ -247,7 +225,6 @@ async function handleNewsSubmit(e){
         if(edit) {
             await db.collection('news_posts').doc(edit).update(p);
         } else {
-            p.views=0;
             p.timestamp=firebase.firestore.FieldValue.serverTimestamp();
             await db.collection('news_posts').add(p);
         }
@@ -294,133 +271,3 @@ function renderNews(){
     if(searchQuery)a=a.filter(x=>String(x.title||'').toLowerCase().includes(searchQuery)||String(x.content||'').toLowerCase().includes(searchQuery));
     document.getElementById('news-count').innerText=a.length+' खबरें';
     if(!a.length){c.innerHTML='<div class="col-span-2 text-center py-8 text-gray-500">कोई खबर नहीं मिली।</div>';return}
-    
-    c.innerHTML=a.map(n=>{
-        const id=escapeHTML(n.id);
-        const img=safeUrl(n.images?.[0]||n.image,'https://via.placeholder.com/600x400?text=Chunda+News');
-        const reporter=escapeHTML(n.reporter || 'विशेष संवाददाता');
-        const date=escapeHTML(n.date || '');
-        const shortContent=escapeHTML((n.content||'').substring(0, 110) + (n.content && n.content.length>110 ? '...' : ''));
-        
-        return `<article class="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
-            <div>
-                <img src="${escapeHTML(img)}" class="h-44 w-full object-cover cursor-pointer hover:opacity-95 transition" onclick="openReadModal('${id}')">
-                <div class="p-4 pb-2">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[11px] bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 font-bold px-2 py-0.5 rounded">${escapeHTML(n.category)}</span>
-                        <span class="text-[11px] text-gray-400">👁️ ${Number(n.views)||0}</span>
-                    </div>
-                    <h3 class="font-bold text-base mt-1 text-gray-900 dark:text-white cursor-pointer hover:text-red-600 line-clamp-2" onclick="openReadModal('${id}')">${escapeHTML(n.title)}</h3>
-                    
-                    <div class="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 my-2 pt-1 border-t border-gray-100 dark:border-gray-800">
-                        <span class="font-medium flex items-center gap-1"><i class="fa-solid fa-microphone-lines text-red-600 text-xs"></i> ${reporter}</span>
-                        <span>${date}</span>
-                    </div>
-                    
-                    <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 mt-1 leading-relaxed">${shortContent}</p>
-                </div>
-            </div>
-            <div class="p-4 pt-1">
-                <div class="mt-2 pt-2 border-t flex items-center justify-between">
-                    <button onclick="openReadModal('${id}')" class="text-xs font-bold text-red-600 hover:underline flex items-center gap-1">पूरा पढ़ें →</button>
-                    <button onclick="shareNewsWhatsApp('${id}')" title="WhatsApp पर शेयर करें" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded flex items-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> शेयर
-                    </button>
-                </div>
-                ${isAdminLoggedIn?`<div class="mt-2 pt-2 border-t flex gap-2"><button onclick="editNewsPost('${id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs flex-1">एडिट</button> <button onclick="deleteNewsPost('${id}')" class="bg-red-600 text-white px-2 py-1 rounded text-xs flex-1">डिलीट</button></div>`:''}
-            </div>
-        </article>`
-    }).join('');
-}
-
-function renderJobAlerts(){const c=document.getElementById('job-alerts-list');if(!allJobAlerts.length){c.innerHTML='<p class="text-center text-xs text-gray-400">कोई सक्रिय फॉर्म नहीं है।</p>';return}c.innerHTML=allJobAlerts.map(j=>`<div class="border rounded p-3 mb-2"><b>${escapeHTML(j.title)}</b><p class="text-xs">${escapeHTML(j.posts)}</p><p class="text-xs font-bold">अंतिम तिथि: ${escapeHTML(j.lastDate)}</p><a href="${escapeHTML(safeUrl(j.link,'#'))}" target="_blank" class="bg-indigo-600 text-white text-xs px-2 py-1 rounded">अप्लाई करें</a></div>`).join('')}
-
-async function openReadModal(id,hash=true){
-    const n=allNewsData.find(x=>x.id===id);
-    if(!n)return;
-    currentActiveNewsId=id;
-    if(hash)history.pushState(null,null,'#news-'+encodeURIComponent(id));
-    
-    // Strict Single-View Counter
-    if(!hasUserViewed(id)){
-        markUserViewed(id);
-        n.views = (Number(n.views) || 0) + 1;
-        renderNews();
-        
-        // सुरक्षित Firestore अपडेट
-        db.collection('news_posts').doc(id).update({
-            views: firebase.firestore.FieldValue.increment(1)
-        }).catch(err => {
-            console.error("Firestore Views Permission Error:", err);
-        });
-    }
-
-    document.getElementById('read-title').innerText=n.title||'';
-    document.getElementById('read-category').innerText=n.category||'';
-    document.getElementById('read-reporter-name').innerText=n.reporter||'विशेष संवाददाता';
-    document.getElementById('read-content').innerText=n.content||'';
-    document.getElementById('read-date').innerText=n.date||'';
-    document.getElementById('read-views').innerText='👁️ '+(Number(n.views)||0)+' Views';
-    
-    const g=document.getElementById('read-images-gallery'),imgs=(n.images||(n.image?[n.image]:[])).map(x=>safeUrl(x)).filter(Boolean);
-    g.innerHTML=imgs.map(x=>`<img src="${escapeHTML(x)}" class="w-full rounded mb-3 shadow">`).join('');
-    openPortalModal('read-modal');
-}
-
-function closeReadModal(){closePortalModal('read-modal');currentActiveNewsId=null;history.pushState(null,null,location.pathname)}
-function editNewsPost(id){if(!requireAdmin())return;const n=allNewsData.find(x=>x.id===id);if(!n)return;document.getElementById('edit-doc-id').value=n.id;document.getElementById('news-title').value=n.title||'';document.getElementById('news-category').value=n.category||'क्षेत्रीय';document.getElementById('news-reporter').value=n.reporter||'विशेष संवाददाता';document.getElementById('news-content').value=n.content||'';document.getElementById('news-breaking').checked=!!n.isBreaking;document.getElementById('submit-btn').innerText='अपडेट करें';openPortalModal('post-modal')}
-async function deleteNewsPost(id){if(!requireAdmin()||!confirm('क्या आप इस खबर को हटाना चाहते हैं?'))return;try{await db.collection('news_posts').doc(id).delete()}catch(_){alert('खबर हटाई नहीं जा सकी।')}}
-async function deleteJobAlert(id){if(!requireAdmin()||!confirm('क्या आप इस भर्ती अपडेट को हटाना चाहते हैं?'))return;try{await db.collection('job_alerts').doc(id).delete()}catch(_){alert('भर्ती अपडेट हटाया नहीं जा सका।')}}
-async function loadCitizenReports(){if(!requireAdmin())return;const c=document.getElementById('admin-reports-list');try{const s=await db.collection('citizen_reports').get();c.innerHTML=s.empty?'<p>कोई रिपोर्ट नहीं मिली।</p>':s.docs.map(d=>{const x=d.data();return `<div class="border rounded p-3"><b>${escapeHTML(x.name||'अज्ञात')}</b> 📍 ${escapeHTML(x.location||'')}<p>${escapeHTML(x.details||'')}</p></div>`}).join('')}catch(_){c.innerHTML='<p class="text-red-500">रिपोर्ट लोड नहीं हो सकी।</p>'}}
-async function handleCitizenSubmit(e){e.preventDefault();const b=document.getElementById('citizen-submit-btn');b.disabled=true;try{const name=document.getElementById('citizen-name').value.trim(),location=document.getElementById('citizen-location').value.trim(),details=document.getElementById('citizen-details').value.trim();if(!name||!location||!details||name.length>100||location.length>200||details.length>5000)throw new Error('इनपुट मान्य नहीं है।');await db.collection('citizen_reports').add({name,location,details,date:new Date().toLocaleDateString('hi-IN'),timestamp:firebase.firestore.FieldValue.serverTimestamp()});alert('आपकी खबर संपादक को भेज दी गई है!');closePortalModal('citizen-modal')}catch(_){alert('रिपोर्ट भेजी नहीं जा सकी।')}finally{b.disabled=false}}
-async function handleSecureAdminLogin(e){e.preventDefault();const b=document.getElementById('login-submit-btn');b.disabled=true;try{const email=document.getElementById('admin-email').value.trim(),password=document.getElementById('admin-password').value,c=await auth.signInWithEmailAndPassword(email,password);if(!(await verifyAdmin(c.user))){await auth.signOut();closePortalModal('admin-modal');alert('यह अकाउंट एडमिन के रूप में अधिकृत नहीं है।');return}closePortalModal('admin-modal');alert('एडमिन लॉगिन सफल!')}catch(err){console.error(err);alert('लॉगिन असफल। ईमेल/पासवर्ड जांचें।')}finally{b.disabled=false}}
-async function logoutAdmin(){await auth.signOut()}
-function filterNews(c){currentFilter=c;document.getElementById('current-category-title').innerText=c==='all'?'ताज़ा समाचार':c;renderNews()}
-function handleLiveSearch(){searchQuery=document.getElementById('search-input').value.toLowerCase().trim();renderNews()}
-function toggleDarkMode(){document.documentElement.classList.toggle('dark')}
-
-auth.onAuthStateChanged(async user=>{if(adminCheckInProgress)return;adminCheckInProgress=true;try{isAdminLoggedIn=await verifyAdmin(user);if(user&&!isAdminLoggedIn){await auth.signOut();isAdminLoggedIn=false}const bar=document.getElementById('admin-action-bar'),btn=document.getElementById('admin-login-btn');bar.style.display=isAdminLoggedIn?'flex':'none';btn.style.display=isAdminLoggedIn?'none':'flex';document.getElementById('admin-user-email').innerText=isAdminLoggedIn&&user?user.email:'';renderNews();renderJobAlerts()}finally{adminCheckInProgress=false}});
-
-function initApp(){
-    try {
-        const d = new Date();
-        document.getElementById('live-panchang').innerText = 'आज: ' + d.toLocaleDateString('hi-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    } catch (_) {}
-
-    db.collection('news_posts').onSnapshot(s => {
-        allNewsData = [];
-        s.forEach(d => {
-            const data = d.data();
-            allNewsData.push({ id: d.id, ...data, views: Number(data.views) || 0 });
-        });
-        allNewsData.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-        renderNews();
-        document.getElementById('breaking-ticker').innerText = allNewsData.filter(x => x.isBreaking).map(x => '🔴 ' + x.title).join(' ✦ ') || 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है...';
-    }, err => {
-        console.error("Firestore news error:", err);
-        document.getElementById('news-container').innerHTML = '<div class="col-span-2 text-center py-8 text-red-500 font-semibold">डेटाबेस से कनेक्ट नहीं हो सका। कृपया Firebase Rules चेक करें।</div>';
-    });
-    
-    db.collection('job_alerts').onSnapshot(s => {
-        allJobAlerts = [];
-        s.forEach(d => allJobAlerts.push({ id: d.id, ...d.data() }));
-        allJobAlerts.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-        renderJobAlerts();
-    }, err => {
-        console.error("Firestore jobs error:", err);
-        document.getElementById('job-alerts-list').innerHTML = '<p class="text-center text-xs text-red-400">अलर्ट लोड नहीं हो सके</p>';
-    });
-    
-    if (location.hash.startsWith('#news-')) {
-        setTimeout(() => openReadModal(decodeURIComponent(location.hash.slice(6)), false), 400);
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-} else {
-    initApp();
-}
-</script>
-</body>
-</html>
