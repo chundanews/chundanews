@@ -1,91 +1,185 @@
-<footer class="bg-gray-900 text-gray-300 border-t border-gray-800 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="md:col-span-1">
-                <h3 class="text-xl font-black text-red-500 mb-2">📰 CHUNDA KSHETRA NEWS</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">
-                    क्षेत्रीय, निष्पक्ष और सटीक समाचारों के लिए आपका विश्वसनीय डिजिटल मंच।
-                </p>
-                <div class="mt-4 flex gap-3 text-lg">
-                    <a href="https://wa.me/918003577576" target="_blank" class="text-emerald-500 hover:text-emerald-400"><i class="fa-brands fa-whatsapp"></i></a>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHUNDA KSHETRA NEWS</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom Modal Styling -->
+    <style>
+        .portal-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            z-index: 99999 !important;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        .portal-modal.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
+
+    <!-- मुख्य कंटेंट एरिया -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+        <!-- यहाँ आपकी बाकी वेबसाइट का कंटेंट/न्यूज कार्ड्स आएंगे -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 border-t border-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- कॉलम 1: ब्रांड परिचय -->
+                <div class="md:col-span-1">
+                    <h3 class="text-xl font-black text-red-500 mb-2">📰 CHUNDA KSHETRA NEWS</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        क्षेत्रीय, निष्पक्ष और सटीक समाचारों के लिए आपका विश्वसनीय डिजिटल मंच।
+                    </p>
+                    <div class="mt-4 flex gap-3 text-lg">
+                        <a href="https://wa.me/918003577576" target="_blank" class="text-emerald-500 hover:text-emerald-400">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- कॉलम 2: त्वरित लिंक -->
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">त्वरित लिंक</h4>
+                    <ul class="text-xs space-y-2">
+                        <li><button onclick="filterNews('all'); window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-red-400 transition-colors">मुख्य पृष्ठ</button></li>
+                        <li><button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400 transition-colors">शिक्षा व रोज़गार अलर्ट</button></li>
+                        <li><button onclick="openPortalModal('citizen-modal')" class="hover:text-yellow-400 transition-colors">नागरिक पत्रकार (खबर भेजें)</button></li>
+                    </ul>
+                </div>
+
+                <!-- कॉलम 3: नीति एवं नियम -->
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">नीति एवं नियम</h4>
+                    <ul class="text-xs space-y-2">
+                        <li><button onclick="openPortalModal('about-modal')" class="hover:text-red-400 transition-colors">हमारे बारे में (About Us)</button></li>
+                        <li><button onclick="openPortalModal('privacy-modal')" class="hover:text-red-400 transition-colors">गोपनीयता नीति (Privacy Policy)</button></li>
+                        <li><button onclick="openPortalModal('grievance-modal')" class="hover:text-red-400 transition-colors">शिकायत निवारण (Grievance)</button></li>
+                    </ul>
+                </div>
+
+                <!-- कॉलम 4: डिजिटल पार्टनर -->
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">डिजिटल पार्टनर</h4>
+                    <p class="text-xs font-semibold text-gray-200">MD CSC & DIGITAL SEVA CENTER</p>
+                    <p class="text-[11px] text-gray-400 mt-1">ई-मित्र सेवाएं, ऑनलाइन फॉर्म व सरकारी भर्ती सहायता।</p>
+                    <a href="https://wa.me/918003577576" target="_blank" class="inline-block mt-3 bg-emerald-700 hover:bg-emerald-600 text-white text-[11px] font-bold px-3 py-1.5 rounded transition-colors">
+                        <i class="fa-brands fa-whatsapp"></i> संपर्क करें
+                    </a>
                 </div>
             </div>
 
-            <div>
-                <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">त्वरित लिंक</h4>
-                <ul class="text-xs space-y-2">
-                    <li><button onclick="filterNews('all'); window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-red-400">मुख्य पृष्ठ</button></li>
-                    <li><button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400">शिक्षा व रोज़गार अलर्ट</button></li>
-                    <li><button onclick="openPortalModal('citizen-modal')" class="hover:text-yellow-400">नागरिक पत्रकार (खबर भेजें)</button></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">नीति एवं नियम</h4>
-                <ul class="text-xs space-y-2">
-                    <li><button onclick="openPortalModal('about-modal')" class="hover:text-red-400">हमारे बारे में (About Us)</button></li>
-                    <li><button onclick="openPortalModal('privacy-modal')" class="hover:text-red-400">गोपनीयता नीति (Privacy Policy)</button></li>
-                    <li><button onclick="openPortalModal('grievance-modal')" class="hover:text-red-400">शिकायत निवारण (Grievance)</button></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">डिजिटल पार्टनर</h4>
-                <p class="text-xs font-semibold text-gray-200">MD CSC & DIGITAL SEVA CENTER</p>
-                <p class="text-[11px] text-gray-400 mt-1">ई-मित्र सेवाएं, ऑनलाइन फॉर्म व सरकारी भर्ती सहायता।</p>
-                <a href="https://wa.me/918003577576" target="_blank" class="inline-block mt-3 bg-emerald-700 hover:bg-emerald-600 text-white text-[11px] font-bold px-3 py-1.5 rounded">
-                    <i class="fa-brands fa-whatsapp"></i> संपर्क करें
-                </a>
+            <!-- कॉपीराइट बार -->
+            <div class="border-t border-gray-800 mt-8 pt-4 flex flex-col sm:flex-row justify-between items-center text-[11px] text-gray-500">
+                <p>© 2026 CHUNDA KSHETRA NEWS. सर्वाधिकार सुरक्षित।</p>
+                <p class="mt-2 sm:mt-0">सटीक • निष्पक्ष • स्थानीय आवाज़</p>
             </div>
         </div>
+    </footer>
 
-        <div class="border-t border-gray-800 mt-8 pt-4 flex flex-col sm:flex-row justify-between items-center text-[11px] text-gray-500">
-            <p>© 2026 CHUNDA KSHETRA NEWS. सर्वाधिकार सुरक्षित।</p>
-            <p class="mt-2 sm:mt-0">सटीक • निष्पक्ष • स्थानीय आवाज़</p>
+    <!-- About Us Modal -->
+    <div id="about-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
+            <button onclick="closePortalModal('about-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
+            <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">हमारे बारे में (About Us)</h3>
+            <p class="mb-2"><strong>CHUNDA KSHETRA NEWS</strong> एक स्वतंत्र डिजिटल समाचार मंच है जिसका मुख्य उद्देश्य स्थानीय और क्षेत्रीय घटनाओं, जनसमस्याओं, शिक्षा, रोज़गार तथा कृषि संबंधी समाचारों को निष्पक्षता और सटीकता के साथ पाठकों तक पहुँचाना है।</p>
+            <p class="mb-2">हम ग्रामीण एवं कस्बाई क्षेत्रों की आवाज़ को प्रमुखता से उठाते हैं और डिजिटल जागरूकता को बढ़ावा देने के लिए प्रतिबद्ध हैं।</p>
+            <div class="mt-4 bg-gray-100 dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700">
+                <p class="font-semibold text-gray-900 dark:text-white">तकनीकी व डिजिटल सहयोग:</p>
+                <p class="text-gray-600 dark:text-gray-300">MD CSC & Digital Seva Center</p>
+            </div>
         </div>
     </div>
-</footer>
 
-<div id="about-modal" class="portal-modal">
-    <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative">
-        <button onclick="closePortalModal('about-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-lg font-bold">✕</button>
-        <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">हमारे बारे में (About Us)</h3>
-        <p class="mb-2"><strong>CHUNDA KSHETRA NEWS</strong> एक स्वतंत्र डिजिटल समाचार मंच है जिसका मुख्य उद्देश्य स्थानीय और क्षेत्रीय घटनाओं, जनसमस्याओं, शिक्षा, रोज़गार तथा कृषि संबंधी समाचारों को निष्पक्षता और सटीकता के साथ पाठकों तक पहुँचाना है।</p>
-        <p class="mb-2">हम ग्रामीण एवं कस्बाई क्षेत्रों की आवाज़ को प्रमुखता से उठाते हैं और डिजिटल जागरूकता को बढ़ावा देने के लिए प्रतिबद्ध हैं।</p>
-        <div class="mt-4 bg-gray-100 dark:bg-gray-800 p-3 rounded">
-            <p class="font-semibold text-gray-900 dark:text-white">तकनीकी व डिजिटल सहयोग:</p>
-            <p class="text-gray-600 dark:text-gray-300">MD CSC & Digital Seva Center</p>
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
+            <button onclick="closePortalModal('privacy-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
+            <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">गोपनीयता नीति (Privacy Policy)</h3>
+            <p class="mb-2">आपकी गोपनीयता हमारे लिए अत्यंत महत्वपूर्ण है। यह नीति स्पष्ट करती है कि हम पोर्टल के माध्यम से डेटा कैसे संभालते हैं:</p>
+            <ul class="list-disc pl-4 space-y-1 mb-3">
+                <li><strong>नागरिक पत्रकार डेटा:</strong> जब आप 'खबर भेजें' फ़ॉर्म भरते हैं, तो आपका नाम और विवरण केवल समाचार सत्यापन और संपादक से संपर्क के उद्देश्य से उपयोग किया जाता है।</li>
+                <li><strong>एनालिटिक्स:</strong> वेबसाइट के प्रदर्शन और ट्रैफ़िक को समझने के लिए मानक Google Analytics (gtag) कुकीज़ का उपयोग किया जाता है।</li>
+                <li><strong>डेटा सुरक्षा:</strong> हम किसी भी उपयोगकर्ता की व्यक्तिगत जानकारी को किसी तीसरे पक्ष के साथ साझा या विक्रय नहीं करते हैं।</li>
+            </ul>
+            <p>इस नीति में किसी भी बदलाव की स्थिति में पृष्ठ को समय-समय पर अपडेट किया जाएगा।</p>
         </div>
     </div>
-</div>
 
-<div id="privacy-modal" class="portal-modal">
-    <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative">
-        <button onclick="closePortalModal('privacy-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-lg font-bold">✕</button>
-        <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">गोपनीयता नीति (Privacy Policy)</h3>
-        <p class="mb-2">आपकी गोपनीयता हमारे लिए अत्यंत महत्वपूर्ण है। यह नीति स्पष्ट करती है कि हम पोर्टल के माध्यम से डेटा कैसे संभालते हैं:</p>
-        <ul class="list-disc pl-4 space-y-1 mb-3">
-            <li><strong>नागरिक पत्रकार डेटा:</strong> जब आप 'खबर भेजें' फ़ॉर्म भरते हैं, तो आपका नाम और विवरण केवल समाचार सत्यापन और संपादक से संपर्क के उद्देश्य से उपयोग किया जाता है।</li>
-            <li><strong>एनालिटिक्स:</strong> वेबसाइट के प्रदर्शन और ट्रैफ़िक को समझने के लिए मानक Google Analytics (gtag) कुकीज़ का उपयोग किया जाता है।</li>
-            <li><strong>डेटा सुरक्षा:</strong> हम किसी भी उपयोगकर्ता की व्यक्तिगत जानकारी को किसी तीसरे पक्ष के साथ साझा या विक्रय नहीं करते हैं।</li>
-        </ul>
-        <p>इस नीति में किसी भी बदलाव की स्थिति में पृष्ठ को समय-समय पर अपडेट किया जाएगा।</p>
-    </div>
-</div>
+    <!-- Grievance Modal -->
+    <div id="grievance-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
+            <button onclick="closePortalModal('grievance-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
+            <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">शिकायत निवारण तंत्र (Grievance Redressal)</h3>
+            <p class="mb-3">डिजिटल मीडिया आचार संहिता और निष्पक्ष पत्रकारिता के मानकों के तहत, यदि आपको पोर्टल पर प्रकाशित किसी भी सामग्री या समाचार से संबंधित कोई आपत्ति या शिकायत है, तो आप हमारे शिकायत निवारण अधिकारी से संपर्क कर सकते हैं:</p>
+            
+            <div class="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded p-3 space-y-1.5 mb-3">
+                <p><strong>पद:</strong> शिकायत निवारण अधिकारी / संपादक</p>
+                <p><strong>पोर्टल:</strong> CHUNDA KSHETRA NEWS</p>
+                <p><strong>हेल्पलाइन / WhatsApp:</strong> +91 80035 77576</p>
+                <p><strong>निवारण अवधि:</strong> शिकायत प्राप्त होने के 24 से 48 कार्य घंटों के भीतर समीक्षा एवं आवश्यक सुधार।</p>
+            </div>
 
-<div id="grievance-modal" class="portal-modal">
-    <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative">
-        <button onclick="closePortalModal('grievance-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-lg font-bold">✕</button>
-        <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">शिकायत निवारण तंत्र (Grievance Redressal)</h3>
-        <p class="mb-3">डिजिटल मीडिया आचार संहिता और निष्पक्ष पत्रकारिता के मानकों के तहत, यदि आपको पोर्टल पर प्रकाशित किसी भी सामग्री या समाचार से संबंधित कोई आपत्ति या शिकायत है, तो आप हमारे शिकायत निवारण अधिकारी से संपर्क कर सकते हैं:</p>
-        
-        <div class="bg-gray-50 dark:bg-gray-800 border rounded p-3 space-y-1.5 mb-3">
-            <p><strong>पद:</strong> शिकायत निवारण अधिकारी / संपादक</p>
-            <p><strong>पोर्टल:</strong> CHUNDA KSHETRA NEWS</p>
-            <p><strong>हेल्पलाइन / WhatsApp:</strong> +91 80035 77576</p>
-            <p><strong>निवारण अवधि:</strong> शिकायत प्राप्त होने के 24 से 48 कार्य घंटों के भीतर समीक्षा एवं आवश्यक सुधार।</p>
+            <p class="text-[11px] text-gray-500">कृपया शिकायत भेजते समय समाचार का शीर्षक, लिंक और अपनी आपत्ति का स्पष्ट कारण अवश्य बताएं।</p>
         </div>
-
-        <p class="text-[11px] text-gray-500">कृपया शिकायत भेजते समय समाचार का शीर्षक, लिंक और अपनी आपत्ति का स्पष्ट कारण अवश्य बताएं।</p>
     </div>
-</div>
+
+    <!-- Citizen Journalist Modal -->
+    <div id="citizen-modal" class="portal-modal">
+        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
+            <button onclick="closePortalModal('citizen-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
+            <h3 class="text-base font-bold text-yellow-600 mb-3 border-b pb-2">नागरिक पत्रकार (खबर भेजें)</h3>
+            <p class="mb-3">क्या आपके क्षेत्र में कोई जनसमस्या, घटना या महत्वपूर्ण समाचार है? सीधे हमें WhatsApp पर भेजें:</p>
+            <a href="https://wa.me/918003577576" target="_blank" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded">
+                <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp पर समाचार भेजें
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript Functions for Modals & News Filter -->
+    <script>
+        function openPortalModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closePortalModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // मोडल के बाहर डार्क एरिया पर क्लिक करने पर बंद करने के लिए
+        window.onclick = function(event) {
+            if (event.target.classList.contains('portal-modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+
+        function filterNews(category) {
+            console.log("Filtering news for:", category);
+            // यहाँ आपका न्यूज़ फ़िल्टर लॉजिक जुड़ेगा
+        }
+    </script>
+</body>
+</html>
