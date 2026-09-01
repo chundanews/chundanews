@@ -1,248 +1,230 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N7CHP0LVYX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-N7CHP0LVYX');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHUNDA KSHETRA NEWS</title>
+    <title>CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार</title>
+    <meta name="theme-color" content="#dc2626">
 
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome Icons CDN -->
+    <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Custom Styling & Animations -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
     <style>
-        @keyframes tickerMotion {
-            0% { transform: translate3d(100%, 0, 0); }
-            100% { transform: translate3d(-100%, 0, 0); }
-        }
-        .animate-ticker {
-            display: inline-block;
-            white-space: nowrap;
-            padding-left: 100%;
-            animation: tickerMotion 30s linear infinite;
-        }
-        .animate-ticker:hover {
-            animation-play-state: paused;
-        }
-        .portal-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.8) !important;
-            z-index: 99999 !important;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-        .portal-modal.active {
-            display: flex;
-        }
+        @keyframes tickerMotion { 0% { transform: translate3d(100%,0,0); } 100% { transform: translate3d(-100%,0,0); } }
+        .animate-ticker { display:inline-block; white-space:nowrap; padding-left:100%; animation:tickerMotion 32s linear infinite; }
+        .animate-ticker:hover { animation-play-state:paused; }
+        .portal-modal { display:none; position:fixed; inset:0; width:100vw; height:100vh; background-color:rgba(0,0,0,.85)!important; z-index:999999!important; align-items:center; justify-content:center; padding:1rem; overflow-y:auto; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .ad-banner-box { background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 10px, #f1f5f9 10px, #f1f5f9 20px); }
+        .dark .ad-banner-box { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px); }
+        @media print { body * { visibility:hidden; } #read-modal-card,#read-modal-card * { visibility:visible; } #read-modal-card { position:absolute; left:0; top:0; width:100%; box-shadow:none; border:none; } .no-print { display:none!important; } }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
-    <!-- Top Header -->
-    <header class="bg-red-700 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-2">
+<div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width:0%"></div>
+
+<div class="bg-gray-950 text-gray-300 text-[11px] py-1 px-4 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center gap-4">
+            <span id="live-panchang"><i class="fa-regular fa-calendar-days text-red-500 mr-1"></i> पंचांग लोड हो रहा है...</span>
+            <span class="hidden sm:inline text-gray-600">|</span>
+            <span><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर / ऋषभदेव: 28°C</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="startAiVoiceBulletin()" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
+                <i class="fa-solid fa-robot"></i> 🎙️ AI बुलेटिन सुनें
+            </button>
+            <button onclick="openPortalModal('citizen-modal')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-0.5 rounded font-semibold text-[10px]">
+                ✍️ खबर भेजें
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="bg-red-700 text-white py-1 px-4 text-xs flex items-center shadow-inner overflow-hidden">
+    <span class="bg-black text-[11px] font-black px-2 py-0.5 rounded mr-3 shrink-0 uppercase tracking-wider flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> ब्रेकिंग
+    </span>
+    <div class="overflow-hidden whitespace-nowrap w-full">
+        <div id="breaking-ticker" class="animate-ticker font-medium text-white">
+            चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...
+        </div>
+    </div>
+</div>
+
+<div class="bg-amber-600 text-white py-1 px-4 text-[11px] flex items-center overflow-hidden">
+    <span class="bg-amber-950 text-[10px] font-bold px-2 py-0.5 rounded mr-2 shrink-0">📈 ई-मंडी भाव</span>
+    <div class="overflow-hidden whitespace-nowrap w-full">
+        <div id="live-mandi-ticker" class="animate-ticker">
+            गेहूं: ₹2,480-2,820/क्विं. | मक्का: ₹2,150-2,380/क्विं. | सरसों: ₹5,150-5,480/क्विं. | चना: ₹5,800-6,100/क्विं. | सोयाबीन: ₹4,300-4,600/क्विं.
+        </div>
+    </div>
+</div>
+
+<header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="filterNews('all')">
+            <div class="bg-red-700 text-white w-14 h-14 rounded-xl flex items-center justify-center shadow-lg border-2 border-red-500">
+                <i class="fa-solid fa-newspaper text-3xl"></i>
+            </div>
             <div>
-                <h1 class="text-2xl md:text-3xl font-black tracking-wider">📰 CHUNDA KSHETRA NEWS</h1>
-                <p class="text-xs text-red-100 font-medium">सटीक • निष्पक्ष • क्षेत्रीय डिजिटल समाचार मंच</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="openPortalModal('citizen-modal')" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold text-xs px-3 py-2 rounded shadow transition">
-                    ✍️ खबर भेजें (नागरिक पत्रकार)
-                </button>
+                <h1 class="text-3xl md:text-4xl font-black tracking-tight text-gray-900 dark:text-white leading-none">
+                    CHUNDA <span class="text-red-600">KSHETRA</span> NEWS
+                </h1>
+                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-bold tracking-widest uppercase mt-1">
+                    सटीक • निष्पक्ष • क्षेत्रीय डिजिटल समाचार नेटवर्क
+                </p>
             </div>
         </div>
 
-        <!-- Breaking News Ticker -->
-        <div class="bg-gray-900 text-yellow-400 py-1.5 px-4 text-xs flex items-center overflow-hidden border-t border-red-800">
-            <span class="bg-red-600 text-white font-bold px-2 py-0.5 rounded mr-3 shrink-0">🔴 ब्रेकिंग</span>
-            <div class="overflow-hidden whitespace-nowrap w-full">
-                <div class="animate-ticker font-medium text-gray-200">
-                    चुंडा क्षेत्र न्यूज़ पर आपका स्वागत है — ताज़ा समाचार, शिक्षा, रोज़गार व सरकारी योजनाओं की जानकारी के लिए जुड़े रहें!
-                </div>
+        <div class="w-full md:w-[500px] lg:w-[650px] h-20 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center ad-banner-box text-gray-400 text-xs text-center p-2 relative overflow-hidden">
+            <span class="absolute top-1 right-2 text-[9px] bg-gray-200 dark:bg-gray-800 text-gray-500 px-1 rounded">Sponsored / AdSense</span>
+            <div>
+                <p class="font-bold text-gray-700 dark:text-gray-300">व्यापार विज्ञापन एवं शुभकामना संदेश हेतु संपर्क करें</p>
+                <p class="text-[10px] text-gray-500">728x90 Header Display Banner Space</p>
             </div>
         </div>
-    </header>
 
-    <!-- Navigation Bar -->
-    <nav class="bg-white dark:bg-gray-900 shadow-sm border-b dark:border-gray-800 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 flex gap-4 overflow-x-auto py-2.5 text-xs font-bold text-gray-700 dark:text-gray-200">
-            <button onclick="filterNews('all')" class="hover:text-red-600 shrink-0">मुख्य पृष्ठ</button>
-            <button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-600 shrink-0">क्षेत्रीय समाचार</button>
-            <button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-600 shrink-0">शिक्षा व रोज़गार</button>
-            <button onclick="filterNews('कृषि व मौसम')" class="hover:text-red-600 shrink-0">कृषि व मौसम</button>
-            <button onclick="filterNews('जनसमस्याएं')" class="hover:text-red-600 shrink-0">जनसमस्याएं</button>
+        <div class="flex items-center gap-2">
+            <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
+            <button id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
+                🔒 एडमिन लॉगिन
+            </button>
+        </div>
+    </div>
+
+    <nav class="bg-gray-950 text-gray-200 border-t border-gray-800 sticky top-0 z-40 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+            <div class="flex overflow-x-auto gap-4 md:gap-6 py-2.5 text-xs font-bold whitespace-nowrap">
+                <button onclick="filterNews('all')" class="hover:text-red-500 transition">सभी खबरें</button>
+                <button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-500 transition">क्षेत्रीय</button>
+                <button onclick="filterNews('तहसील समाचार')" class="hover:text-red-500 transition">तहसील समाचार</button>
+                <button onclick="filterNews('ज़िला समाचार')" class="hover:text-red-500 transition">ज़िला समाचार</button>
+                <button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-500 transition">शिक्षा व रोज़गार</button>
+                <button onclick="filterNews('राजनीति')" class="hover:text-red-500 transition">राजनीति</button>
+                <button onclick="filterNews('कृषि व मौसम')" class="hover:text-red-500 transition">कृषि व मौसम</button>
+                <button onclick="filterNews('खेल (Sports)')" class="hover:text-red-500 transition">खेल</button>
+                <button onclick="filterNews('देश-विदेश')" class="hover:text-red-500 transition">देश-विदेश</button>
+            </div>
+            <div class="hidden lg:block relative w-48 ml-4">
+                <input type="text" id="search-input" oninput="handleLiveSearch()" placeholder="खबर खोजें..." class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
+                <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2 text-gray-400 text-xs"></i>
+            </div>
         </div>
     </nav>
+</header>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- मुख्य समाचार कार्ड -->
-            <div class="md:col-span-2 bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
-                <span class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-[11px] font-bold px-2.5 py-1 rounded">ताज़ा अपडेट</span>
-                <h2 class="text-xl font-bold mt-3 mb-2 text-gray-900 dark:text-white">पोर्टल पर नई खबरें जल्द ही लाइव की जा रही हैं</h2>
-                <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-                    क्षेत्र की ताज़ा घटनाओं और जनहित से जुड़ी खबरों को पढ़ने के लिए नियमित रूप से विजिट करें।
-                </p>
+<div class="max-w-7xl mx-auto px-4 pt-4 w-full">
+    <div class="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 text-white rounded-xl p-3 shadow-md flex flex-wrap items-center justify-between gap-3 border border-indigo-800">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="bg-yellow-400 text-black text-[10px] font-black px-1.5 py-0.5 rounded">DIGITAL PARTNER</span>
+                <b class="text-sm">MD CSC & DIGITAL SEVA CENTER (कल्याणपुर)</b>
             </div>
-
-            <!-- साइडबार विजेट -->
-            <div class="bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
-                <h3 class="text-sm font-bold border-b pb-2 mb-3 text-red-600">डिजिटल सेवा केंद्र</h3>
-                <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                    ई-मित्र, ऑनलाइन फॉर्म व भर्ती सहायता के लिए संपर्क करें।
-                </p>
-                <a href="https://wa.me/918003577576" target="_blank" class="block text-center bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs py-2 rounded">
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp पर पूछें
-                </a>
-            </div>
+            <p class="text-xs text-blue-200 mt-0.5">ई-मित्र सेवाएं, ऑनलाइन भर्ती फॉर्म, AEPS बैंक निकासी, PVC कार्ड व सभी डिजिटल सेवाएं उपलब्ध।</p>
         </div>
-    </main>
+        <a href="https://wa.me/918003577576" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+            <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp सेवा
+        </a>
+    </div>
+</div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 border-t border-gray-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- ब्रांड परिचय -->
-                <div class="md:col-span-1">
-                    <h3 class="text-xl font-black text-red-500 mb-2">📰 CHUNDA KSHETRA NEWS</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        क्षेत्रीय, निष्पक्ष और सटीक समाचारों के लिए आपका विश्वसनीय डिजिटल मंच।
-                    </p>
-                    <div class="mt-4 flex gap-3 text-lg">
-                        <a href="https://wa.me/918003577576" target="_blank" class="text-emerald-500 hover:text-emerald-400">
-                            <i class="fa-brands fa-whatsapp"></i>
-                        </a>
+<div id="admin-action-bar" style="display:none" class="bg-emerald-800 text-white px-4 py-2.5 flex flex-wrap justify-between items-center gap-2 shadow-md">
+    <div class="flex items-center gap-2 text-xs">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+        <b>एडमिन कंसोल: <span id="admin-user-email" class="font-normal text-emerald-200"></span></b>
+    </div>
+    <div class="flex flex-wrap gap-2 text-xs">
+        <button onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
+        <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
+        <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
+        <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500">📥 प्राप्त रिपोर्ट</button>
+        <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
+    </div>
+</div>
+
+<main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+    
+    <section id="lead-news-section" class="mb-8 hidden">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
+            <div class="lg:col-span-7 relative h-72 sm:h-96 bg-black">
+                <img id="lead-image" class="w-full h-full object-cover cursor-pointer" onclick="openLeadModal()">
+                <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                    ⭐ प्रमुख समाचार (LEAD STORY)
+                </div>
+            </div>
+            <div class="lg:col-span-5 p-6 flex flex-col justify-between">
+                <div>
+                    <span id="lead-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2.5 py-0.5 rounded"></span>
+                    <h2 id="lead-title" class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600" onclick="openLeadModal()"></h2>
+                    <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 my-3">
+                        <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-bold text-gray-700 dark:text-gray-300">
+                            🎤 <span class="text-red-600">CKN</span> <span id="lead-reporter"></span>
+                        </span>
+                        <span id="lead-date"></span>
                     </div>
+                    <p id="lead-excerpt" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3"></p>
                 </div>
-
-                <!-- त्वरित लिंक -->
-                <div>
-                    <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">त्वरित लिंक</h4>
-                    <ul class="text-xs space-y-2">
-                        <li><button onclick="filterNews('all'); window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-red-400 transition-colors">मुख्य पृष्ठ</button></li>
-                        <li><button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400 transition-colors">शिक्षा व रोज़गार अलर्ट</button></li>
-                        <li><button onclick="openPortalModal('citizen-modal')" class="hover:text-yellow-400 transition-colors">नागरिक पत्रकार (खबर भेजें)</button></li>
-                    </ul>
-                </div>
-
-                <!-- नीति एवं नियम -->
-                <div>
-                    <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">नीति एवं नियम</h4>
-                    <ul class="text-xs space-y-2">
-                        <li><button onclick="openPortalModal('about-modal')" class="hover:text-red-400 transition-colors">हमारे बारे में (About Us)</button></li>
-                        <li><button onclick="openPortalModal('privacy-modal')" class="hover:text-red-400 transition-colors">गोपनीयता नीति (Privacy Policy)</button></li>
-                        <li><button onclick="openPortalModal('grievance-modal')" class="hover:text-red-400 transition-colors">शिकायत निवारण (Grievance)</button></li>
-                    </ul>
-                </div>
-
-                <!-- डिजिटल पार्टनर -->
-                <div>
-                    <h4 class="text-sm font-bold text-white mb-3 border-b border-gray-700 pb-1">डिजिटल पार्टनर</h4>
-                    <p class="text-xs font-semibold text-gray-200">MD CSC & DIGITAL SEVA CENTER</p>
-                    <p class="text-[11px] text-gray-400 mt-1">ई-मित्र सेवाएं, ऑनलाइन फॉर्म व सरकारी भर्ती सहायता।</p>
-                    <a href="https://wa.me/918003577576" target="_blank" class="inline-block mt-3 bg-emerald-700 hover:bg-emerald-600 text-white text-[11px] font-bold px-3 py-1.5 rounded transition-colors">
-                        <i class="fa-brands fa-whatsapp"></i> संपर्क करें
-                    </a>
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <button id="lead-read-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
+                        पूरी खबर पढ़ें →
+                    </button>
+                    <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp"></i> शेयर
+                    </button>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- कॉपीराइट -->
-            <div class="border-t border-gray-800 mt-8 pt-4 flex flex-col sm:flex-row justify-between items-center text-[11px] text-gray-500">
-                <p>© 2026 CHUNDA KSHETRA NEWS. सर्वाधिकार सुरक्षित।</p>
-                <p class="mt-2 sm:mt-0">सटीक • निष्पक्ष • स्थानीय आवाज़</p>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-8">
+            <div class="flex justify-between items-center border-b-2 border-red-600 pb-2 mb-6">
+                <h2 id="current-category-title" class="text-xl font-black tracking-tight text-gray-900 dark:text-white uppercase flex items-center gap-2">
+                    <span class="w-3 h-3 bg-red-600 rounded-sm"></span> ताज़ा समाचार
+                </h2>
+                <span id="news-count" class="text-xs bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 px-2.5 py-1 rounded-full font-bold">0 खबरें</span>
+            </div>
+
+            <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="col-span-2 text-center py-12 text-gray-500">समाचार लोड हो रहे हैं...</div>
+            </div>
+
+            <div class="my-8 p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-800 ad-banner-box text-center relative">
+                <span class="absolute top-1 right-2 text-[9px] bg-gray-200 dark:bg-gray-800 text-gray-500 px-1 rounded">AdSense In-Feed</span>
+                <p class="text-xs font-bold text-gray-700 dark:text-gray-300">स्थानीय दुकान, संस्थान एवं प्रतिष्ठान का प्रचार यहाँ कराएं</p>
+                <p class="text-[11px] text-gray-500 mt-1">In-Feed Responsive Display Banner</p>
             </div>
         </div>
-    </footer>
 
-    <!-- About Us Modal -->
-    <div id="about-modal" class="portal-modal">
-        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
-            <button onclick="closePortalModal('about-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
-            <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">हमारे बारे में (About Us)</h3>
-            <p class="mb-2"><strong>CHUNDA KSHETRA NEWS</strong> एक स्वतंत्र डिजिटल समाचार मंच है जिसका मुख्य उद्देश्य स्थानीय और क्षेत्रीय घटनाओं, जनसमस्याओं, शिक्षा, रोज़गार तथा कृषि संबंधी समाचारों को निष्पक्षता और सटीकता के साथ पाठकों तक पहुँचाना है।</p>
-            <p class="mb-2">हम ग्रामीण एवं कस्बाई क्षेत्रों की आवाज़ को प्रमुखता से उठाते हैं और डिजिटल जागरूकता को बढ़ावा देने के लिए प्रतिबद्ध हैं।</p>
-            <div class="mt-4 bg-gray-100 dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700">
-                <p class="font-semibold text-gray-900 dark:text-white">तकनीकी व डिजिटल सहयोग:</p>
-                <p class="text-gray-600 dark:text-gray-300">MD CSC & Digital Seva Center</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Privacy Policy Modal -->
-    <div id="privacy-modal" class="portal-modal">
-        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
-            <button onclick="closePortalModal('privacy-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
-            <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">गोपनीयता नीति (Privacy Policy)</h3>
-            <p class="mb-2">आपकी गोपनीयता हमारे लिए अत्यंत महत्वपूर्ण है। यह नीति स्पष्ट करती है कि हम पोर्टल के माध्यम से डेटा कैसे संभालते हैं:</p>
-            <ul class="list-disc pl-4 space-y-1 mb-3">
-                <li><strong>नागरिक पत्रकार डेटा:</strong> जब आप 'खबर भेजें' फ़ॉर्म भरते हैं, तो आपका नाम और विवरण केवल समाचार सत्यापन और संपादक से संपर्क के उद्देश्य से उपयोग किया जाता है।</li>
-                <li><strong>एनालिटिक्स:</strong> वेबसाइट के प्रदर्शन और ट्रैफ़िक को समझने के लिए मानक Google Analytics (gtag) कुकीज़ का उपयोग किया जाता है।</li>
-                <li><strong>डेटा सुरक्षा:</strong> हम किसी भी उपयोगकर्ता की व्यक्तिगत जानकारी को किसी तीसरे पक्ष के साथ साझा या विक्रय नहीं करते हैं।</li>
-            </ul>
-            <p>इस नीति में किसी भी बदलाव की स्थिति में पृष्ठ को समय-समय पर अपडेट किया जाएगा।</p>
-        </div>
-    </div>
-
-    <!-- Grievance Modal -->
-    <div id="grievance-modal" class="portal-modal">
-        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
-            <button onclick="closePortalModal('grievance-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
-            <h3 class="text-base font-bold text-red-600 mb-3 border-b pb-2">शिकायत निवारण तंत्र (Grievance Redressal)</h3>
-            <p class="mb-3">डिजिटल मीडिया आचार संहिता और निष्पक्ष पत्रकारिता के मानकों के तहत, यदि आपको पोर्टल पर प्रकाशित किसी भी सामग्री या समाचार से संबंधित कोई आपत्ति या शिकायत है, तो आप हमारे शिकायत निवारण अधिकारी से संपर्क कर सकते हैं:</p>
+        <aside class="lg:col-span-4 space-y-6">
             
-            <div class="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded p-3 space-y-1.5 mb-3">
-                <p><strong>पद:</strong> शिकायत निवारण अधिकारी / संपादक</p>
-                <p><strong>पोर्टल:</strong> CHUNDA KSHETRA NEWS</p>
-                <p><strong>हेल्पलाइन / WhatsApp:</strong> +91 80035 77576</p>
-                <p><strong>निवारण अवधि:</strong> शिकायत प्राप्त होने के 24 से 48 कार्य घंटों के भीतर समीक्षा एवं आवश्यक सुधार।</p>
+            <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 shadow-sm">
+                <div class="bg-gradient-to-r from-red-600 to-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-black flex items-center justify-between mb-3">
+                    <span>🏏 क्षेत्रीय खेल / टूर्नामेंट स्कोर</span>
+                    <span class="bg-white text-red-700 px-1.5 py-0.2 rounded text-[9px] animate-pulse">LIVE</span>
+                </div>
+                <div id="live-score-box" class="text-xs text-center py-2 bg-gray-50 dark:bg-gray-800/50 rounded border border-gray-100 dark:border-gray-800">
+                    <p class="font-bold text-gray-800 dark:text-gray-200" id="match-title">क्षेत्रीय प्रीमियर लीग</p>
+                    <p class="text-sm font-black text-red-600 my-1" id="match-score">स्कोर उपलब्ध नहीं</p>
+                    <p class="text-[10px] text-gray-500" id="match-status">लाइव अपडेट्स के लिए बने रहें</p>
+                </div>
             </div>
 
-            <p class="text-[11px] text-gray-500">कृपया शिकायत भेजते समय समाचार का शीर्षक, लिंक और अपनी आपत्ति का स्पष्ट कारण अवश्य बताएं।</p>
-        </div>
-    </div>
-
-    <!-- Citizen Journalist Modal -->
-    <div id="citizen-modal" class="portal-modal">
-        <div class="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full p-6 text-gray-800 dark:text-gray-200 text-xs leading-relaxed max-h-[85vh] overflow-y-auto relative shadow-2xl border border-gray-700">
-            <button onclick="closePortalModal('citizen-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-lg font-bold">✕</button>
-            <h3 class="text-base font-bold text-yellow-600 mb-3 border-b pb-2">नागरिक पत्रकार (खबर भेजें)</h3>
-            <p class="mb-3">क्या आपके क्षेत्र में कोई जनसमस्या, घटना या महत्वपूर्ण समाचार है? सीधे हमें WhatsApp पर भेजें:</p>
-            <a href="https://wa.me/918003577576" target="_blank" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded">
-                <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp पर समाचार भेजें
-            </a>
-        </div>
-    </div>
-
-    <!-- JavaScript Functions -->
-    <script>
-        function openPortalModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.add('active');
-        }
-
-        function closePortalModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.remove('active');
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('portal-modal')) {
-                event.target.classList.remove('active');
-            }
-        };
-
-        function filterNews(category) {
-            console.log("Filtering news for:", category);
-        }
-    </script>
-</body>
-</html>
+            <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark
