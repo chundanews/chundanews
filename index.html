@@ -136,7 +136,7 @@
                 <span class="bg-yellow-400 text-black text-[10px] font-black px-1.5 py-0.5 rounded">DIGITAL PARTNER</span>
                 <b class="text-sm">MD CSC & DIGITAL SEVA CENTER (कल्याणपुर)</b>
             </div>
-            <p class="text-xs text-blue-200 mt-0.5">ई-मित्र सेवाएं, ऑनलाइन भर्ती फॉर्म, AEPS बैंक निकासी, PVC कार्ड व सभी डिजिटल सेवाएं उपलब्ध।</p>
+            <p class="text-xs text-blue-200 mt-0.5">ई-मित्र सेवाएं, ऑनलाइन भर्ती फॉर्म, बैंक निकासी, PVC कार्ड व सभी डिजिटल सेवाएं उपलब्ध।</p>
         </div>
         <a href="https://wa.me/918003577576" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
             <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp सेवा
@@ -176,6 +176,7 @@
                             🎤 <span class="text-red-600">CKN</span> <span id="lead-reporter"></span>
                         </span>
                         <span id="lead-date"></span>
+                        <span id="lead-views" class="ml-2 text-gray-400"></span>
                     </div>
                     <p id="lead-excerpt" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3"></p>
                 </div>
@@ -301,9 +302,6 @@
     </div>
 </footer>
 
-<!-- Modals Section -->
-
-<!-- 1. Post News Modal -->
 <div id="post-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-800">
         <h3 id="post-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नई खबर पोस्ट करें</h3>
@@ -332,7 +330,6 @@
             <div id="image-preview-box" class="flex gap-2 flex-wrap hidden"></div>
             
             <input type="url" id="news-image" placeholder="या इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
-            <input type="url" id="news-video" placeholder="शॉर्ट वीडियो URL / YouTube Embed (वैकल्पिक)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             
             <textarea id="news-content" rows="5" required placeholder="समाचार का पूरा विवरण" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2"></textarea>
             
@@ -349,7 +346,6 @@
     </div>
 </div>
 
-<!-- 2. Job Alert Modal -->
 <div id="job-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
@@ -360,13 +356,12 @@
             <input type="url" id="job-link" placeholder="अप्लाई करने का लिंक (https://...)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
                 <button type="button" onclick="closePortalModal('job-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
-                <button type="submit" class="bg-indigo-600 text-white px-5 py-1.5 rounded font-bold">सेव करें</button>
+                <button type="submit" id="job-submit-btn" class="bg-indigo-600 text-white px-5 py-1.5 rounded font-bold">सेव करें</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- 3. Live Score Update Modal -->
 <div id="score-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
@@ -382,7 +377,6 @@
     </div>
 </div>
 
-<!-- 4. Citizen Reporter Modal -->
 <div id="citizen-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
@@ -390,17 +384,16 @@
         <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
             <input type="text" id="citizen-name" required placeholder="आपका शुभ नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="tel" id="citizen-phone" required placeholder="मोबाइल नंबर" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
-            <input type="text" id="citizen-area" required placeholder="गाँव / शहर का नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+            <input type="text" id="citizen-area" required placeholder="स्थान / गाँव का नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <textarea id="citizen-msg" rows="4" required placeholder="घटना / समाचार का पूरा विवरण लिखें..." class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2"></textarea>
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
                 <button type="button" onclick="closePortalModal('citizen-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
-                <button type="submit" class="bg-red-600 text-white px-5 py-1.5 rounded font-bold">भेजें</button>
+                <button type="submit" id="citizen-submit-btn" class="bg-red-600 text-white px-5 py-1.5 rounded font-bold">भेजें</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- 5. Admin Login Modal -->
 <div id="admin-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
@@ -409,13 +402,12 @@
             <input type="password" id="admin-pass" required placeholder="पासवर्ड" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
                 <button type="button" onclick="closePortalModal('admin-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
-                <button type="submit" class="bg-red-600 text-white px-5 py-1.5 rounded font-bold">लॉगिन</button>
+                <button type="submit" id="login-submit-btn" class="bg-red-600 text-white px-5 py-1.5 rounded font-bold">लॉगिन</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- 6. Reports View Modal (Admin Only) -->
 <div id="reports-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[85vh] flex flex-col">
         <div class="flex justify-between items-center pb-2 border-b dark:border-gray-800 mb-3">
@@ -428,13 +420,13 @@
     </div>
 </div>
 
-<!-- 7. News Full Reader Card Modal (Print Ready) -->
 <div id="read-modal" class="portal-modal">
     <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 relative max-h-[90vh] overflow-y-auto">
         <div class="no-print flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
             <div class="flex items-center gap-2">
                 <span id="read-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2 py-0.5 rounded"></span>
                 <span id="read-date" class="text-[11px] text-gray-500"></span>
+                <span id="read-views-count" class="text-[11px] text-gray-400"></span>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="window.print()" class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded border">🖨️ प्रिंट</button>
@@ -447,10 +439,10 @@
             <span>संवाददाता: <b id="read-reporter" class="text-gray-800 dark:text-gray-200"></b></span>
         </div>
 
-        <img id="read-image" class="w-full max-h-96 object-cover rounded-xl mb-4 hidden" alt="News Image">
+        <div id="read-gallery-box" class="space-y-3 mb-4"></div>
         <div id="read-content" class="text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-6"></div>
 
-        <div class="no-print pt-4 border-t dark:border-gray-800 flex justify-between items-center">
+        <div class="no-print pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2">
             <button id="read-share-whatsapp" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
                 <i class="fa-brands fa-whatsapp"></i> WhatsApp शेयर
             </button>
@@ -461,7 +453,6 @@
     </div>
 </div>
 
-<!-- 8. Policy Modals (About, Privacy, Grievance) -->
 <div id="about-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white">हमारे बारे में (About Us)</h3>
@@ -473,7 +464,7 @@
 <div id="privacy-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white">गोपनीयता नीति (Privacy Policy)</h3>
-        <p>हम अपने पाठकों की गोपनीयता का पूरा सम्मान करते हैं। नागरिक पत्रकारिता फॉर्म के माध्यम से प्राप्त की गई व्यक्तिगत जानकारी (नाम व फोन नंबर) का उपयोग केवल सत्यापन हेतु किया जाता है और किसी तीसरे पक्ष के साथ साझा नहीं किया जाता।</p>
+        <p>हम अपने पाठकों की गोपनीयता का पूरा सम्मान करते हैं। नागरिक पत्रकारिता फॉर्म के माध्यम से प्राप्त की गई व्यक्तिगत जानकारी का उपयोग केवल सत्यापन हेतु किया जाता है और किसी तीसरे पक्ष के साथ साझा नहीं किया जाता।</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('privacy-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -499,24 +490,20 @@
         measurementId: "G-N7CHPOLVYX"
     };
 
-    let db = null;
-    let auth = null;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        db = firebase.firestore();
-        auth = firebase.auth();
-    } catch (e) {
-        console.warn("Firebase Init Error:", e);
-    }
+    // एडमिन वैरिएबल्स
+    const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
+    let isAdminLoggedIn = false;
 
-    // Local in-memory state
+    // State Variables
     let newsList = [];
     let currentCategory = 'all';
     let leadNewsItem = null;
     let uploadedCompressedImages = [];
+    let currentActiveNewsId = null;
 
     // --- 2. THEME & UI HELPERS ---
     function toggleDarkMode() {
@@ -562,8 +549,8 @@
         if (leadNewsItem) {
             speechText += "प्रमुख समाचार: " + leadNewsItem.title + "। ";
         }
-        const headlines = newsList.slice(0, 3).map(n => n.title).join("। ");
-        speechText += headlines ? ("अन्य खबरें: " + headlines) : "फिलहाल अन्य खबरें उपलब्ध नहीं हैं।";
+        const headlines = newsList.slice(0, 4).map(n => n.title).join("। ");
+        speechText += headlines ? ("अन्य मुख्य खबरें: " + headlines) : "अन्य खबरें लोड हो रही हैं।";
 
         const utterance = new SpeechSynthesisUtterance(speechText);
         utterance.lang = 'hi-IN';
@@ -603,7 +590,7 @@
 
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 1000;
+                    const maxDim = 900;
                     if (width > maxDim || height > maxDim) {
                         if (width > height) {
                             height = Math.round((height * maxDim) / width);
@@ -618,13 +605,14 @@
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    ctx.fillStyle = "rgba(220, 38, 38, 0.75)";
-                    ctx.fillRect(width - 210, height - 35, 200, 25);
-                    ctx.font = "bold 13px sans-serif";
+                    // वॉटरमार्क
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+                    ctx.fillRect(Math.max(0, width - 215), Math.max(0, height - 30), 210, 24);
+                    ctx.font = "bold 11px sans-serif";
                     ctx.fillStyle = "#ffffff";
-                    ctx.fillText("CHUNDA KSHETRA NEWS", width - 200, height - 18);
+                    ctx.fillText("CHUNDA KSHETRA NEWS", Math.max(5, width - 205), Math.max(15, height - 14));
 
-                    const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+                    const compressedBase64 = canvas.toDataURL("image/jpeg", 0.75);
                     uploadedCompressedImages.push(compressedBase64);
 
                     const thumb = document.createElement('img');
@@ -648,14 +636,19 @@
             return;
         }
 
-        container.innerHTML = list.map(item => `
+        container.innerHTML = list.map(item => {
+            const displayImg = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
+            return `
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
                 <div>
-                    ${item.image ? `<img src="${item.image}" class="w-full h-44 object-cover cursor-pointer" onclick="openReaderModal('${item.id}')">` : ''}
+                    <img src="${displayImg}" class="w-full h-44 object-cover cursor-pointer" onclick="openReaderModal('${item.id}')">
                     <div class="p-4">
                         <div class="flex items-center justify-between text-[10px] text-gray-500 mb-2">
-                            <span class="bg-red-50 text-red-600 dark:bg-red-950/50 px-2 py-0.5 rounded font-bold">${item.category}</span>
-                            <span>${item.date || 'आज'}</span>
+                            <span class="bg-red-50 text-red-600 dark:bg-red-950/50 px-2 py-0.5 rounded font-bold">${item.category || 'सामान्य'}</span>
+                            <div class="flex items-center gap-2">
+                                <span>👁️ ${item.views || 0}</span>
+                                <span>${item.date || 'आज'}</span>
+                            </div>
                         </div>
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReaderModal('${item.id}')">
                             ${item.title}
@@ -663,14 +656,22 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${item.content}</p>
                     </div>
                 </div>
-                <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center text-xs">
-                    <button onclick="openReaderModal('${item.id}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
-                    <button onclick="shareWhatsApp('${item.id}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> शेयर
-                    </button>
+                <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
+                    <div class="flex justify-between items-center text-xs py-2">
+                        <button onclick="openReaderModal('${item.id}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
+                        <button onclick="shareWhatsApp('${item.id}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i> शेयर
+                        </button>
+                    </div>
+                    ${isAdminLoggedIn ? `
+                        <div class="pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
+                            <button onclick="editNewsPost('${item.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[11px] flex-1">एडिट</button>
+                            <button onclick="deleteNewsPost('${item.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-[11px] flex-1">डिलीट</button>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     function setLeadStory(item) {
@@ -678,11 +679,12 @@
         leadNewsItem = item;
         document.getElementById('lead-news-section').classList.remove('hidden');
         document.getElementById('lead-title').innerText = item.title;
-        document.getElementById('lead-category').innerText = item.category;
+        document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
         document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('lead-date').innerText = item.date || "आज";
+        document.getElementById('lead-views').innerText = `👁️ ${item.views || 0} Views`;
         document.getElementById('lead-excerpt').innerText = item.content;
-        document.getElementById('lead-image').src = item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
+        document.getElementById('lead-image').src = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
         document.getElementById('lead-share-btn').onclick = () => shareWhatsApp(item.id);
     }
@@ -695,19 +697,31 @@
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
 
+        currentActiveNewsId = id;
+
+        // View Counter Increment
+        db.collection('news_posts').doc(id).update({
+            views: firebase.firestore.FieldValue.increment(1)
+        }).catch(() => {});
+
         document.getElementById('read-title').innerText = item.title;
-        document.getElementById('read-category').innerText = item.category;
+        document.getElementById('read-category').innerText = item.category || 'सामान्य';
         document.getElementById('read-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('read-date').innerText = item.date || "आज";
+        document.getElementById('read-views-count').innerText = `👁️ ${(item.views || 0) + 1} बार देखा गया`;
         document.getElementById('read-content').innerText = item.content;
 
-        const imgEl = document.getElementById('read-image');
-        if (item.image) {
-            imgEl.src = item.image;
-            imgEl.classList.remove('hidden');
-        } else {
-            imgEl.classList.add('hidden');
-        }
+        const gallery = document.getElementById('read-gallery-box');
+        gallery.innerHTML = '';
+        const allImgs = item.images || (item.image ? [item.image] : []);
+        allImgs.forEach(imgSrc => {
+            if (imgSrc) {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = "w-full max-h-96 object-cover rounded-xl shadow mb-3";
+                gallery.appendChild(img);
+            }
+        });
 
         document.getElementById('read-share-whatsapp').onclick = () => shareWhatsApp(item.id);
         openPortalModal('read-modal');
@@ -716,7 +730,7 @@
     function shareWhatsApp(id) {
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
-        const text = `*${item.title}*\n\n${item.content.substring(0, 150)}...\n\nपूरी खबर चूंडा क्षेत्र न्यूज़ पर पढ़ें:\n${window.location.href}`;
+        const text = `📰 *${item.title}*\n\n🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ने के लिए क्लिक करें:\n${location.origin}${location.pathname}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
     }
 
@@ -736,12 +750,19 @@
             filterNews(currentCategory);
             return;
         }
-        const filtered = newsList.filter(n => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q));
+        const filtered = newsList.filter(n => (n.title && n.title.toLowerCase().includes(q)) || (n.content && n.content.toLowerCase().includes(q)));
         renderNews(filtered);
     }
 
     // --- 6. ADMIN & FORM SUBMISSIONS ---
-    function triggerOpenNewPostModal() { openPortalModal('post-modal'); }
+    function triggerOpenNewPostModal() { 
+        ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('news-reporter').value = 'विशेष संवाददाता';
+        document.getElementById('news-breaking').checked = false;
+        document.getElementById('news-lead').checked = false;
+        document.getElementById('submit-btn').innerText = 'पोस्ट करें';
+        openPortalModal('post-modal'); 
+    }
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
@@ -749,58 +770,96 @@
     async function handleNewsSubmit(e) {
         e.preventDefault();
         const submitBtn = document.getElementById('submit-btn');
+        const editDocId = document.getElementById('edit-doc-id').value;
         submitBtn.disabled = true;
         submitBtn.innerText = "अपलोड हो रहा है...";
 
-        const finalImage = uploadedCompressedImages[0] || document.getElementById('news-image').value || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
-        
+        let imgs = [...uploadedCompressedImages];
+        const manualUrl = document.getElementById('news-image').value.trim();
+        if (manualUrl) imgs.push(manualUrl);
+
         const newItem = {
-            title: document.getElementById('news-title').value,
+            title: document.getElementById('news-title').value.trim(),
             category: document.getElementById('news-category').value,
-            reporter: document.getElementById('news-reporter').value,
-            content: document.getElementById('news-content').value,
-            image: finalImage,
-            isLead: document.getElementById('news-lead').checked,
+            reporter: document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता',
+            content: document.getElementById('news-content').value.trim(),
             isBreaking: document.getElementById('news-breaking').checked,
-            date: new Date().toLocaleDateString('hi-IN'),
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            isLead: document.getElementById('news-lead').checked,
+            date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+            createdAt: Date.now()
         };
 
+        if (imgs.length > 0) {
+            newItem.images = imgs;
+            newItem.image = imgs[0];
+        }
+
         try {
-            if (db) {
-                await db.collection('news').add(newItem);
+            if (editDocId) {
+                await db.collection('news_posts').doc(editDocId).update(newItem);
+                alert("खबर सफलतापूर्वक अपडेट हो गई!");
+            } else {
+                newItem.views = 0;
+                newItem.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('news_posts').add(newItem);
+                alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
             }
-            alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
             e.target.reset();
             document.getElementById('image-preview-box').innerHTML = '';
             document.getElementById('image-preview-box').classList.add('hidden');
             closePortalModal('post-modal');
         } catch (err) {
-            console.error("Firestore Save Error:", err);
+            console.error("Firestore Error:", err);
             alert("त्रुटि: खबर सेव नहीं हो सकी - " + err.message);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerText = "पोस्ट करें";
+            submitBtn.innerText = editDocId ? "अपडेट करें" : "पोस्ट करें";
         }
     }
 
-    function handleJobSubmit(e) {
+    function editNewsPost(id) {
+        const n = newsList.find(x => x.id === id);
+        if (!n) return;
+        document.getElementById('edit-doc-id').value = n.id;
+        document.getElementById('news-title').value = n.title || '';
+        document.getElementById('news-category').value = n.category || 'क्षेत्रीय';
+        document.getElementById('news-reporter').value = n.reporter || 'विशेष संवाददाता';
+        document.getElementById('news-content').value = n.content || '';
+        document.getElementById('news-breaking').checked = !!n.isBreaking;
+        document.getElementById('news-lead').checked = !!n.isLead;
+        document.getElementById('submit-btn').innerText = 'अपडेट करें';
+        openPortalModal('post-modal');
+    }
+
+    async function deleteNewsPost(id) {
+        if (!confirm('क्या आप सचमुच इस खबर को हटाना चाहते हैं?')) return;
+        try {
+            await db.collection('news_posts').doc(id).delete();
+            alert("खबर हटा दी गई!");
+        } catch (err) {
+            alert("खबर हटाने में समस्या: " + err.message);
+        }
+    }
+
+    async function handleJobSubmit(e) {
         e.preventDefault();
         const job = {
-            title: document.getElementById('job-title').value,
-            posts: document.getElementById('job-posts').value,
-            lastDate: document.getElementById('job-last-date').value,
-            link: document.getElementById('job-link').value || "#",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            title: document.getElementById('job-title').value.trim(),
+            posts: document.getElementById('job-posts').value.trim() || 'विस्तृत विज्ञापन देखें',
+            lastDate: document.getElementById('job-last-date').value.trim(),
+            link: document.getElementById('job-link').value.trim() || "#",
+            createdAt: Date.now(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        if (db) {
-            db.collection('jobs').add(job).catch(err => console.error(err));
+        try {
+            await db.collection('job_alerts').add(job);
+            alert("भर्ती अलर्ट जोड़ दिया गया!");
+            e.target.reset();
+            closePortalModal('job-modal');
+        } catch (err) {
+            alert("भर्ती अलर्ट सेव नहीं हो सका: " + err.message);
         }
-
-        e.target.reset();
-        closePortalModal('job-modal');
-        alert("भर्ती अलर्ट जोड़ दिया गया!");
     }
 
     function handleScoreSubmit(e) {
@@ -811,86 +870,86 @@
             status: document.getElementById('score-status').value
         };
 
-        if (db) {
-            db.collection('live_score').doc('current').set(scoreData).catch(err => console.error(err));
-        }
-
-        e.target.reset();
-        closePortalModal('score-modal');
-        alert("स्कोर सफलतापूर्वक अपडेट हो गया!");
+        db.collection('live_score').doc('current').set(scoreData).then(() => {
+            alert("स्कोर सफलतापूर्वक अपडेट हो गया!");
+            e.target.reset();
+            closePortalModal('score-modal');
+        }).catch(err => alert("स्कोर अपडेट त्रुटि: " + err.message));
     }
 
-    function handleCitizenSubmit(e) {
+    async function handleCitizenSubmit(e) {
         e.preventDefault();
         const report = {
-            name: document.getElementById('citizen-name').value,
-            phone: document.getElementById('citizen-phone').value,
-            area: document.getElementById('citizen-area').value,
-            msg: document.getElementById('citizen-msg').value,
-            date: new Date().toLocaleString('hi-IN'),
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            name: document.getElementById('citizen-name').value.trim(),
+            phone: document.getElementById('citizen-phone').value.trim(),
+            location: document.getElementById('citizen-area').value.trim(),
+            details: document.getElementById('citizen-msg').value.trim(),
+            date: new Date().toLocaleDateString('hi-IN'),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        if (db) {
-            db.collection('citizen_reports').add(report).catch(err => console.error(err));
+        try {
+            await db.collection('citizen_reports').add(report);
+            alert("धन्यवाद! आपकी सूचना संपादक को भेज दी गई है।");
+            e.target.reset();
+            closePortalModal('citizen-modal');
+        } catch (err) {
+            alert("रिपोर्ट भेजने में समस्या: " + err.message);
         }
-
-        e.target.reset();
-        closePortalModal('citizen-modal');
-        alert("धन्यवाद! आपकी सूचना हमें प्राप्त हो गई है।");
     }
 
-    function handleAdminLogin(e) {
+    async function handleAdminLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('admin-email').value;
+        const email = document.getElementById('admin-email').value.trim();
         const pass = document.getElementById('admin-pass').value;
 
-        if (auth) {
-            auth.signInWithEmailAndPassword(email, pass).then(userCredential => {
-                onAdminSuccess(userCredential.user.email);
-            }).catch(error => {
-                alert("लॉगिन असफल: " + error.message);
-            });
+        try {
+            const userCred = await auth.signInWithEmailAndPassword(email, pass);
+            onAdminSuccess(userCred.user.email);
+            alert("एडमिन लॉगिन सफल!");
+        } catch (error) {
+            alert("लॉगिन असफल: " + error.message);
         }
     }
 
     function onAdminSuccess(email) {
+        isAdminLoggedIn = true;
         document.getElementById('admin-user-email').innerText = email;
         document.getElementById('admin-action-bar').style.display = 'flex';
         document.getElementById('admin-login-btn').innerText = 'एडमिन सक्रिय';
         closePortalModal('admin-modal');
+        renderNews(newsList);
     }
 
-    function logoutAdmin() {
-        if (auth) auth.signOut();
+    async function logoutAdmin() {
+        await auth.signOut();
+        isAdminLoggedIn = false;
         document.getElementById('admin-action-bar').style.display = 'none';
         document.getElementById('admin-login-btn').innerText = '🔒 एडमिन लॉगिन';
+        renderNews(newsList);
     }
 
-    // --- 7. FIRESTORE REALTIME SYNC (FETCH PREVIOUS & NEW NEWS COMPATIBLE) ---
+    // --- 7. FIRESTORE REALTIME SYNC (RESTORING OLD NEWS & DATA) ---
     function initRealtimeData() {
-        if (!db) return;
-
-        // 1. रियल-टाइम खबरें लोड करना (बिना orderBy ताकि पुरानी अनटैग्ड खबरें भी आएं)
-        db.collection('news').onSnapshot(snapshot => {
+        // 1. असली कलेक्शन: 'news_posts' से पुरानी व नई खबरें लोड करना
+        db.collection('news_posts').onSnapshot(snapshot => {
             if (!snapshot.empty) {
-                newsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                // टाइमस्टैम्प के आधार पर जावास्क्रिप्ट में सॉर्टिंग (पुरानी खबरें नीचे नहीं छूटेंगी)
-                newsList.sort((a, b) => {
-                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : 0;
-                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : 0;
-                    return timeB - timeA;
+                newsList = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return { id: doc.id, ...data, views: Number(data.views) || 0 };
                 });
 
-                // लीड स्टोरी खोजना या पहली खबर को मुख्य बनाना
+                // समय अनुसार सॉर्टिंग (ताज़ा खबर ऊपर)
+                newsList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                // लीड स्टोरी खोजना
                 const lead = newsList.find(n => n.isLead) || newsList[0];
                 setLeadStory(lead);
 
-                // ब्रेकिंग न्यूज़ अपडेट
-                const breaking = newsList.find(n => n.isBreaking);
-                if (breaking) {
-                    document.getElementById('breaking-ticker').innerText = breaking.title;
+                // ब्रेकिंग न्यूज़ टिकर
+                const breaking = newsList.filter(n => n.isBreaking);
+                if (breaking.length > 0) {
+                    document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('  ✦  ');
                 }
 
                 filterNews(currentCategory);
@@ -898,20 +957,18 @@
                 renderNews([]);
             }
         }, error => {
-            console.error("News fetch error:", error);
-            alert("डेटा लोड करने में समस्या: " + error.message);
+            console.error("Firestore news_posts error:", error);
+            document.getElementById('news-container').innerHTML = `<div class="col-span-2 text-center py-12 text-red-500 font-bold">
+                डेटाबेस से कनेक्ट नहीं हो सका। कृपया Firebase Rules में अनुमति जांचें।
+            </div>`;
         });
 
-        // 2. भर्ती अलर्ट लोड करना
-        db.collection('jobs').onSnapshot(snapshot => {
+        // 2. असली कलेक्शन: 'job_alerts' से भर्ती लोड करना
+        db.collection('job_alerts').onSnapshot(snapshot => {
             const jobContainer = document.getElementById('job-alerts-list');
             if (!snapshot.empty) {
-                let jobs = snapshot.docs.map(doc => doc.data());
-                jobs.sort((a, b) => {
-                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : 0;
-                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : 0;
-                    return timeB - timeA;
-                });
+                let jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 jobContainer.innerHTML = jobs.slice(0, 5).map(job => `
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
                         <b class="text-gray-900 dark:text-white text-xs">${job.title}</b>
@@ -919,13 +976,15 @@
                             <span>${job.posts || ''}</span>
                             <span class="text-red-500 font-semibold">अंतिम तिथि: ${job.lastDate}</span>
                         </div>
-                        <a href="${job.link}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                        <a href="${job.link || '#'}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
                     </div>
                 `).join('');
+            } else {
+                jobContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">कोई सक्रिय फॉर्म नहीं है।</p>';
             }
         });
 
-        // 3. लाइव स्कोर लोड करना
+        // 3. लाइव स्कोर
         db.collection('live_score').doc('current').onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
@@ -935,39 +994,34 @@
             }
         });
 
-        // 4. नागरिक रिपोर्ट्स लोड करना (Admin panel)
+        // 4. नागरिक रिपोर्ट्स
         db.collection('citizen_reports').onSnapshot(snapshot => {
             const reportsList = document.getElementById('reports-list');
             if (!snapshot.empty) {
-                let reports = snapshot.docs.map(doc => doc.data());
-                reports.sort((a, b) => {
-                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : 0;
-                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : 0;
-                    return timeB - timeA;
-                });
-                reportsList.innerHTML = reports.map(report => `
-                    <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                        <div class="flex justify-between font-bold">
-                            <span>${report.name} (${report.area})</span>
-                            <span class="text-[10px] text-gray-500">${report.date}</span>
+                reportsList.innerHTML = snapshot.docs.map(doc => {
+                    const report = doc.data();
+                    return `
+                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
+                            <div class="flex justify-between font-bold">
+                                <span>${report.name} (${report.location || report.area || ''})</span>
+                                <span class="text-[10px] text-gray-500">${report.date || ''}</span>
+                            </div>
+                            <p class="text-red-600 my-1 font-mono">${report.phone || ''}</p>
+                            <p class="text-gray-700 dark:text-gray-300">${report.details || report.msg || ''}</p>
                         </div>
-                        <p class="text-red-600 my-1 font-mono">${report.phone}</p>
-                        <p class="text-gray-700 dark:text-gray-300">${report.msg}</p>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         });
     }
 
     // --- 8. AUTH LISTENER & INITIAL LOAD ---
     window.addEventListener('DOMContentLoaded', () => {
-        if (auth) {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    onAdminSuccess(user.email);
-                }
-            });
-        }
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                onAdminSuccess(user.email);
+            }
+        });
         initRealtimeData();
     });
 </script>
