@@ -502,11 +502,9 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // एडमिन वैरिएबल्स
     const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     let isAdminLoggedIn = false;
 
-    // State Variables
     let newsList = [];
     let currentCategory = 'all';
     let leadNewsItem = null;
@@ -613,7 +611,6 @@
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // वॉटरमार्क
                     ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
                     ctx.fillRect(Math.max(0, width - 215), Math.max(0, height - 30), 210, 24);
                     ctx.font = "bold 11px sans-serif";
@@ -664,7 +661,7 @@
                 <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
                     <div class="flex justify-between items-center text-xs py-2">
                         <button onclick="openReaderModal('${item.id}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
-                        <button onclick="shareWhatsApp('${item.id}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
+                        <button onclick="shareWhatsAppWithImage('${item.id}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> शेयर
                         </button>
                     </div>
@@ -690,7 +687,7 @@
         document.getElementById('lead-excerpt').innerText = item.content;
         document.getElementById('lead-image').src = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
-        document.getElementById('lead-share-btn').onclick = () => shareWhatsApp(item.id);
+        document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
     }
 
     function openLeadModal() {
@@ -721,15 +718,56 @@
             }
         });
 
-        document.getElementById('read-share-whatsapp').onclick = () => shareWhatsApp(item.id);
+        document.getElementById('read-share-whatsapp').onclick = () => shareWhatsAppWithImage(item.id);
         openPortalModal('read-modal');
     }
 
-    function shareWhatsApp(id) {
+    // --- PHOTO + TITLE + LINK WHATSAPP SHARE SYSTEM ---
+    async function shareWhatsAppWithImage(id) {
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
-        const text = `📰 *${item.title}*\n\n🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ने के लिए क्लिक करें:\n${location.origin}${location.pathname}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+
+        const shareTitle = `📰 *${item.title}*`;
+        const shareText = `${shareTitle}\n\n🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${window.location.origin}${window.location.pathname}`;
+        const rawImg = item.images?.[0] || item.image;
+
+        // यदि ब्राउज़र फाइल शेयरिंग सपोर्ट करता है (स्मार्टफोन या कम्पैटिबल ब्राउज़र)
+        if (navigator.share && rawImg) {
+            try {
+                let blob = null;
+                if (rawImg.startsWith('data:image')) {
+                    const arr = rawImg.split(',');
+                    const mime = arr[0].match(/:(.*?);/)[1];
+                    const bstr = atob(arr[1]);
+                    let n = bstr.length;
+                    const u8arr = new Uint8Array(n);
+                    while (n--) {
+                        u8arr[n] = bstr.charCodeAt(n);
+                    }
+                    blob = new Blob([u8arr], { type: mime });
+                } else {
+                    const res = await fetch(rawImg);
+                    blob = await res.blob();
+                }
+
+                if (blob) {
+                    const file = new File([blob], 'chunda-news.jpg', { type: blob.type || 'image/jpeg' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: item.title,
+                            text: shareText,
+                            files: [file]
+                        });
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.log("Direct File Share bypass:", err);
+            }
+        }
+
+        // फ़ॉलबैक (Direct WhatsApp Link)
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
     }
 
     function filterNews(cat) {
