@@ -14,6 +14,9 @@
     <title>CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार</title>
     <meta name="theme-color" content="#dc2626">
 
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -23,6 +26,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"></script>
 
     <style>
         @keyframes tickerMotion { 0% { transform: translate3d(100%,0,0); } 100% { transform: translate3d(-100%,0,0); } }
@@ -103,6 +107,14 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <!-- PWA Install Button -->
+            <button id="pwa-install-btn" style="display:none;" onclick="triggerPwaInstall()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black px-2.5 py-1.5 rounded-lg font-bold shadow flex items-center gap-1 transition">
+                📲 ऐप इंस्टॉल
+            </button>
+            <!-- Web Push Notification Toggle Button -->
+            <button onclick="enablePushNotifications()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400 border text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700" title="नोटिफिकेशन चालू करें">
+                🔔
+            </button>
             <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
             <button id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
                 🔒 एडमिन लॉगिन
@@ -335,7 +347,7 @@
 <!-- 2. Job Alert Modal -->
 <div id="job-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
-        <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
+        <h3 id="job-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
         <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
             <input type="text" id="job-title" required placeholder="भर्ती का नाम (उदा. RPSC / REET)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-posts" placeholder="पद संख्या / योग्यता" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -497,7 +509,6 @@
         return '#';
     }
 
-    // Helper: Convert Base64 Data URL to Blob for Storage Upload
     function dataURLtoBlob(dataurl) {
         const arr = dataurl.split(',');
         const mime = arr[0].match(/:(.*?);/)[1];
@@ -525,6 +536,12 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
     const storage = firebase.storage();
+
+    // Firebase Messaging Instance (Push Notifications)
+    let messaging = null;
+    if (firebase.messaging.isSupported()) {
+        messaging = firebase.messaging();
+    }
 
     const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     let isAdminLoggedIn = false;
@@ -840,7 +857,6 @@
         if (manualUrl) finalImageUrls.push(manualUrl);
 
         try {
-            // Firebase Storage में कंप्रेस्ड फोटो अपलोड
             for (let i = 0; i < uploadedCompressedImages.length; i++) {
                 const blob = dataURLtoBlob(uploadedCompressedImages[i]);
                 const fileName = `news_${Date.now()}_${i}.jpg`;
@@ -955,7 +971,7 @@
     async function handleCitizenSubmit(e) {
         e.preventDefault();
 
-        // 1. Honeypot check (बॉट ट्रैप)
+        // 1. Honeypot check
         if (document.getElementById('citizen-hp').value) {
             return; 
         }
@@ -963,7 +979,7 @@
         // 2. 5-Minute Anti-Spam Rate Limit Cooldown
         const lastSubmitted = localStorage.getItem('last_report_time');
         const now = Date.now();
-        const cooldownPeriod = 5 * 60 * 1000; // 5 मिनट
+        const cooldownPeriod = 5 * 60 * 1000;
 
         if (lastSubmitted && (now - parseInt(lastSubmitted)) < cooldownPeriod) {
             const remainingMinutes = Math.ceil((cooldownPeriod - (now - parseInt(lastSubmitted))) / 60000);
@@ -986,7 +1002,7 @@
 
         try {
             await db.collection('citizen_reports').add(report);
-            localStorage.setItem('last_report_time', now.toString()); // टाइमर सेट
+            localStorage.setItem('last_report_time', now.toString());
             alert("धन्यवाद! आपकी सूचना संपादक को भेज दी गई है।");
             e.target.reset();
             closePortalModal('citizen-modal');
@@ -1108,8 +1124,72 @@
         });
     }
 
-    // --- 8. AUTH LISTENER & INITIAL LOAD ---
+    // --- 8. PWA INSTALLATION SYSTEM ---
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const pwaBtn = document.getElementById('pwa-install-btn');
+        if (pwaBtn) pwaBtn.style.display = 'inline-flex';
+    });
+
+    function triggerPwaInstall() {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                document.getElementById('pwa-install-btn').style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+    }
+
+    // --- 9. WEB PUSH NOTIFICATIONS SYSTEM ---
+    async function enablePushNotifications() {
+        if (!('Notification' in window)) {
+            alert("यह ब्राउज़र वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
+            return;
+        }
+
+        if (!messaging) {
+            alert("Firebase Messaging सपोर्ट उपलब्ध नहीं है।");
+            return;
+        }
+
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                // अपनी Firebase VAPID Key यहाँ रिप्लेस करें:
+                const token = await messaging.getToken({
+                    vapidKey: "YOUR_PUBLIC_VAPID_KEY"
+                });
+
+                if (token) {
+                    await db.collection('fcm_subscribers').doc(token).set({
+                        token: token,
+                        platform: navigator.userAgent,
+                        subscribedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert("🔔 धन्यवाद! समाचार अलर्ट नोटिफिकेशन सफलतापूर्वक चालू हो गए हैं।");
+                }
+            } else {
+                alert("आपने नोटिफिकेशन की अनुमति नहीं दी।");
+            }
+        } catch (err) {
+            console.error("Push Notification Error:", err);
+            alert("नोटिफिकेशन शुरू करने में समस्या: " + err.message);
+        }
+    }
+
+    // --- 10. AUTH LISTENER & INITIAL LOAD (WITH SW REGISTRATION) ---
     window.addEventListener('DOMContentLoaded', () => {
+        // Register PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('PWA Service Worker Registered:', reg.scope))
+                .catch(err => console.log('SW Registration failed:', err));
+        }
+
         auth.onAuthStateChanged(user => {
             if (user) {
                 onAdminSuccess(user.email);
