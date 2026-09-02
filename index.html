@@ -18,9 +18,11 @@
     <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
     <style>
         @keyframes tickerMotion { 0% { transform: translate3d(100%,0,0); } 100% { transform: translate3d(-100%,0,0); } }
@@ -309,7 +311,7 @@
                 </div>
             </div>
             
-            <label class="block font-semibold text-gray-700 dark:text-gray-300">तस्वीरें चुनें (ऑटो कंप्रेस्ड &lt;100KB + वॉटरमार्क):</label>
+            <label class="block font-semibold text-gray-700 dark:text-gray-300">तस्वीरें चुनें (ऑटो कंप्रेस्ड &lt;100KB + वॉटरमार्क + Storage Upload):</label>
             <input type="file" id="news-files" accept="image/*" multiple onchange="previewSelectedImages(event)" class="w-full text-xs">
             <div id="image-preview-box" class="flex gap-2 flex-wrap hidden"></div>
             
@@ -363,12 +365,15 @@
     </div>
 </div>
 
-<!-- 4. Citizen Reporter Modal -->
+<!-- 4. Citizen Reporter Modal (Anti-Spam Protected) -->
 <div id="citizen-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
         <p class="text-[11px] text-gray-500 mb-3">आपके क्षेत्र की समस्या या सूचना हमें भेजें, सत्यापन उपरांत प्रकाशित की जाएगी।</p>
         <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
+            <!-- Honeypot Field for Bot Trap -->
+            <input type="text" id="citizen-hp" style="display:none!important;" tabindex="-1" autocomplete="off">
+
             <input type="text" id="citizen-name" required placeholder="आपका शुभ नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="tel" id="citizen-phone" required placeholder="मोबाइल नंबर" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="citizen-area" required placeholder="स्थान / गाँव का नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -492,6 +497,19 @@
         return '#';
     }
 
+    // Helper: Convert Base64 Data URL to Blob for Storage Upload
+    function dataURLtoBlob(dataurl) {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+
     // --- 1. FIREBASE CONFIGURATION ---
     const firebaseConfig = {
         apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
@@ -506,6 +524,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
+    const storage = firebase.storage();
 
     const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     let isAdminLoggedIn = false;
@@ -796,7 +815,7 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS ---
+    // --- 6. ADMIN & FORM SUBMISSIONS (FIREBASE STORAGE ENABLED) ---
     function triggerOpenNewPostModal() { 
         ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('news-reporter').value = 'विशेष संवाददाता';
@@ -814,29 +833,42 @@
         const submitBtn = document.getElementById('submit-btn');
         const editDocId = document.getElementById('edit-doc-id').value;
         submitBtn.disabled = true;
-        submitBtn.innerText = "अपलोड हो रहा है...";
+        submitBtn.innerText = "तस्वीरें अपलोड हो रही हैं...";
 
-        let imgs = [...uploadedCompressedImages];
+        let finalImageUrls = [];
         const manualUrl = document.getElementById('news-image').value.trim();
-        if (manualUrl) imgs.push(manualUrl);
-
-        const newItem = {
-            title: document.getElementById('news-title').value.trim(),
-            category: document.getElementById('news-category').value,
-            reporter: document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता',
-            content: document.getElementById('news-content').value.trim(),
-            isBreaking: document.getElementById('news-breaking').checked,
-            isLead: document.getElementById('news-lead').checked,
-            date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-            createdAt: Date.now()
-        };
-
-        if (imgs.length > 0) {
-            newItem.images = imgs;
-            newItem.image = imgs[0];
-        }
+        if (manualUrl) finalImageUrls.push(manualUrl);
 
         try {
+            // Firebase Storage में कंप्रेस्ड फोटो अपलोड
+            for (let i = 0; i < uploadedCompressedImages.length; i++) {
+                const blob = dataURLtoBlob(uploadedCompressedImages[i]);
+                const fileName = `news_${Date.now()}_${i}.jpg`;
+                const storageRef = storage.ref().child(`news_images/${fileName}`);
+                
+                const snapshot = await storageRef.put(blob);
+                const downloadUrl = await snapshot.ref.getDownloadURL();
+                finalImageUrls.push(downloadUrl);
+            }
+
+            submitBtn.innerText = "डेटा सेव हो रहा है...";
+
+            const newItem = {
+                title: document.getElementById('news-title').value.trim(),
+                category: document.getElementById('news-category').value,
+                reporter: document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता',
+                content: document.getElementById('news-content').value.trim(),
+                isBreaking: document.getElementById('news-breaking').checked,
+                isLead: document.getElementById('news-lead').checked,
+                date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+                createdAt: Date.now()
+            };
+
+            if (finalImageUrls.length > 0) {
+                newItem.images = finalImageUrls;
+                newItem.image = finalImageUrls[0];
+            }
+
             if (editDocId) {
                 await db.collection('news_posts').doc(editDocId).update(newItem);
                 alert("खबर सफलतापूर्वक अपडेट हो गई!");
@@ -846,12 +878,13 @@
                 alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
             }
             e.target.reset();
+            uploadedCompressedImages = [];
             document.getElementById('image-preview-box').innerHTML = '';
             document.getElementById('image-preview-box').classList.add('hidden');
             closePortalModal('post-modal');
         } catch (err) {
-            console.error("Firestore Error:", err);
-            alert("त्रुटि: खबर सेव नहीं हो सकी - " + err.message);
+            console.error("Upload/Firestore Error:", err);
+            alert("त्रुटि: प्रक्रिया पूरी नहीं हो सकी - " + err.message);
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerText = editDocId ? "अपडेट करें" : "पोस्ट करें";
@@ -918,8 +951,30 @@
         }).catch(err => alert("स्कोर अपडेट त्रुटि: " + err.message));
     }
 
+    // --- ANTI-SPAM & THROTTLED CITIZEN REPORT SUBMISSION ---
     async function handleCitizenSubmit(e) {
         e.preventDefault();
+
+        // 1. Honeypot check (बॉट ट्रैप)
+        if (document.getElementById('citizen-hp').value) {
+            return; 
+        }
+
+        // 2. 5-Minute Anti-Spam Rate Limit Cooldown
+        const lastSubmitted = localStorage.getItem('last_report_time');
+        const now = Date.now();
+        const cooldownPeriod = 5 * 60 * 1000; // 5 मिनट
+
+        if (lastSubmitted && (now - parseInt(lastSubmitted)) < cooldownPeriod) {
+            const remainingMinutes = Math.ceil((cooldownPeriod - (now - parseInt(lastSubmitted))) / 60000);
+            alert(`कृपया प्रतीक्षा करें! आप अगली सूचना ${remainingMinutes} मिनट बाद ही भेज सकते हैं।`);
+            return;
+        }
+
+        const submitBtn = document.getElementById('citizen-submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "भेजा जा रहा है...";
+
         const report = {
             name: document.getElementById('citizen-name').value.trim(),
             phone: document.getElementById('citizen-phone').value.trim(),
@@ -931,11 +986,15 @@
 
         try {
             await db.collection('citizen_reports').add(report);
+            localStorage.setItem('last_report_time', now.toString()); // टाइमर सेट
             alert("धन्यवाद! आपकी सूचना संपादक को भेज दी गई है।");
             e.target.reset();
             closePortalModal('citizen-modal');
         } catch (err) {
             alert("रिपोर्ट भेजने में समस्या: " + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "भेजें";
         }
     }
 
