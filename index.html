@@ -488,15 +488,15 @@
 </div>
 
 <script>
-    // --- 1. FIREBASE CONFIGURATION ---
-    // (यहाँ अपने Firebase प्रोजेक्ट की सही keys रिप्लेस करें)
+    // --- 1. FIREBASE CONFIGURATION (UPDATED WITH REAL KEYS) ---
     const firebaseConfig = {
-        apiKey: "AIzaSyDummyKeyReplaceThisWithYours",
+        apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
         authDomain: "chunda-news.firebaseapp.com",
         projectId: "chunda-news",
-        storageBucket: "chunda-news.appspot.com",
-        messagingSenderId: "1234567890",
-        appId: "1:1234567890:web:abcdef"
+        storageBucket: "chunda-news.firebasestorage.app",
+        messagingSenderId: "872760222820",
+        appId: "1:872760222820:web:5e316ef1eb27d5a7046b71",
+        measurementId: "G-N7CHPOLVYX"
     };
 
     let db = null;
@@ -509,7 +509,7 @@
         db = firebase.firestore();
         auth = firebase.auth();
     } catch (e) {
-        console.warn("Firebase Initialized in Demo/Offline mode:", e);
+        console.warn("Firebase Init Error:", e);
     }
 
     // Local in-memory state
@@ -774,7 +774,7 @@
         newsList.unshift(newItem);
         renderNews(newsList);
 
-        // Firebase Sync (if available)
+        // Firestore Sync
         if (db) {
             db.collection('news').add(newItem).catch(err => console.error("Firestore Error:", err));
         }
@@ -871,19 +871,8 @@
             auth.signInWithEmailAndPassword(email, pass).then(userCredential => {
                 onAdminSuccess(userCredential.user.email);
             }).catch(error => {
-                // डेमो / ऑफलाइन फ़ॉलबैक
-                if (pass === "admin123") {
-                    onAdminSuccess(email);
-                } else {
-                    alert("लॉगिन असफल: " + error.message);
-                }
+                alert("लॉगिन असफल: " + error.message);
             });
-        } else {
-            if (pass === "admin123") {
-                onAdminSuccess(email);
-            } else {
-                alert("गलत पासवर्ड! डेमो पासवर्ड 'admin123' है।");
-            }
         }
     }
 
@@ -900,8 +889,16 @@
         document.getElementById('admin-login-btn').innerText = '🔒 एडमिन लॉगिन';
     }
 
-    // --- 7. DEFAULT SEED DATA (FIRST RUN) ---
+    // --- 7. FIREBASE AUTH STATE LISTENER & SEED DATA ---
     window.addEventListener('DOMContentLoaded', () => {
+        if (auth) {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    onAdminSuccess(user.email);
+                }
+            });
+        }
+
         const defaultNews = [
             {
                 id: 'lead_1',
