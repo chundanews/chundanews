@@ -488,7 +488,7 @@
 </div>
 
 <script>
-    // --- 1. FIREBASE CONFIGURATION (UPDATED WITH REAL KEYS) ---
+    // --- 1. FIREBASE CONFIGURATION ---
     const firebaseConfig = {
         apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
         authDomain: "chunda-news.firebaseapp.com",
@@ -544,7 +544,6 @@
         document.getElementById("scroll-progress").style.width = scrolled + "%";
     };
 
-    // पंचांग ऑटो-अपडेट
     function updateLivePanchang() {
         const d = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -619,7 +618,6 @@
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Watermark
                     ctx.fillStyle = "rgba(220, 38, 38, 0.75)";
                     ctx.fillRect(width - 210, height - 35, 200, 25);
                     ctx.font = "bold 13px sans-serif";
@@ -748,12 +746,15 @@
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
 
-    function handleNewsSubmit(e) {
+    async function handleNewsSubmit(e) {
         e.preventDefault();
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "अपलोड हो रहा है...";
+
         const finalImage = uploadedCompressedImages[0] || document.getElementById('news-image').value || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
         
         const newItem = {
-            id: 'local_' + Date.now(),
             title: document.getElementById('news-title').value,
             category: document.getElementById('news-category').value,
             reporter: document.getElementById('news-reporter').value,
@@ -761,29 +762,26 @@
             image: finalImage,
             isLead: document.getElementById('news-lead').checked,
             isBreaking: document.getElementById('news-breaking').checked,
-            date: new Date().toLocaleDateString('hi-IN')
+            date: new Date().toLocaleDateString('hi-IN'),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        if (newItem.isLead) {
-            setLeadStory(newItem);
+        try {
+            if (db) {
+                await db.collection('news').add(newItem);
+            }
+            alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
+            e.target.reset();
+            document.getElementById('image-preview-box').innerHTML = '';
+            document.getElementById('image-preview-box').classList.add('hidden');
+            closePortalModal('post-modal');
+        } catch (err) {
+            console.error("Firestore Save Error:", err);
+            alert("त्रुटि: खबर सेव नहीं हो सकी - " + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "पोस्ट करें";
         }
-        if (newItem.isBreaking) {
-            document.getElementById('breaking-ticker').innerText = newItem.title;
-        }
-
-        newsList.unshift(newItem);
-        renderNews(newsList);
-
-        // Firestore Sync
-        if (db) {
-            db.collection('news').add(newItem).catch(err => console.error("Firestore Error:", err));
-        }
-
-        e.target.reset();
-        document.getElementById('image-preview-box').innerHTML = '';
-        document.getElementById('image-preview-box').classList.add('hidden');
-        closePortalModal('post-modal');
-        alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
     }
 
     function handleJobSubmit(e) {
@@ -792,22 +790,9 @@
             title: document.getElementById('job-title').value,
             posts: document.getElementById('job-posts').value,
             lastDate: document.getElementById('job-last-date').value,
-            link: document.getElementById('job-link').value || "#"
+            link: document.getElementById('job-link').value || "#",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
-
-        const jobContainer = document.getElementById('job-alerts-list');
-        const jobCard = `
-            <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
-                <b class="text-gray-900 dark:text-white text-xs">${job.title}</b>
-                <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
-                    <span>${job.posts}</span>
-                    <span class="text-red-500 font-semibold">अंतिम तिथि: ${job.lastDate}</span>
-                </div>
-                <a href="${job.link}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
-            </div>
-        `;
-        if (jobContainer.querySelector('p')) jobContainer.innerHTML = '';
-        jobContainer.insertAdjacentHTML('afterbegin', jobCard);
 
         if (db) {
             db.collection('jobs').add(job).catch(err => console.error(err));
@@ -820,10 +805,16 @@
 
     function handleScoreSubmit(e) {
         e.preventDefault();
-        document.getElementById('match-title').innerText = document.getElementById('score-title').value;
-        document.getElementById('match-score').innerText = document.getElementById('score-detail').value;
-        document.getElementById('match-status').innerText = document.getElementById('score-status').value;
-        
+        const scoreData = {
+            title: document.getElementById('score-title').value,
+            score: document.getElementById('score-detail').value,
+            status: document.getElementById('score-status').value
+        };
+
+        if (db) {
+            db.collection('live_score').doc('current').set(scoreData).catch(err => console.error(err));
+        }
+
         e.target.reset();
         closePortalModal('score-modal');
         alert("स्कोर सफलतापूर्वक अपडेट हो गया!");
@@ -836,22 +827,9 @@
             phone: document.getElementById('citizen-phone').value,
             area: document.getElementById('citizen-area').value,
             msg: document.getElementById('citizen-msg').value,
-            date: new Date().toLocaleString('hi-IN')
+            date: new Date().toLocaleString('hi-IN'),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
-
-        const reportsList = document.getElementById('reports-list');
-        if (reportsList.querySelector('p')) reportsList.innerHTML = '';
-        
-        reportsList.insertAdjacentHTML('afterbegin', `
-            <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                <div class="flex justify-between font-bold">
-                    <span>${report.name} (${report.area})</span>
-                    <span class="text-[10px] text-gray-500">${report.date}</span>
-                </div>
-                <p class="text-red-600 my-1 font-mono">${report.phone}</p>
-                <p class="text-gray-700 dark:text-gray-300">${report.msg}</p>
-            </div>
-        `);
 
         if (db) {
             db.collection('citizen_reports').add(report).catch(err => console.error(err));
@@ -889,7 +867,86 @@
         document.getElementById('admin-login-btn').innerText = '🔒 एडमिन लॉगिन';
     }
 
-    // --- 7. FIREBASE AUTH STATE LISTENER & SEED DATA ---
+    // --- 7. FIRESTORE REALTIME SYNC (FETCH PREVIOUS & NEW NEWS) ---
+    function initRealtimeData() {
+        if (!db) return;
+
+        // 1. रियल-टाइम खबरें लोड करना (Purani & Nayi News)
+        db.collection('news').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            if (!snapshot.empty) {
+                newsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // लीड स्टोरी खोजना या पहली खबर को मुख्य बनाना
+                const lead = newsList.find(n => n.isLead) || newsList[0];
+                setLeadStory(lead);
+
+                // ब्रेकिंग न्यूज़ अपडेट
+                const breaking = newsList.find(n => n.isBreaking);
+                if (breaking) {
+                    document.getElementById('breaking-ticker').innerText = breaking.title;
+                }
+
+                filterNews(currentCategory);
+            } else {
+                // अगर Firestore बिल्कुल खाली हो तभी डिफॉल्ट दिखे
+                renderNews([]);
+            }
+        }, error => {
+            console.error("News fetch error:", error);
+        });
+
+        // 2. भर्ती अलर्ट लोड करना
+        db.collection('jobs').orderBy('createdAt', 'desc').limit(5).onSnapshot(snapshot => {
+            const jobContainer = document.getElementById('job-alerts-list');
+            if (!snapshot.empty) {
+                jobContainer.innerHTML = snapshot.docs.map(doc => {
+                    const job = doc.data();
+                    return `
+                        <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
+                            <b class="text-gray-900 dark:text-white text-xs">${job.title}</b>
+                            <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
+                                <span>${job.posts || ''}</span>
+                                <span class="text-red-500 font-semibold">अंतिम तिथि: ${job.lastDate}</span>
+                            </div>
+                            <a href="${job.link}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+
+        // 3. लाइव स्कोर लोड करना
+        db.collection('live_score').doc('current').onSnapshot(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('match-title').innerText = data.title;
+                document.getElementById('match-score').innerText = data.score;
+                document.getElementById('match-status').innerText = data.status;
+            }
+        });
+
+        // 4. नागरिक रिपोर्ट्स लोड करना (Admin panel)
+        db.collection('citizen_reports').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            const reportsList = document.getElementById('reports-list');
+            if (!snapshot.empty) {
+                reportsList.innerHTML = snapshot.docs.map(doc => {
+                    const report = doc.data();
+                    return `
+                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
+                            <div class="flex justify-between font-bold">
+                                <span>${report.name} (${report.area})</span>
+                                <span class="text-[10px] text-gray-500">${report.date}</span>
+                            </div>
+                            <p class="text-red-600 my-1 font-mono">${report.phone}</p>
+                            <p class="text-gray-700 dark:text-gray-300">${report.msg}</p>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+    }
+
+    // --- 8. AUTH LISTENER & INITIAL LOAD ---
     window.addEventListener('DOMContentLoaded', () => {
         if (auth) {
             auth.onAuthStateChanged(user => {
@@ -898,32 +955,7 @@
                 }
             });
         }
-
-        const defaultNews = [
-            {
-                id: 'lead_1',
-                title: "ऋषभदेव-कल्याणपुर क्षेत्र में डिजिटल सेवाओं का विस्तार, युवाओं को तकनीकी प्रशिक्षण",
-                category: "क्षेत्रीय",
-                reporter: "मेहुल वैष्णव",
-                content: "कल्याणपुर एवं आस-पास के ग्रामीण क्षेत्रों में डिजिटल साक्षरता को लेकर विशेष अभियान चलाया जा रहा है। स्थानीय युवाओं को ई-मित्र व ऑनलाइन सरकारी फॉर्म भरने से संबंधित आवश्यक दिशा-निर्देश दिए जा रहे हैं ताकि वे प्रतियोगी परीक्षाओं की तैयारी सुगमता से कर सकें।",
-                image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800",
-                date: "02 सितंबर 2026",
-                isLead: true
-            },
-            {
-                id: 'news_2',
-                title: "कृषि मंडी में फसलों के दामों में स्थिरता, किसानों को मिला उचित समर्थन मूल्य",
-                category: "कृषि व मौसम",
-                reporter: "ब्यूरो डेस्क",
-                content: "स्थानीय मंडी में आज मक्का, सरसों व गेहूं की आवक में बढ़ोतरी दर्ज की गई। व्यापारियों के अनुसार आने वाले दिनों में अच्छी बारिश के चलते फसलों की पैदावार बेहतर रहने की उम्मीद है।",
-                image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800",
-                date: "02 सितंबर 2026"
-            }
-        ];
-
-        newsList = [...defaultNews];
-        setLeadStory(defaultNews[0]);
-        renderNews(newsList);
+        initRealtimeData();
     });
 </script>
 
