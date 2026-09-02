@@ -176,7 +176,6 @@
                             🎤 <span class="text-red-600">CKN</span> <span id="lead-reporter"></span>
                         </span>
                         <span id="lead-date"></span>
-                        <span id="lead-views" class="ml-2 text-gray-400"></span>
                     </div>
                     <p id="lead-excerpt" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3"></p>
                 </div>
@@ -302,6 +301,9 @@
     </div>
 </footer>
 
+<!-- Modals Section -->
+
+<!-- 1. Post News Modal -->
 <div id="post-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-800">
         <h3 id="post-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नई खबर पोस्ट करें</h3>
@@ -346,6 +348,7 @@
     </div>
 </div>
 
+<!-- 2. Job Alert Modal -->
 <div id="job-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
@@ -362,6 +365,7 @@
     </div>
 </div>
 
+<!-- 3. Live Score Update Modal -->
 <div id="score-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
@@ -377,6 +381,7 @@
     </div>
 </div>
 
+<!-- 4. Citizen Reporter Modal -->
 <div id="citizen-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
@@ -394,6 +399,7 @@
     </div>
 </div>
 
+<!-- 5. Admin Login Modal -->
 <div id="admin-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
@@ -408,6 +414,7 @@
     </div>
 </div>
 
+<!-- 6. Reports View Modal (Admin Only) -->
 <div id="reports-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[85vh] flex flex-col">
         <div class="flex justify-between items-center pb-2 border-b dark:border-gray-800 mb-3">
@@ -420,13 +427,13 @@
     </div>
 </div>
 
+<!-- 7. News Full Reader Card Modal (Print Ready) -->
 <div id="read-modal" class="portal-modal">
     <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 relative max-h-[90vh] overflow-y-auto">
         <div class="no-print flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
             <div class="flex items-center gap-2">
                 <span id="read-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2 py-0.5 rounded"></span>
                 <span id="read-date" class="text-[11px] text-gray-500"></span>
-                <span id="read-views-count" class="text-[11px] text-gray-400"></span>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="window.print()" class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded border">🖨️ प्रिंट</button>
@@ -453,6 +460,7 @@
     </div>
 </div>
 
+<!-- 8. Policy Modals (About, Privacy, Grievance) -->
 <div id="about-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white">हमारे बारे में (About Us)</h3>
@@ -626,7 +634,7 @@
         });
     }
 
-    // --- 5. RENDER & DATA HANDLING ---
+    // --- 5. RENDER & DATA HANDLING (VIEWS OFF) ---
     function renderNews(list) {
         const container = document.getElementById('news-container');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
@@ -645,10 +653,7 @@
                     <div class="p-4">
                         <div class="flex items-center justify-between text-[10px] text-gray-500 mb-2">
                             <span class="bg-red-50 text-red-600 dark:bg-red-950/50 px-2 py-0.5 rounded font-bold">${item.category || 'सामान्य'}</span>
-                            <div class="flex items-center gap-2">
-                                <span>👁️ ${item.views || 0}</span>
-                                <span>${item.date || 'आज'}</span>
-                            </div>
+                            <span>${item.date || 'आज'}</span>
                         </div>
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReaderModal('${item.id}')">
                             ${item.title}
@@ -682,7 +687,6 @@
         document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
         document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('lead-date').innerText = item.date || "आज";
-        document.getElementById('lead-views').innerText = `👁️ ${item.views || 0} Views`;
         document.getElementById('lead-excerpt').innerText = item.content;
         document.getElementById('lead-image').src = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
@@ -699,16 +703,10 @@
 
         currentActiveNewsId = id;
 
-        // View Counter Increment
-        db.collection('news_posts').doc(id).update({
-            views: firebase.firestore.FieldValue.increment(1)
-        }).catch(() => {});
-
         document.getElementById('read-title').innerText = item.title;
         document.getElementById('read-category').innerText = item.category || 'सामान्य';
         document.getElementById('read-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('read-date').innerText = item.date || "आज";
-        document.getElementById('read-views-count').innerText = `👁️ ${(item.views || 0) + 1} बार देखा गया`;
         document.getElementById('read-content').innerText = item.content;
 
         const gallery = document.getElementById('read-gallery-box');
@@ -799,7 +797,6 @@
                 await db.collection('news_posts').doc(editDocId).update(newItem);
                 alert("खबर सफलतापूर्वक अपडेट हो गई!");
             } else {
-                newItem.views = 0;
                 newItem.timestamp = firebase.firestore.FieldValue.serverTimestamp();
                 await db.collection('news_posts').add(newItem);
                 alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
@@ -929,24 +926,20 @@
         renderNews(newsList);
     }
 
-    // --- 7. FIRESTORE REALTIME SYNC (RESTORING OLD NEWS & DATA) ---
+    // --- 7. FIRESTORE REALTIME SYNC ---
     function initRealtimeData() {
-        // 1. असली कलेक्शन: 'news_posts' से पुरानी व नई खबरें लोड करना
         db.collection('news_posts').onSnapshot(snapshot => {
             if (!snapshot.empty) {
                 newsList = snapshot.docs.map(doc => {
                     const data = doc.data();
-                    return { id: doc.id, ...data, views: Number(data.views) || 0 };
+                    return { id: doc.id, ...data };
                 });
 
-                // समय अनुसार सॉर्टिंग (ताज़ा खबर ऊपर)
                 newsList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-                // लीड स्टोरी खोजना
                 const lead = newsList.find(n => n.isLead) || newsList[0];
                 setLeadStory(lead);
 
-                // ब्रेकिंग न्यूज़ टिकर
                 const breaking = newsList.filter(n => n.isBreaking);
                 if (breaking.length > 0) {
                     document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('  ✦  ');
@@ -963,7 +956,6 @@
             </div>`;
         });
 
-        // 2. असली कलेक्शन: 'job_alerts' से भर्ती लोड करना
         db.collection('job_alerts').onSnapshot(snapshot => {
             const jobContainer = document.getElementById('job-alerts-list');
             if (!snapshot.empty) {
@@ -984,7 +976,6 @@
             }
         });
 
-        // 3. लाइव स्कोर
         db.collection('live_score').doc('current').onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
@@ -994,7 +985,6 @@
             }
         });
 
-        // 4. नागरिक रिपोर्ट्स
         db.collection('citizen_reports').onSnapshot(snapshot => {
             const reportsList = document.getElementById('reports-list');
             if (!snapshot.empty) {
