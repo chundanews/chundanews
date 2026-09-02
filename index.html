@@ -867,15 +867,22 @@
         document.getElementById('admin-login-btn').innerText = '🔒 एडमिन लॉगिन';
     }
 
-    // --- 7. FIRESTORE REALTIME SYNC (FETCH PREVIOUS & NEW NEWS) ---
+    // --- 7. FIRESTORE REALTIME SYNC (FETCH PREVIOUS & NEW NEWS COMPATIBLE) ---
     function initRealtimeData() {
         if (!db) return;
 
-        // 1. रियल-टाइम खबरें लोड करना (Purani & Nayi News)
-        db.collection('news').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        // 1. रियल-टाइम खबरें लोड करना (बिना orderBy ताकि पुरानी अनटैग्ड खबरें भी आएं)
+        db.collection('news').onSnapshot(snapshot => {
             if (!snapshot.empty) {
                 newsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
+                // टाइमस्टैम्प के आधार पर जावास्क्रिप्ट में सॉर्टिंग (पुरानी खबरें नीचे नहीं छूटेंगी)
+                newsList.sort((a, b) => {
+                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : 0;
+                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : 0;
+                    return timeB - timeA;
+                });
+
                 // लीड स्टोरी खोजना या पहली खबर को मुख्य बनाना
                 const lead = newsList.find(n => n.isLead) || newsList[0];
                 setLeadStory(lead);
@@ -888,30 +895,33 @@
 
                 filterNews(currentCategory);
             } else {
-                // अगर Firestore बिल्कुल खाली हो तभी डिफॉल्ट दिखे
                 renderNews([]);
             }
         }, error => {
             console.error("News fetch error:", error);
+            alert("डेटा लोड करने में समस्या: " + error.message);
         });
 
         // 2. भर्ती अलर्ट लोड करना
-        db.collection('jobs').orderBy('createdAt', 'desc').limit(5).onSnapshot(snapshot => {
+        db.collection('jobs').onSnapshot(snapshot => {
             const jobContainer = document.getElementById('job-alerts-list');
             if (!snapshot.empty) {
-                jobContainer.innerHTML = snapshot.docs.map(doc => {
-                    const job = doc.data();
-                    return `
-                        <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
-                            <b class="text-gray-900 dark:text-white text-xs">${job.title}</b>
-                            <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
-                                <span>${job.posts || ''}</span>
-                                <span class="text-red-500 font-semibold">अंतिम तिथि: ${job.lastDate}</span>
-                            </div>
-                            <a href="${job.link}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                let jobs = snapshot.docs.map(doc => doc.data());
+                jobs.sort((a, b) => {
+                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : 0;
+                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : 0;
+                    return timeB - timeA;
+                });
+                jobContainer.innerHTML = jobs.slice(0, 5).map(job => `
+                    <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
+                        <b class="text-gray-900 dark:text-white text-xs">${job.title}</b>
+                        <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
+                            <span>${job.posts || ''}</span>
+                            <span class="text-red-500 font-semibold">अंतिम तिथि: ${job.lastDate}</span>
                         </div>
-                    `;
-                }).join('');
+                        <a href="${job.link}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                    </div>
+                `).join('');
             }
         });
 
@@ -926,22 +936,25 @@
         });
 
         // 4. नागरिक रिपोर्ट्स लोड करना (Admin panel)
-        db.collection('citizen_reports').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+        db.collection('citizen_reports').onSnapshot(snapshot => {
             const reportsList = document.getElementById('reports-list');
             if (!snapshot.empty) {
-                reportsList.innerHTML = snapshot.docs.map(doc => {
-                    const report = doc.data();
-                    return `
-                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                            <div class="flex justify-between font-bold">
-                                <span>${report.name} (${report.area})</span>
-                                <span class="text-[10px] text-gray-500">${report.date}</span>
-                            </div>
-                            <p class="text-red-600 my-1 font-mono">${report.phone}</p>
-                            <p class="text-gray-700 dark:text-gray-300">${report.msg}</p>
+                let reports = snapshot.docs.map(doc => doc.data());
+                reports.sort((a, b) => {
+                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : 0;
+                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : 0;
+                    return timeB - timeA;
+                });
+                reportsList.innerHTML = reports.map(report => `
+                    <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
+                        <div class="flex justify-between font-bold">
+                            <span>${report.name} (${report.area})</span>
+                            <span class="text-[10px] text-gray-500">${report.date}</span>
                         </div>
-                    `;
-                }).join('');
+                        <p class="text-red-600 my-1 font-mono">${report.phone}</p>
+                        <p class="text-gray-700 dark:text-gray-300">${report.msg}</p>
+                    </div>
+                `).join('');
             }
         });
     }
