@@ -469,6 +469,29 @@
 </div>
 
 <script>
+    // --- 0. SECURITY & HTML SANITIZATION ---
+    function escapeHTML(str) {
+        if (!str && str !== 0) return '';
+        return String(str).replace(/[&<>'"]/g, 
+            tag => ({ 
+                '&': '&amp;', 
+                '<': '&lt;', 
+                '>': '&gt;', 
+                "'": '&#39;', 
+                '"': '&quot;' 
+            }[tag] || tag)
+        );
+    }
+
+    function sanitizeUrl(url) {
+        if (!url) return '';
+        const trimmed = String(url).trim();
+        if (trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/')) {
+            return escapeHTML(trimmed);
+        }
+        return '#';
+    }
+
     // --- 1. FIREBASE CONFIGURATION ---
     const firebaseConfig = {
         apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
@@ -522,7 +545,7 @@
     function updateLivePanchang() {
         const d = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('live-panchang').innerHTML = `<i class="fa-regular fa-calendar-days text-red-500 mr-1"></i> ${d.toLocaleDateString('hi-IN', options)}`;
+        document.getElementById('live-panchang').innerHTML = `<i class="fa-regular fa-calendar-days text-red-500 mr-1"></i> ${escapeHTML(d.toLocaleDateString('hi-IN', options))}`;
     }
     updateLivePanchang();
 
@@ -624,33 +647,36 @@
         }
 
         container.innerHTML = list.map(item => {
-            const displayImg = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
+            const rawImg = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
+            const displayImg = sanitizeUrl(rawImg);
+            const safeId = escapeHTML(item.id);
+            
             return `
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
                 <div>
-                    <img src="${displayImg}" class="w-full h-44 object-cover cursor-pointer" onclick="openReaderModal('${item.id}')">
+                    <img src="${displayImg}" class="w-full h-44 object-cover cursor-pointer" onclick="openReaderModal('${safeId}')">
                     <div class="p-4">
                         <div class="flex items-center justify-between text-[10px] text-gray-500 mb-2">
-                            <span class="bg-red-50 text-red-600 dark:bg-red-950/50 px-2 py-0.5 rounded font-bold">${item.category || 'सामान्य'}</span>
-                            <span>${item.date || 'आज'}</span>
+                            <span class="bg-red-50 text-red-600 dark:bg-red-950/50 px-2 py-0.5 rounded font-bold">${escapeHTML(item.category || 'सामान्य')}</span>
+                            <span>${escapeHTML(item.date || 'आज')}</span>
                         </div>
-                        <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReaderModal('${item.id}')">
-                            ${item.title}
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReaderModal('${safeId}')">
+                            ${escapeHTML(item.title)}
                         </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${item.content}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${escapeHTML(item.content)}</p>
                     </div>
                 </div>
                 <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
                     <div class="flex justify-between items-center text-xs py-2">
-                        <button onclick="openReaderModal('${item.id}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
-                        <button onclick="shareWhatsAppWithImage('${item.id}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
+                        <button onclick="openReaderModal('${safeId}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
+                        <button onclick="shareWhatsAppWithImage('${safeId}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> शेयर
                         </button>
                     </div>
                     ${isAdminLoggedIn ? `
                         <div class="pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
-                            <button onclick="editNewsPost('${item.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[11px] flex-1">एडिट</button>
-                            <button onclick="deleteNewsPost('${item.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-[11px] flex-1">डिलीट</button>
+                            <button onclick="editNewsPost('${safeId}')" class="bg-blue-600 text-white px-2 py-1 rounded text-[11px] flex-1">एडिट</button>
+                            <button onclick="deleteNewsPost('${safeId}')" class="bg-red-600 text-white px-2 py-1 rounded text-[11px] flex-1">डिलीट</button>
                         </div>
                     ` : ''}
                 </div>
@@ -662,12 +688,12 @@
         if (!item) return;
         leadNewsItem = item;
         document.getElementById('lead-news-section').classList.remove('hidden');
-        document.getElementById('lead-title').innerText = item.title;
+        document.getElementById('lead-title').innerText = item.title || '';
         document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
         document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('lead-date').innerText = item.date || "आज";
-        document.getElementById('lead-excerpt').innerText = item.content;
-        document.getElementById('lead-image').src = item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
+        document.getElementById('lead-excerpt').innerText = item.content || '';
+        document.getElementById('lead-image').src = sanitizeUrl(item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800");
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
         document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
     }
@@ -682,11 +708,11 @@
 
         currentActiveNewsId = id;
 
-        document.getElementById('read-title').innerText = item.title;
+        document.getElementById('read-title').innerText = item.title || '';
         document.getElementById('read-category').innerText = item.category || 'सामान्य';
         document.getElementById('read-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('read-date').innerText = item.date || "आज";
-        document.getElementById('read-content').innerText = item.content;
+        document.getElementById('read-content').innerText = item.content || '';
 
         const gallery = document.getElementById('read-gallery-box');
         gallery.innerHTML = '';
@@ -694,7 +720,7 @@
         allImgs.forEach(imgSrc => {
             if (imgSrc) {
                 const img = document.createElement('img');
-                img.src = imgSrc;
+                img.src = sanitizeUrl(imgSrc);
                 img.className = "w-full max-h-96 object-cover rounded-xl shadow mb-3";
                 gallery.appendChild(img);
             }
@@ -752,7 +778,7 @@
 
     function filterNews(cat) {
         currentCategory = cat;
-        document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ${cat === 'all' ? 'ताज़ा समाचार' : cat}`;
+        document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ${cat === 'all' ? 'ताज़ा समाचार' : escapeHTML(cat)}`;
         if (cat === 'all') {
             renderNews(newsList);
         } else {
@@ -981,12 +1007,12 @@
                 jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                 jobContainer.innerHTML = jobs.slice(0, 5).map(job => `
                     <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
-                        <b class="text-gray-900 dark:text-white text-xs">${job.title}</b>
+                        <b class="text-gray-900 dark:text-white text-xs">${escapeHTML(job.title)}</b>
                         <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
-                            <span>${job.posts || ''}</span>
-                            <span class="text-red-500 font-semibold">अंतिम तिथि: ${job.lastDate}</span>
+                            <span>${escapeHTML(job.posts || '')}</span>
+                            <span class="text-red-500 font-semibold">अंतिम तिथि: ${escapeHTML(job.lastDate)}</span>
                         </div>
-                        <a href="${job.link || '#'}" target="_blank" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                        <a href="${sanitizeUrl(job.link || '#')}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
                     </div>
                 `).join('');
             } else {
@@ -997,9 +1023,9 @@
         db.collection('live_score').doc('current').onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
-                document.getElementById('match-title').innerText = data.title;
-                document.getElementById('match-score').innerText = data.score;
-                document.getElementById('match-status').innerText = data.status;
+                document.getElementById('match-title').innerText = data.title || '';
+                document.getElementById('match-score').innerText = data.score || '';
+                document.getElementById('match-status').innerText = data.status || '';
             }
         });
 
@@ -1011,11 +1037,11 @@
                     return `
                         <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
                             <div class="flex justify-between font-bold">
-                                <span>${report.name} (${report.location || report.area || ''})</span>
-                                <span class="text-[10px] text-gray-500">${report.date || ''}</span>
+                                <span>${escapeHTML(report.name)} (${escapeHTML(report.location || report.area || '')})</span>
+                                <span class="text-[10px] text-gray-500">${escapeHTML(report.date || '')}</span>
                             </div>
-                            <p class="text-red-600 my-1 font-mono">${report.phone || ''}</p>
-                            <p class="text-gray-700 dark:text-gray-300">${report.details || report.msg || ''}</p>
+                            <p class="text-red-600 my-1 font-mono">${escapeHTML(report.phone || '')}</p>
+                            <p class="text-gray-700 dark:text-gray-300">${escapeHTML(report.details || report.msg || '')}</p>
                         </div>
                     `;
                 }).join('');
