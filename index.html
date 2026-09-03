@@ -409,7 +409,7 @@
 <!-- 3. Live Score Update Modal -->
 <div id="score-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
-        <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
+        <h3 id="score-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
         <form onsubmit="handleScoreSubmit(event)" class="space-y-3 text-xs">
             <input type="text" id="score-title" placeholder="मैच टाइटल (उदा. प्रीमियर लीग)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
             <input type="text" id="score-detail" placeholder="स्कोर (उदा. टीम A: 120/4 (14.2 ov))" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
@@ -425,7 +425,7 @@
 <!-- 4. Citizen Reporter Modal (Anti-Spam Protected) -->
 <div id="citizen-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
-        <h3 class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
+        <h3 id="citizen-modal-title" class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
         <p class="text-[11px] text-gray-500 mb-3">आपके क्षेत्र की समस्या या सूचना हमें भेजें, सत्यापन उपरांत प्रकाशित की जाएगी।</p>
         <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
             <input type="text" id="citizen-hp" style="display:none!important;" tabindex="-1" autocomplete="off">
@@ -1223,8 +1223,13 @@
         try {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
+                // सर्विस वर्कर को सीधे रजिस्टर और एक्टिवेट कराएं
+                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                await navigator.serviceWorker.ready;
+
                 const token = await messaging.getToken({
-                    vapidKey: "BIs4iab2gPUGk3EQu8xD6KVU4d0a81aa2VRQdZ61n9N5_uIseC8ob6yAlQQyrsiIIINBmNOKvO8Dq6x4R8Zu9kA"
+                    vapidKey: "BIs4iab2gPUGk3EQu8xD6KVU4d0a81aa2VRQdZ61n9N5_uIseC8ob6yAlQQyrsiIIINBmNOKvO8Dq6x4R8Zu9kA",
+                    serviceWorkerRegistration: registration
                 });
 
                 if (token) {
