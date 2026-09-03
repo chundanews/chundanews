@@ -35,8 +35,6 @@
         .portal-modal { display:none; position:fixed; inset:0; width:100vw; height:100vh; background-color:rgba(0,0,0,.85)!important; z-index:999999!important; align-items:center; justify-content:center; padding:1rem; overflow-y:auto; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .ad-banner-box { background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 10px, #f1f5f9 10px, #f1f5f9 20px); }
-        .dark .ad-banner-box { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px); }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
@@ -97,12 +95,22 @@
             </div>
         </div>
 
-        <div class="w-full md:w-[500px] lg:w-[650px] h-20 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center ad-banner-box text-gray-400 text-xs text-center p-2 relative overflow-hidden">
-            <span class="absolute top-1 right-2 text-[9px] bg-gray-200 dark:bg-gray-800 text-gray-500 px-1 rounded">Sponsored / AdSense</span>
-            <div>
-                <p class="font-bold text-gray-700 dark:text-gray-300">विज्ञापन स्थान (Ad Space Available)</p>
-                <p class="text-[10px] text-gray-500">728x90 Header Display Banner Space</p>
+        <!-- 1. HEADER AD SPACE (728x90): श्रीजी ज्वैलर्स -->
+        <div class="w-full md:w-[500px] lg:w-[650px] h-20 rounded-xl bg-gradient-to-r from-amber-900 via-yellow-800 to-stone-900 text-white flex items-center justify-between px-4 py-2 relative overflow-hidden shadow border border-amber-500/40">
+            <span class="absolute top-1 right-2 text-[8px] bg-black/60 text-amber-200 px-1 rounded uppercase tracking-wider">Sponsored</span>
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-amber-400/20 border border-amber-300 flex items-center justify-center text-amber-300 text-xl shrink-0">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs md:text-sm font-black text-amber-200 tracking-wide">✨ श्रीजी ज्वैलर्स & सन्स</h3>
+                    <p class="text-[10px] md:text-[11px] text-gray-200 leading-tight">100% BIS हॉलमार्क शुद्ध सोने एवं चांदी के आभूषण</p>
+                    <p class="text-[9px] text-amber-300 font-semibold mt-0.5">मेकिंग चार्ज पर 25% तक की विशेष छूट | मेन बाज़ार, ऋषभदेव</p>
+                </div>
             </div>
+            <a href="tel:9876543210" class="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black px-3 py-1.5 rounded-lg font-black text-xs shadow shrink-0">
+                <i class="fa-solid fa-phone"></i> संपर्क करें
+            </a>
         </div>
 
         <div class="flex items-center gap-2">
@@ -142,15 +150,24 @@
     </nav>
 </header>
 
+<!-- 2. TOP BANNER AD: मेवाड़ मोटर्स (ऑटोमोबाइल / बाइक लोन मेला) -->
 <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
-    <div class="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white rounded-xl p-3 shadow-md flex flex-wrap items-center justify-between gap-3 border border-gray-700">
-        <div>
-            <div class="flex items-center gap-2">
-                <span class="bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded">SPONSORED</span>
-                <b class="text-sm">विज्ञापन स्थान उपलब्ध (Ad Space Available)</b>
+    <div class="bg-gradient-to-r from-red-900 via-zinc-900 to-black text-white rounded-xl p-3 sm:p-4 shadow-md flex flex-wrap items-center justify-between gap-3 border border-red-700/50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center text-white text-lg shrink-0">
+                <i class="fa-solid fa-motorcycle"></i>
             </div>
-            <p class="text-xs text-gray-300 mt-0.5">व्यापार एवं सेवाओं के प्रचार हेतु संपर्क रहित विज्ञापन बैनर स्पेस।</p>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.2 rounded uppercase">विशेषाधिकार</span>
+                    <b class="text-xs sm:text-sm font-black text-red-100">मेवाड़ मोटर्स — भव्य दोपहिया वाहन एक्सचेंज मेला!</b>
+                </div>
+                <p class="text-[11px] text-gray-300 mt-0.5">पुरानी बाइक लाइए, नई ले जाइए | मात्र ₹4,999 की डाउन पेमेंट और 6.99% ब्याज दर पर आसान लोन।</p>
+            </div>
         </div>
+        <a href="tel:9829012345" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition shadow">
+            📞 98290-XXXXX पर कॉल करें
+        </a>
     </div>
 </div>
 
@@ -214,10 +231,25 @@
                 <div class="col-span-2 text-center py-12 text-gray-500">समाचार लोड हो रहे हैं...</div>
             </div>
 
-            <div class="my-8 p-4 rounded-xl border border-dashed border-gray-300 dark:border-gray-800 ad-banner-box text-center relative">
-                <span class="absolute top-1 right-2 text-[9px] bg-gray-200 dark:bg-gray-800 text-gray-500 px-1 rounded">AdSense In-Feed</span>
-                <p class="text-xs font-bold text-gray-700 dark:text-gray-300">विज्ञापन स्थान (Ad Space Available)</p>
-                <p class="text-[11px] text-gray-500 mt-1">In-Feed Responsive Display Banner</p>
+            <!-- 3. IN-FEED AD: किसान सेवा केंद्र (कृषि व बीज भण्डार) -->
+            <div class="my-8 rounded-xl bg-gradient-to-r from-emerald-800 via-teal-900 to-green-950 text-white p-4 relative overflow-hidden shadow-md border border-emerald-600/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span class="absolute top-2 right-2 text-[8px] bg-black/50 text-emerald-300 px-1.5 py-0.5 rounded uppercase">Sponsored</span>
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-emerald-700/60 border border-emerald-400 flex items-center justify-center text-white text-2xl shrink-0">
+                        <i class="fa-solid fa-tractor"></i>
+                    </div>
+                    <div>
+                        <span class="bg-amber-400 text-emerald-950 text-[10px] font-black px-2 py-0.5 rounded">कृषक बंधुओं के लिए</span>
+                        <h4 class="text-sm font-black mt-1 text-emerald-100">जय किसान बीज एवं कृषि उपकरण केंद्र</h4>
+                        <p class="text-xs text-emerald-200 mt-0.5">उन्नत प्रमाणित हाइब्रिड बीज, जैविक खाद एवं आधुनिक स्प्रेयर सब्सिडी पर उपलब्ध।</p>
+                    </div>
+                </div>
+                <div class="flex sm:flex-col items-center gap-2 w-full sm:w-auto shrink-0">
+                    <span class="text-[11px] text-amber-300 font-bold">ऋषभदेव चौराहा</span>
+                    <a href="tel:9414000000" class="w-full sm:w-auto text-center bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs px-4 py-1.5 rounded-lg shadow">
+                        जानकारी लें
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -244,13 +276,27 @@
                 </div>
             </div>
 
-            <div class="sticky top-16 bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-300 dark:border-gray-800 p-4 text-center ad-banner-box relative overflow-hidden">
-                <span class="absolute top-1 right-2 text-[9px] bg-gray-200 dark:bg-gray-800 text-gray-500 px-1 rounded">Sidebar Ad</span>
-                <div class="h-64 flex flex-col items-center justify-center">
-                    <i class="fa-solid fa-rectangle-ad text-3xl text-gray-400 mb-2"></i>
-                    <p class="font-bold text-xs text-gray-700 dark:text-gray-300">विज्ञापन स्थान उपलब्ध</p>
-                    <p class="text-[10px] text-gray-500 mt-1">300x250 / 300x600 Display Banner</p>
+            <!-- 4. SIDEBAR VERTICAL AD: संकल्प क्लासेज (प्रतियोगी परीक्षा कोचिंग) -->
+            <div class="sticky top-16 rounded-xl bg-gradient-to-b from-blue-950 via-slate-900 to-gray-950 text-white border border-blue-600/30 p-5 text-center relative overflow-hidden shadow-lg">
+                <span class="absolute top-2 right-2 text-[8px] bg-blue-500/20 text-blue-300 border border-blue-500/40 px-1 rounded uppercase">Sponsored</span>
+                
+                <div class="w-16 h-16 mx-auto rounded-full bg-blue-600/30 border-2 border-blue-400 flex items-center justify-center text-blue-300 text-2xl mb-3">
+                    <i class="fa-solid fa-graduation-cap"></i>
                 </div>
+                
+                <span class="bg-amber-400 text-black text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">नया बैच प्रारंभ</span>
+                <h3 class="text-base font-black text-white mt-2">संकल्प प्रतियोगी क्लासेज</h3>
+                <p class="text-[11px] text-blue-300 font-bold mt-1">उदयपुर संभाग का अग्रणी संस्थान</p>
+                
+                <div class="my-4 py-2 border-y border-white/10 text-xs space-y-1 text-gray-300">
+                    <p class="font-bold text-amber-200">🎯 RAS • REET • CET • पटवार</p>
+                    <p class="text-[11px]">अनुभवी विषय विशेषज्ञों द्वारा डिजिटल स्मार्ट क्लासरूम</p>
+                    <p class="text-[10px] text-emerald-400 font-semibold">✓ 3 दिन की फ्री डेमो क्लास उपलब्ध</p>
+                </div>
+
+                <a href="tel:9414123456" class="block w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-xs py-2 rounded-lg shadow-md transition">
+                    📞 सीट सुरक्षित करें: 94141-XXXXX
+                </a>
             </div>
         </aside>
     </div>
@@ -370,7 +416,7 @@
             <input type="text" id="score-status" placeholder="स्थिति (उदा. टीम B को जीत के लिए 24 रन चाहिए)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
                 <button type="button" onclick="closePortalModal('score-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
-                <button type="submit" class="bg-sky-600 text-white px-5 py-1.5 rounded font-bold">अपडेट करें</button>
+                <button type="submit" id="score-submit-btn" class="bg-sky-600 text-white px-5 py-1.5 rounded font-bold">अपडेट करें</button>
             </div>
         </form>
     </div>
@@ -382,9 +428,7 @@
         <h3 class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
         <p class="text-[11px] text-gray-500 mb-3">आपके क्षेत्र की समस्या या सूचना हमें भेजें, सत्यापन उपरांत प्रकाशित की जाएगी।</p>
         <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
-            <!-- Honeypot Field for Bot Trap -->
             <input type="text" id="citizen-hp" style="display:none!important;" tabindex="-1" autocomplete="off">
-
             <input type="text" id="citizen-name" required placeholder="आपका शुभ नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="tel" id="citizen-phone" required placeholder="मोबाइल नंबर" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="citizen-area" required placeholder="स्थान / गाँव का नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -425,7 +469,7 @@
     </div>
 </div>
 
-<!-- 7. News Full Reader Card Modal (Print Removed) -->
+<!-- 7. News Full Reader Card Modal -->
 <div id="read-modal" class="portal-modal">
     <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 relative max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
@@ -535,7 +579,6 @@
     const auth = firebase.auth();
     const storage = firebase.storage();
 
-    // Firebase Messaging Instance (Push Notifications)
     let messaging = null;
     if (firebase.messaging.isSupported()) {
         messaging = firebase.messaging();
@@ -670,7 +713,7 @@
         });
     }
 
-    // --- 5. RENDER & DATA HANDLING (VIEWS OFF) ---
+    // --- 5. RENDER & DATA HANDLING ---
     function renderNews(list) {
         const container = document.getElementById('news-container');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
@@ -830,7 +873,7 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS (FIREBASE STORAGE ENABLED) ---
+    // --- 6. ADMIN & FORM SUBMISSIONS ---
     function triggerOpenNewPostModal() { 
         ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('news-reporter').value = 'विशेष संवाददाता';
@@ -965,16 +1008,14 @@
         }).catch(err => alert("स्कोर अपडेट त्रुटि: " + err.message));
     }
 
-    // --- ANTI-SPAM & THROTTLED CITIZEN REPORT SUBMISSION ---
+    // --- ANTI-SPAM CITIZEN REPORT SUBMISSION ---
     async function handleCitizenSubmit(e) {
         e.preventDefault();
 
-        // 1. Honeypot check
         if (document.getElementById('citizen-hp').value) {
             return; 
         }
 
-        // 2. 5-Minute Anti-Spam Rate Limit Cooldown
         const lastSubmitted = localStorage.getItem('last_report_time');
         const now = Date.now();
         const cooldownPeriod = 5 * 60 * 1000;
@@ -1080,7 +1121,6 @@
                 const lead = newsList.find(n => n.isLead) || newsList[0];
                 setLeadStory(lead);
 
-                // केवल 03/09/2026 की ब्रेकिंग न्यूज़ फ़िल्टर
                 const breaking = newsList.filter(n => n.isBreaking && isTodayDate(n.date, n.createdAt));
                 if (breaking.length > 0) {
                     document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
@@ -1204,9 +1244,8 @@
         }
     }
 
-    // --- 10. AUTH LISTENER & INITIAL LOAD (WITH SW REGISTRATION) ---
+    // --- 10. AUTH LISTENER & INITIAL LOAD ---
     window.addEventListener('DOMContentLoaded', () => {
-        // Register PWA Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
                 .then(reg => console.log('PWA Service Worker Registered:', reg.scope))
