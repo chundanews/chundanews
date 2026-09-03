@@ -1190,6 +1190,13 @@
 
     // --- 8. PWA INSTALLATION SYSTEM ---
     let deferredPrompt = null;
+
+    // बटन को लोड होते ही हमेशा स्क्रीन पर विजिबल रखें
+    window.addEventListener('DOMContentLoaded', () => {
+        const pwaBtn = document.getElementById('pwa-install-btn');
+        if (pwaBtn) pwaBtn.style.display = 'inline-flex';
+    });
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -1198,14 +1205,18 @@
     });
 
     function triggerPwaInstall() {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                document.getElementById('pwa-install-btn').style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    document.getElementById('pwa-install-btn').style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        } else {
+            // अगर ब्राउज़र ने डायरेक्ट प्रॉम्प्ट रोक रखा है, तो यूज़र को गाइड करें
+            alert("ऐप इंस्टॉल करने के लिए:\n1. ब्राउज़र के ऊपर कोने में 3 डॉट्स (⋮) पर क्लिक करें।\n2. 'Install app' या 'Add to Home screen' (होम स्क्रीन में जोड़ें) चुनें।");
+        }
     }
 
     // --- 9. WEB PUSH NOTIFICATIONS SYSTEM ---
