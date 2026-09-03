@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <!-- 1. HEADER AD SPACE: सीजनल महा-सेल (सैम्पल विज्ञापन) -->
+        <!-- 1. HEADER AD SPACE -->
         <div class="w-full md:w-[500px] lg:w-[650px] h-20 rounded-xl bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 text-white flex items-center justify-between px-4 py-2 relative overflow-hidden shadow border border-indigo-500/30">
             <span class="absolute top-1 right-2 text-[8px] bg-black/60 text-yellow-300 px-1 rounded uppercase tracking-wider">सैम्पल विज्ञापन (Demo Ad)</span>
             <div class="flex items-center gap-3">
@@ -114,11 +114,9 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <!-- PWA Install Button -->
             <button id="pwa-install-btn" style="display:none;" onclick="triggerPwaInstall()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black px-2.5 py-1.5 rounded-lg font-bold shadow flex items-center gap-1 transition">
                 📲 ऐप इंस्टॉल
             </button>
-            <!-- Web Push Notification Toggle Button -->
             <button onclick="enablePushNotifications()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400 border text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700" title="नोटिफिकेशन चालू करें">
                 🔔
             </button>
@@ -150,7 +148,7 @@
     </nav>
 </header>
 
-<!-- 2. TOP BANNER AD: 5G स्मार्टफोन एक्सचेंज धमाका (सैम्पल विज्ञापन) -->
+<!-- 2. TOP BANNER AD -->
 <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
     <div class="bg-gradient-to-r from-sky-950 via-slate-900 to-teal-950 text-white rounded-xl p-3 sm:p-4 shadow-md flex flex-wrap items-center justify-between gap-3 border border-sky-600/30">
         <div class="flex items-center gap-3">
@@ -231,7 +229,7 @@
                 <div class="col-span-2 text-center py-12 text-gray-500">समाचार लोड हो रहे हैं...</div>
             </div>
 
-            <!-- 3. IN-FEED AD: 10-मिनट ग्रॉसरी डिलीवरी ऐप (सैम्पल विज्ञापन) -->
+            <!-- 3. IN-FEED AD -->
             <div class="my-8 rounded-xl bg-gradient-to-r from-emerald-900 via-zinc-900 to-green-950 text-white p-4 relative overflow-hidden shadow-md border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span class="absolute top-2 right-2 text-[8px] bg-black/60 text-emerald-300 px-1.5 py-0.5 rounded uppercase">सैम्पल विज्ञापन</span>
                 <div class="flex items-center gap-4">
@@ -276,7 +274,7 @@
                 </div>
             </div>
 
-            <!-- 4. SIDEBAR VERTICAL AD: ऑनलाइन स्किल लर्निंग प्लेटफॉर्म (सैम्पल विज्ञापन) -->
+            <!-- 4. SIDEBAR VERTICAL AD -->
             <div class="sticky top-16 rounded-xl bg-gradient-to-b from-slate-900 via-indigo-950 to-gray-950 text-white border border-indigo-500/30 p-5 text-center relative overflow-hidden shadow-lg">
                 <span class="absolute top-2 right-2 text-[8px] bg-white/10 text-indigo-200 border border-white/20 px-1 rounded uppercase">सैम्पल डेमो</span>
                 
@@ -341,8 +339,6 @@
         </div>
     </div>
 </footer>
-
-<!-- Modals Section -->
 
 <!-- 1. Post News Modal -->
 <div id="post-modal" class="portal-modal">
@@ -422,7 +418,7 @@
     </div>
 </div>
 
-<!-- 4. Citizen Reporter Modal (Anti-Spam Protected) -->
+<!-- 4. Citizen Reporter Modal -->
 <div id="citizen-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="citizen-modal-title" class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
@@ -444,7 +440,7 @@
 <!-- 5. Admin Login Modal -->
 <div id="admin-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border dark:border-gray-800">
-        <h3 class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
+        <h3 id="admin-modal-heading" class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
         <form onsubmit="handleAdminLogin(event)" class="space-y-3 text-xs">
             <input type="email" id="admin-email" required placeholder="ईमेल आईडी" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="password" id="admin-pass" required placeholder="पासवर्ड" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -456,7 +452,7 @@
     </div>
 </div>
 
-<!-- 6. Reports View Modal (Admin Only) -->
+<!-- 6. Reports View Modal -->
 <div id="reports-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[85vh] flex flex-col">
         <div class="flex justify-between items-center pb-2 border-b dark:border-gray-800 mb-3">
@@ -501,11 +497,11 @@
     </div>
 </div>
 
-<!-- 8. Policy Modals (About, Privacy, Grievance) -->
+<!-- 8. Policy Modals -->
 <div id="about-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white">हमारे बारे में (About Us)</h3>
-        <p>चूंडा क्षेत्र न्यूज़ (Chunda Kshetra News) स्थानीय और ग्रामीण अंचल की खबरों को डिजिटल मंच पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र समाचार नेटवर्क है। हमारा लक्ष्य स्थानीय समस्याओं, विकास कार्यों, शिक्षा व रोज़गार से जुड़ी प्रामाणिक खबरें जनता तक पहुँचाना है।</p>
+        <p>चूंडा क्षेत्र न्यूज़ (Chunda Kshetra News) स्थानीय और ग्रामीण अंचल की खबरों को डिजिटल मंच पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र समाचार नेटवर्क है।</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('about-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -513,7 +509,7 @@
 <div id="privacy-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white">गोपनीयता नीति (Privacy Policy)</h3>
-        <p>हम अपने पाठकों की गोपनीयता का पूरा सम्मान करते हैं। नागरिक पत्रकारिता फॉर्म के माध्यम से प्राप्त की गई व्यक्तिगत जानकारी का उपयोग केवल सत्यापन हेतु किया जाता है और किसी तीसरे पक्ष के साथ साझा नहीं किया जाता।</p>
+        <p>हम अपने पाठकों की गोपनीयता का पूरा सम्मान करते हैं।</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('privacy-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -521,8 +517,7 @@
 <div id="grievance-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white">शिकायत निवारण (Grievance Redressal)</h3>
-        <p>किसी भी प्रकाशित समाचार पर आपत्ति अथवा सुधार हेतु आप हमारे शिकायत निवारण अधिकारी से संपर्क कर सकते हैं:</p>
-        <p><b>ईमेल:</b> support@chundanews.in</p>
+        <p>किसी भी प्रकाशित समाचार पर आपत्ति अथवा सुधार हेतु आप संपर्क कर सकते हैं: support@chundanews.in</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('grievance-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -552,15 +547,20 @@
     }
 
     function dataURLtoBlob(dataurl) {
-        const arr = dataurl.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
+        try {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        } catch (e) {
+            console.error("Blob conversion error:", e);
+            return null;
         }
-        return new Blob([u8arr], { type: mime });
     }
 
     // --- 1. FIREBASE CONFIGURATION ---
@@ -660,15 +660,9 @@
         };
     }
 
-    // --- 4. IMAGE COMPRESSION (<100KB) + WATERMARK ---
-    function previewSelectedImages(event) {
-        const files = event.target.files;
-        uploadedCompressedImages = [];
-        const previewBox = document.getElementById('image-preview-box');
-        previewBox.innerHTML = '';
-        previewBox.classList.remove('hidden');
-
-        Array.from(files).forEach(file => {
+    // --- 4. IMAGE COMPRESSION (<100KB) + WATERMARK (REVISED WITH PROMISE) ---
+    function processImageFile(file) {
+        return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
@@ -700,16 +694,41 @@
                     ctx.fillText("CHUNDA KSHETRA NEWS", Math.max(5, width - 205), Math.max(15, height - 14));
 
                     const compressedBase64 = canvas.toDataURL("image/jpeg", 0.75);
-                    uploadedCompressedImages.push(compressedBase64);
-
-                    const thumb = document.createElement('img');
-                    thumb.src = compressedBase64;
-                    thumb.className = "w-14 h-14 object-cover rounded border border-red-500";
-                    previewBox.appendChild(thumb);
+                    resolve(compressedBase64);
                 };
+                img.onerror = () => resolve(null);
                 img.src = e.target.result;
             };
+            reader.onerror = () => resolve(null);
             reader.readAsDataURL(file);
+        });
+    }
+
+    async function previewSelectedImages(event) {
+        const files = Array.from(event.target.files);
+        uploadedCompressedImages = [];
+        const previewBox = document.getElementById('image-preview-box');
+        previewBox.innerHTML = '<span class="text-gray-400 text-xs py-1">फ़ोटो प्रोसेस हो रही हैं...</span>';
+        previewBox.classList.remove('hidden');
+
+        for (const file of files) {
+            const base64 = await processImageFile(file);
+            if (base64) {
+                uploadedCompressedImages.push(base64);
+            }
+        }
+
+        previewBox.innerHTML = '';
+        if (uploadedCompressedImages.length === 0) {
+            previewBox.classList.add('hidden');
+            return;
+        }
+
+        uploadedCompressedImages.forEach(base64 => {
+            const thumb = document.createElement('img');
+            thumb.src = base64;
+            thumb.className = "w-14 h-14 object-cover rounded border border-red-500 shadow-sm";
+            previewBox.appendChild(thumb);
         });
     }
 
@@ -807,7 +826,6 @@
         openPortalModal('read-modal');
     }
 
-    // --- PHOTO + TITLE + LINK WHATSAPP SHARE SYSTEM ---
     async function shareWhatsAppWithImage(id) {
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
@@ -820,15 +838,7 @@
             try {
                 let blob = null;
                 if (rawImg.startsWith('data:image')) {
-                    const arr = rawImg.split(',');
-                    const mime = arr[0].match(/:(.*?);/)[1];
-                    const bstr = atob(arr[1]);
-                    let n = bstr.length;
-                    const u8arr = new Uint8Array(n);
-                    while (n--) {
-                        u8arr[n] = bstr.charCodeAt(n);
-                    }
-                    blob = new Blob([u8arr], { type: mime });
+                    blob = dataURLtoBlob(rawImg);
                 } else {
                     const res = await fetch(rawImg);
                     blob = await res.blob();
@@ -873,15 +883,38 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS ---
-    function triggerOpenNewPostModal() { 
-        ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => document.getElementById(id).value = '');
+    // --- 6. ADMIN & FORM SUBMISSIONS (RESOLVED UPLOAD & REPEAT ISSUES) ---
+    function resetPostModalState() {
+        ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        const fileInput = document.getElementById('news-files');
+        if (fileInput) fileInput.value = '';
+        
+        uploadedCompressedImages = [];
+        const previewBox = document.getElementById('image-preview-box');
+        if (previewBox) {
+            previewBox.innerHTML = '';
+            previewBox.classList.add('hidden');
+        }
+
         document.getElementById('news-reporter').value = 'विशेष संवाददाता';
+        document.getElementById('news-category').value = 'क्षेत्रीय';
         document.getElementById('news-breaking').checked = false;
         document.getElementById('news-lead').checked = false;
-        document.getElementById('submit-btn').innerText = 'पोस्ट करें';
+        
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'पोस्ट करें';
+    }
+
+    function triggerOpenNewPostModal() { 
+        resetPostModalState();
+        document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
         openPortalModal('post-modal'); 
     }
+    
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
@@ -891,21 +924,25 @@
         const submitBtn = document.getElementById('submit-btn');
         const editDocId = document.getElementById('edit-doc-id').value;
         submitBtn.disabled = true;
-        submitBtn.innerText = "तस्वीरें अपलोड हो रही हैं...";
 
         let finalImageUrls = [];
         const manualUrl = document.getElementById('news-image').value.trim();
         if (manualUrl) finalImageUrls.push(manualUrl);
 
         try {
-            for (let i = 0; i < uploadedCompressedImages.length; i++) {
-                const blob = dataURLtoBlob(uploadedCompressedImages[i]);
-                const fileName = `news_${Date.now()}_${i}.jpg`;
-                const storageRef = storage.ref().child(`news_images/${fileName}`);
-                
-                const snapshot = await storageRef.put(blob);
-                const downloadUrl = await snapshot.ref.getDownloadURL();
-                finalImageUrls.push(downloadUrl);
+            if (uploadedCompressedImages.length > 0) {
+                submitBtn.innerText = "तस्वीरें अपलोड हो रही हैं...";
+                for (let i = 0; i < uploadedCompressedImages.length; i++) {
+                    const blob = dataURLtoBlob(uploadedCompressedImages[i]);
+                    if (!blob) continue;
+
+                    const fileName = `news_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${i}.jpg`;
+                    const storageRef = storage.ref().child(`news_images/${fileName}`);
+                    
+                    const snapshot = await storageRef.put(blob);
+                    const downloadUrl = await snapshot.ref.getDownloadURL();
+                    finalImageUrls.push(downloadUrl);
+                }
             }
 
             submitBtn.innerText = "डेटा सेव हो रहा है...";
@@ -934,10 +971,8 @@
                 await db.collection('news_posts').add(newItem);
                 alert("समाचार सफलतापूर्वक पोस्ट कर दिया गया!");
             }
-            e.target.reset();
-            uploadedCompressedImages = [];
-            document.getElementById('image-preview-box').innerHTML = '';
-            document.getElementById('image-preview-box').classList.add('hidden');
+
+            resetPostModalState();
             closePortalModal('post-modal');
         } catch (err) {
             console.error("Upload/Firestore Error:", err);
@@ -949,8 +984,11 @@
     }
 
     function editNewsPost(id) {
+        resetPostModalState();
         const n = newsList.find(x => x.id === id);
         if (!n) return;
+        
+        document.getElementById('post-modal-title').innerText = "खबर एडिट करें";
         document.getElementById('edit-doc-id').value = n.id;
         document.getElementById('news-title').value = n.title || '';
         document.getElementById('news-category').value = n.category || 'क्षेत्रीय';
@@ -958,7 +996,9 @@
         document.getElementById('news-content').value = n.content || '';
         document.getElementById('news-breaking').checked = !!n.isBreaking;
         document.getElementById('news-lead').checked = !!n.isLead;
+        document.getElementById('news-image').value = n.image || '';
         document.getElementById('submit-btn').innerText = 'अपडेट करें';
+        
         openPortalModal('post-modal');
     }
 
@@ -1086,24 +1126,13 @@
 
     // --- 7. FIRESTORE REALTIME SYNC ---
     function isTodayDate(itemDate, itemCreatedAt) {
-        const todayStrFormats = [
-            "03/09/2026",
-            "3/9/2026",
-            "03-09-2026",
-            "3-9-2026",
-            new Date(2026, 8, 3).toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-            new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-        ];
-
-        if (itemDate && todayStrFormats.some(fmt => String(itemDate).trim().toLowerCase() === String(fmt).trim().toLowerCase())) {
-            return true;
-        }
+        const todayStr = new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (itemDate && String(itemDate).trim() === todayStr) return true;
 
         if (itemCreatedAt) {
             const d = new Date(itemCreatedAt);
-            if (d.getFullYear() === 2026 && d.getMonth() === 8 && d.getDate() === 3) {
-                return true;
-            }
+            const now = new Date();
+            if (d.toDateString() === now.toDateString()) return true;
         }
         return false;
     }
@@ -1191,7 +1220,6 @@
     // --- 8. PWA INSTALLATION SYSTEM ---
     let deferredPrompt = null;
 
-    // बटन को लोड होते ही हमेशा स्क्रीन पर विजिबल रखें
     window.addEventListener('DOMContentLoaded', () => {
         const pwaBtn = document.getElementById('pwa-install-btn');
         if (pwaBtn) pwaBtn.style.display = 'inline-flex';
@@ -1214,7 +1242,6 @@
                 deferredPrompt = null;
             });
         } else {
-            // अगर ब्राउज़र ने डायरेक्ट प्रॉम्प्ट रोक रखा है, तो यूज़र को गाइड करें
             alert("ऐप इंस्टॉल करने के लिए:\n1. ब्राउज़र के ऊपर कोने में 3 डॉट्स (⋮) पर क्लिक करें।\n2. 'Install app' या 'Add to Home screen' (होम स्क्रीन में जोड़ें) चुनें।");
         }
     }
@@ -1234,7 +1261,6 @@
         try {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
-                // सर्विस वर्कर को सीधे रजिस्टर और एक्टिवेट कराएं
                 const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                 await navigator.serviceWorker.ready;
 
