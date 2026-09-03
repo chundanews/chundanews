@@ -37,7 +37,6 @@
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .ad-banner-box { background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 10px, #f1f5f9 10px, #f1f5f9 20px); }
         .dark .ad-banner-box { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px); }
-        @media print { body * { visibility:hidden; } #read-modal-card,#read-modal-card * { visibility:visible; } #read-modal-card { position:absolute; left:0; top:0; width:100%; box-shadow:none; border:none; } .no-print { display:none!important; } }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
@@ -426,16 +425,15 @@
     </div>
 </div>
 
-<!-- 7. News Full Reader Card Modal (Print Ready) -->
+<!-- 7. News Full Reader Card Modal (Print Removed) -->
 <div id="read-modal" class="portal-modal">
     <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 relative max-h-[90vh] overflow-y-auto">
-        <div class="no-print flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
+        <div class="flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
             <div class="flex items-center gap-2">
                 <span id="read-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2 py-0.5 rounded"></span>
                 <span id="read-date" class="text-[11px] text-gray-500"></span>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="window.print()" class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded border">🖨️ प्रिंट</button>
                 <button onclick="closePortalModal('read-modal')" class="text-gray-500 hover:text-black dark:hover:text-white font-bold text-lg leading-none">&times;</button>
             </div>
         </div>
@@ -448,7 +446,7 @@
         <div id="read-gallery-box" class="space-y-3 mb-4"></div>
         <div id="read-content" class="text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-6"></div>
 
-        <div class="no-print pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2">
+        <div class="pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2">
             <button id="read-share-whatsapp" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
                 <i class="fa-brands fa-whatsapp"></i> WhatsApp शेयर
             </button>
@@ -1046,6 +1044,29 @@
     }
 
     // --- 7. FIRESTORE REALTIME SYNC ---
+    function isTodayDate(itemDate, itemCreatedAt) {
+        const todayStrFormats = [
+            "03/09/2026",
+            "3/9/2026",
+            "03-09-2026",
+            "3-9-2026",
+            new Date(2026, 8, 3).toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+            new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        ];
+
+        if (itemDate && todayStrFormats.some(fmt => String(itemDate).trim().toLowerCase() === String(fmt).trim().toLowerCase())) {
+            return true;
+        }
+
+        if (itemCreatedAt) {
+            const d = new Date(itemCreatedAt);
+            if (d.getFullYear() === 2026 && d.getMonth() === 8 && d.getDate() === 3) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function initRealtimeData() {
         db.collection('news_posts').onSnapshot(snapshot => {
             if (!snapshot.empty) {
@@ -1059,9 +1080,12 @@
                 const lead = newsList.find(n => n.isLead) || newsList[0];
                 setLeadStory(lead);
 
-                const breaking = newsList.filter(n => n.isBreaking);
+                // केवल 03/09/2026 की ब्रेकिंग न्यूज़ फ़िल्टर
+                const breaking = newsList.filter(n => n.isBreaking && isTodayDate(n.date, n.createdAt));
                 if (breaking.length > 0) {
-                    document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('   ✦   ');
+                    document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
+                } else {
+                    document.getElementById('breaking-ticker').innerText = 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
                 }
 
                 filterNews(currentCategory);
@@ -1159,7 +1183,6 @@
         try {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
-                // अपनी Firebase VAPID Key यहाँ रिप्लेस करें:
                 const token = await messaging.getToken({
                     vapidKey: "YOUR_PUBLIC_VAPID_KEY"
                 });
