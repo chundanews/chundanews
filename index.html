@@ -21,7 +21,7 @@
     <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Firebase SDKs (Storage हटा दिया गया है) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
@@ -208,7 +208,7 @@
                         पूरी खबर पढ़ें →
                     </button>
                     <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
-                        <i class="fa-brands fa-whatsapp"></i> शेयर
+                        <i class="fa-solid fa-share-nodes"></i> शेयर करें
                     </button>
                 </div>
             </div>
@@ -487,7 +487,7 @@
 
         <div class="pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2">
             <button id="read-share-whatsapp" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
-                <i class="fa-brands fa-whatsapp"></i> WhatsApp शेयर
+                <i class="fa-solid fa-share-nodes"></i> शेयर करें
             </button>
             <button onclick="closePortalModal('read-modal')" class="bg-gray-200 dark:bg-gray-800 text-xs font-bold px-4 py-2 rounded">
                 बंद करें
@@ -543,6 +543,25 @@
             return escapeHTML(trimmed);
         }
         return '#';
+    }
+
+    // Base64 Data URL से सुरक्षित Blob निर्माण
+    function dataURLtoBlob(dataurl) {
+        try {
+            const parts = dataurl.split(';base64,');
+            if (parts.length < 2) return null;
+            const contentType = parts[0].split(':')[1] || 'image/jpeg';
+            const raw = window.atob(parts[1]);
+            const rawLength = raw.length;
+            const uInt8Array = new Uint8Array(rawLength);
+            for (let i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            return new Blob([uInt8Array], { type: contentType });
+        } catch (e) {
+            console.error("Blob conversion error:", e);
+            return null;
+        }
     }
 
     // --- 1. FIREBASE CONFIGURATION ---
@@ -653,7 +672,7 @@
 
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 800; // 800px तक रिसाइज जिससे इमेज 30-50kb में बन जाए
+                    const maxDim = 800;
                     if (width > maxDim || height > maxDim) {
                         if (width > height) {
                             height = Math.round((height * maxDim) / width);
@@ -746,8 +765,8 @@
                 <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
                     <div class="flex justify-between items-center text-xs py-2">
                         <button onclick="openReaderModal('${safeId}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
-                        <button onclick="shareWhatsAppWithImage('${safeId}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
-                            <i class="fa-brands fa-whatsapp"></i> शेयर
+                        <button onclick="shareWhatsAppWithImage('${safeId}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-share-nodes"></i> शेयर करें
                         </button>
                     </div>
                     ${isAdminLoggedIn ? `
@@ -807,13 +826,60 @@
         openPortalModal('read-modal');
     }
 
+    // फ़ोटो + हेडलाइन + लिंक एक साथ WhatsApp व अन्य ऐप्स पर शेयर करने का सिस्टम
     async function shareWhatsAppWithImage(id) {
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
 
         const shareTitle = `📰 *${item.title}*`;
-        const shareText = `${shareTitle}\n\n🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${window.location.origin}${window.location.pathname}`;
+        const shareExcerpt = item.content ? (item.content.length > 140 ? item.content.substring(0, 140) + '...' : item.content) : '';
+        const pageUrl = window.location.href;
+        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${pageUrl}`;
+        const rawImg = item.images?.[0] || item.image;
 
+        // 1. Web Share API (फ़ोटो + टेक्स्ट डायरेक्ट किसी भी ऐप पर भेजने हेतु)
+        if (navigator.share && rawImg) {
+            try {
+                let blob = null;
+                if (rawImg.startsWith('data:image')) {
+                    blob = dataURLtoBlob(rawImg);
+                } else if (rawImg.startsWith('http')) {
+                    const res = await fetch(rawImg);
+                    blob = await res.blob();
+                }
+
+                if (blob) {
+                    const file = new File([blob], 'chunda-news.jpg', { type: blob.type || 'image/jpeg' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: item.title,
+                            text: shareText,
+                            files: [file]
+                        });
+                        return;
+                    }
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') return; // यूज़र द्वारा शेयर कैंसिल करने पर
+                console.log("Image share bypass to text share:", err);
+            }
+        }
+
+        // 2. यदि ब्राउज़र फाइल शेयरिंग सपोर्ट न करे तो टेक्स्ट शेयर
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: item.title,
+                    text: shareText,
+                    url: pageUrl
+                });
+                return;
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+            }
+        }
+
+        // 3. फॉलबैक - डायरेक्ट WhatsApp वेब या ऐप
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
     }
 
@@ -837,7 +903,7 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS (100% FREE - NO STORAGE REQUIRED) ---
+    // --- 6. ADMIN & FORM SUBMISSIONS ---
     function resetPostModalState() {
         ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => {
             const el = document.getElementById(id);
@@ -873,7 +939,6 @@
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
 
-    // डायरेक्ट फ़ायरस्टोर बेस64 सेविंग (Storage की कोई आवश्यकता नहीं)
     async function handleNewsSubmit(e) {
         e.preventDefault();
         const submitBtn = document.getElementById('submit-btn');
@@ -887,7 +952,6 @@
         try {
             submitBtn.innerText = "समाचार सेव हो रहा है...";
 
-            // अपलोड की गई कंप्रेस्ड Base64 इमेजेस को सीधे एरे में जोड़ें
             if (uploadedCompressedImages.length > 0) {
                 finalImageUrls = finalImageUrls.concat(uploadedCompressedImages);
             }
