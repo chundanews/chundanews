@@ -546,17 +546,19 @@
         return '#';
     }
 
+    // मानक Base64-to-Blob पार्सर (Mime-type सुरक्षित)
     function dataURLtoBlob(dataurl) {
         try {
-            const arr = dataurl.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
+            const parts = dataurl.split(';base64,');
+            const contentType = parts[0].split(':')[1];
+            const raw = window.atob(parts[1]);
+            const rawLength = raw.length;
+            const uInt8Array = new Uint8Array(rawLength);
+
+            for (let i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
             }
-            return new Blob([u8arr], { type: mime });
+            return new Blob([uInt8Array], { type: contentType });
         } catch (e) {
             console.error("Blob conversion error:", e);
             return null;
@@ -660,7 +662,7 @@
         };
     }
 
-    // --- 4. IMAGE COMPRESSION (<100KB) + WATERMARK (REVISED WITH PROMISE) ---
+    // --- 4. IMAGE COMPRESSION (<100KB) + WATERMARK ---
     function processImageFile(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -883,7 +885,7 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS (RESOLVED UPLOAD & REPEAT ISSUES) ---
+    // --- 6. ADMIN & FORM SUBMISSIONS ---
     function resetPostModalState() {
         ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => {
             const el = document.getElementById(id);
@@ -919,6 +921,7 @@
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
 
+    // सुधरा हुआ और स्थिर फोटो अपलोड सबमिशन
     async function handleNewsSubmit(e) {
         e.preventDefault();
         const submitBtn = document.getElementById('submit-btn');
@@ -933,13 +936,13 @@
             if (uploadedCompressedImages.length > 0) {
                 submitBtn.innerText = "तस्वीरें अपलोड हो रही हैं...";
                 for (let i = 0; i < uploadedCompressedImages.length; i++) {
-                    const blob = dataURLtoBlob(uploadedCompressedImages[i]);
-                    if (!blob) continue;
-
+                    const base64Data = uploadedCompressedImages[i];
                     const fileName = `news_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${i}.jpg`;
                     const storageRef = storage.ref().child(`news_images/${fileName}`);
                     
-                    const snapshot = await storageRef.put(blob);
+                    // Direct Data URL string upload
+                    const metadata = { contentType: 'image/jpeg' };
+                    const snapshot = await storageRef.putString(base64Data, 'data_url', metadata);
                     const downloadUrl = await snapshot.ref.getDownloadURL();
                     finalImageUrls.push(downloadUrl);
                 }
@@ -976,7 +979,7 @@
             closePortalModal('post-modal');
         } catch (err) {
             console.error("Upload/Firestore Error:", err);
-            alert("त्रुटि: प्रक्रिया पूरी नहीं हो सकी - " + err.message);
+            alert("त्रुटि: फ़ोटो अपलोड या सेव नहीं हो सकी - " + err.message + "\n(कृपया Firebase Storage Rules की अनुमति जांचें)");
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerText = editDocId ? "अपडेट करें" : "पोस्ट करें";
@@ -1305,4 +1308,3 @@
 
 </body>
 </html>
-
