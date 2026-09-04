@@ -21,11 +21,10 @@
     <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (Storage हटा दिया गया है) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"></script>
 
     <style>
@@ -364,11 +363,11 @@
                 </div>
             </div>
             
-            <label class="block font-semibold text-gray-700 dark:text-gray-300">तस्वीरें चुनें (ऑटो कंप्रेस्ड &lt;100KB + वॉटरमार्क + Storage Upload):</label>
+            <label class="block font-semibold text-gray-700 dark:text-gray-300">तस्वीरें चुनें (ऑटो-कंप्रेस्ड 40KB + वॉटरमार्क):</label>
             <input type="file" id="news-files" accept="image/*" multiple onchange="previewSelectedImages(event)" class="w-full text-xs">
             <div id="image-preview-box" class="flex gap-2 flex-wrap hidden"></div>
             
-            <input type="url" id="news-image" placeholder="या इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+            <input type="url" id="news-image" placeholder="या ऑनलाइन इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             
             <textarea id="news-content" rows="5" required placeholder="समाचार का पूरा विवरण" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2"></textarea>
             
@@ -546,25 +545,6 @@
         return '#';
     }
 
-    // मानक Base64-to-Blob पार्सर (Mime-type सुरक्षित)
-    function dataURLtoBlob(dataurl) {
-        try {
-            const parts = dataurl.split(';base64,');
-            const contentType = parts[0].split(':')[1];
-            const raw = window.atob(parts[1]);
-            const rawLength = raw.length;
-            const uInt8Array = new Uint8Array(rawLength);
-
-            for (let i = 0; i < rawLength; ++i) {
-                uInt8Array[i] = raw.charCodeAt(i);
-            }
-            return new Blob([uInt8Array], { type: contentType });
-        } catch (e) {
-            console.error("Blob conversion error:", e);
-            return null;
-        }
-    }
-
     // --- 1. FIREBASE CONFIGURATION ---
     const firebaseConfig = {
         apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
@@ -579,7 +559,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    const storage = firebase.storage();
 
     let messaging = null;
     if (firebase.messaging.isSupported()) {
@@ -662,7 +641,7 @@
         };
     }
 
-    // --- 4. IMAGE COMPRESSION (<100KB) + WATERMARK ---
+    // --- 4. HIGH-EFFICIENCY IMAGE COMPRESSION (<50KB) + WATERMARK ---
     function processImageFile(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -674,7 +653,7 @@
 
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 900;
+                    const maxDim = 800; // 800px तक रिसाइज जिससे इमेज 30-50kb में बन जाए
                     if (width > maxDim || height > maxDim) {
                         if (width > height) {
                             height = Math.round((height * maxDim) / width);
@@ -695,7 +674,7 @@
                     ctx.fillStyle = "#ffffff";
                     ctx.fillText("CHUNDA KSHETRA NEWS", Math.max(5, width - 205), Math.max(15, height - 14));
 
-                    const compressedBase64 = canvas.toDataURL("image/jpeg", 0.75);
+                    const compressedBase64 = canvas.toDataURL("image/jpeg", 0.70);
                     resolve(compressedBase64);
                 };
                 img.onerror = () => resolve(null);
@@ -834,33 +813,6 @@
 
         const shareTitle = `📰 *${item.title}*`;
         const shareText = `${shareTitle}\n\n🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${window.location.origin}${window.location.pathname}`;
-        const rawImg = item.images?.[0] || item.image;
-
-        if (navigator.share && rawImg) {
-            try {
-                let blob = null;
-                if (rawImg.startsWith('data:image')) {
-                    blob = dataURLtoBlob(rawImg);
-                } else {
-                    const res = await fetch(rawImg);
-                    blob = await res.blob();
-                }
-
-                if (blob) {
-                    const file = new File([blob], 'chunda-news.jpg', { type: blob.type || 'image/jpeg' });
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: item.title,
-                            text: shareText,
-                            files: [file]
-                        });
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.log("Direct File Share bypass:", err);
-            }
-        }
 
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
     }
@@ -885,7 +837,7 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS ---
+    // --- 6. ADMIN & FORM SUBMISSIONS (100% FREE - NO STORAGE REQUIRED) ---
     function resetPostModalState() {
         ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => {
             const el = document.getElementById(id);
@@ -921,7 +873,7 @@
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
 
-    // सुधरा हुआ और स्थिर फोटो अपलोड सबमिशन
+    // डायरेक्ट फ़ायरस्टोर बेस64 सेविंग (Storage की कोई आवश्यकता नहीं)
     async function handleNewsSubmit(e) {
         e.preventDefault();
         const submitBtn = document.getElementById('submit-btn');
@@ -933,22 +885,12 @@
         if (manualUrl) finalImageUrls.push(manualUrl);
 
         try {
-            if (uploadedCompressedImages.length > 0) {
-                submitBtn.innerText = "तस्वीरें अपलोड हो रही हैं...";
-                for (let i = 0; i < uploadedCompressedImages.length; i++) {
-                    const base64Data = uploadedCompressedImages[i];
-                    const fileName = `news_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${i}.jpg`;
-                    const storageRef = storage.ref().child(`news_images/${fileName}`);
-                    
-                    // Direct Data URL string upload
-                    const metadata = { contentType: 'image/jpeg' };
-                    const snapshot = await storageRef.putString(base64Data, 'data_url', metadata);
-                    const downloadUrl = await snapshot.ref.getDownloadURL();
-                    finalImageUrls.push(downloadUrl);
-                }
-            }
+            submitBtn.innerText = "समाचार सेव हो रहा है...";
 
-            submitBtn.innerText = "डेटा सेव हो रहा है...";
+            // अपलोड की गई कंप्रेस्ड Base64 इमेजेस को सीधे एरे में जोड़ें
+            if (uploadedCompressedImages.length > 0) {
+                finalImageUrls = finalImageUrls.concat(uploadedCompressedImages);
+            }
 
             const newItem = {
                 title: document.getElementById('news-title').value.trim(),
@@ -978,8 +920,8 @@
             resetPostModalState();
             closePortalModal('post-modal');
         } catch (err) {
-            console.error("Upload/Firestore Error:", err);
-            alert("त्रुटि: फ़ोटो अपलोड या सेव नहीं हो सकी - " + err.message + "\n(कृपया Firebase Storage Rules की अनुमति जांचें)");
+            console.error("Firestore Save Error:", err);
+            alert("त्रुटि: खबर सेव नहीं हो सकी - " + err.message);
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerText = editDocId ? "अपडेट करें" : "पोस्ट करें";
@@ -999,7 +941,7 @@
         document.getElementById('news-content').value = n.content || '';
         document.getElementById('news-breaking').checked = !!n.isBreaking;
         document.getElementById('news-lead').checked = !!n.isLead;
-        document.getElementById('news-image').value = n.image || '';
+        document.getElementById('news-image').value = n.image && !n.image.startsWith('data:image') ? n.image : '';
         document.getElementById('submit-btn').innerText = 'अपडेट करें';
         
         openPortalModal('post-modal');
