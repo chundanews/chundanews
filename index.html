@@ -571,10 +571,10 @@
 
     firebase.initializeApp(firebaseConfig);
 
-    // --- FIREBASE APP CHECK ACTIVATION (reCAPTCHA v3) ---
+    // --- FIREBASE APP CHECK (reCAPTCHA Enterprise Provider) ---
     const appCheck = firebase.appCheck();
     appCheck.activate(
-        '6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod',
+        new firebase.appCheck.ReCaptchaEnterpriseProvider('6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod'),
         true
     );
 
