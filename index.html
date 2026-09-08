@@ -573,16 +573,32 @@
 
     firebase.initializeApp(firebaseConfig);
 
-    // --- FIREBASE APP CHECK INITIALIZATION (Enterprise Setup) ---
-    try {
-        const appCheck = firebase.appCheck();
-        appCheck.activate(
-            new firebase.appCheck.ReCaptchaEnterpriseProvider('6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod'),
-            true
-        );
-        console.log("App Check initialized successfully");
-    } catch (acErr) {
-        console.warn("App Check initialization notice:", acErr);
+    // --- FIREBASE APP CHECK INITIALIZATION (Safe Async Execution) ---
+    const RECAPTCHA_SITE_KEY = '6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod';
+
+    function initFirebaseAppCheck() {
+        try {
+            const appCheck = firebase.appCheck();
+            appCheck.activate(
+                new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY),
+                true
+            );
+            console.log("App Check Enterprise Verified & Ready");
+        } catch (err) {
+            console.warn("App Check setup warning:", err);
+        }
+    }
+
+    if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+        grecaptcha.enterprise.ready(initFirebaseAppCheck);
+    } else {
+        window.addEventListener('load', () => {
+            if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+                grecaptcha.enterprise.ready(initFirebaseAppCheck);
+            } else {
+                initFirebaseAppCheck();
+            }
+        });
     }
 
     const db = firebase.firestore();
