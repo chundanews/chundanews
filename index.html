@@ -21,10 +21,10 @@
     <script>tailwind.config = { darkMode: 'class' }</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Enterprise reCAPTCHA Script -->
+    <!-- 1. Google reCAPTCHA Enterprise Script -->
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod"></script>
 
-    <!-- Firebase SDKs -->
+    <!-- 2. Firebase SDKs (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -98,7 +98,7 @@
             </div>
         </div>
 
-        <!-- 1. HEADER AD CONTAINER -->
+        <!-- HEADER AD CONTAINER -->
         <div class="w-full md:w-[500px] lg:w-[650px] h-20 rounded-xl bg-gray-50 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center p-2">
             <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400 dark:text-gray-500">विज्ञापन स्थान (Ad Space)</span>
             <span class="text-[9px] text-gray-400">728 x 90 Responsive Banner</span>
@@ -140,7 +140,7 @@
     </nav>
 </header>
 
-<!-- 2. TOP BANNER AD CONTAINER -->
+<!-- TOP BANNER AD CONTAINER -->
 <div class="max-w-7xl mx-auto px-4 pt-4 w-full">
     <div class="w-full h-24 rounded-xl bg-gray-50 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-center p-3">
         <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400 dark:text-gray-500">विज्ञापन स्थान (Ad Space)</span>
@@ -208,7 +208,7 @@
                 <div class="col-span-2 text-center py-12 text-gray-500">समाचार लोड हो रहे हैं...</div>
             </div>
 
-            <!-- 3. IN-FEED AD CONTAINER -->
+            <!-- IN-FEED AD CONTAINER -->
             <div class="my-8 rounded-xl bg-gray-50 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 p-6 flex flex-col items-center justify-center text-center">
                 <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400 dark:text-gray-500">विज्ञापन स्थान (In-Feed Ad Space)</span>
                 <span class="text-[9px] text-gray-400 mt-1">Responsive Banner / Content Ad</span>
@@ -238,7 +238,7 @@
                 </div>
             </div>
 
-            <!-- 4. SIDEBAR VERTICAL AD CONTAINER -->
+            <!-- SIDEBAR VERTICAL AD CONTAINER -->
             <div class="sticky top-16 rounded-xl bg-gray-50 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
                 <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400 dark:text-gray-500">विज्ञापन स्थान (Ad Space)</span>
                 <span class="text-[9px] text-gray-400 mt-1">300 x 250 / 300 x 600 Vertical</span>
@@ -542,7 +542,6 @@
         return '#';
     }
 
-    // Base64 Data URL से सुरक्षित Blob निर्माण
     function dataURLtoBlob(dataurl) {
         try {
             const parts = dataurl.split(';base64,');
@@ -574,12 +573,17 @@
 
     firebase.initializeApp(firebaseConfig);
 
-    // --- FIREBASE APP CHECK (reCAPTCHA Enterprise Provider) ---
-    const appCheck = firebase.appCheck();
-    appCheck.activate(
-        new firebase.appCheck.ReCaptchaEnterpriseProvider('6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod'),
-        true
-    );
+    // --- FIREBASE APP CHECK INITIALIZATION (Enterprise Setup) ---
+    try {
+        const appCheck = firebase.appCheck();
+        appCheck.activate(
+            new firebase.appCheck.ReCaptchaEnterpriseProvider('6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod'),
+            true
+        );
+        console.log("App Check initialized successfully");
+    } catch (acErr) {
+        console.warn("App Check initialization notice:", acErr);
+    }
 
     const db = firebase.firestore();
     const auth = firebase.auth();
