@@ -23,6 +23,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"></script>
@@ -109,7 +110,6 @@
             </button>
             <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
             
-            <!-- Step 1: एडमिन लॉगिन बटन को पब्लिक व्यू से पूरी तरह छिपा दिया गया है -->
             <button id="admin-login-btn" style="display:none;" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
                 🔒 एडमिन लॉगिन
             </button>
@@ -268,7 +268,6 @@
             </div>
         </div>
 
-        <!-- अत्यंत सटल एवं कानूनी रूप से मान्य प्राइवेसी/टर्म्स स्ट्रिप -->
         <div class="border-t border-gray-900 mt-6 pt-4 flex flex-col sm:flex-row justify-between items-center text-[10px] text-gray-500 gap-3">
             <p>© 2026 CHUNDA KSHETRA NEWS. All Rights Reserved.</p>
             <div class="flex items-center gap-3">
@@ -571,6 +570,14 @@
     };
 
     firebase.initializeApp(firebaseConfig);
+
+    // --- FIREBASE APP CHECK ACTIVATION (reCAPTCHA v3) ---
+    const appCheck = firebase.appCheck();
+    appCheck.activate(
+        '6Leyn7AtAAAAADI93HEUY5NUGLy30ig29H10Oeod',
+        true
+    );
+
     const db = firebase.firestore();
     const auth = firebase.auth();
 
@@ -821,7 +828,6 @@
         openPortalModal('read-modal');
     }
 
-    // फ़ोटो + हेडलाइन + लिंक एक साथ WhatsApp व अन्य ऐप्स पर शेयर करने का सिस्टम
     async function shareWhatsAppWithImage(id) {
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
@@ -832,7 +838,6 @@
         const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${pageUrl}`;
         const rawImg = item.images?.[0] || item.image;
 
-        // 1. Web Share API (फ़ोटो + टेक्स्ट डायरेक्ट किसी भी ऐप पर भेजने हेतु)
         if (navigator.share && rawImg) {
             try {
                 let blob = null;
@@ -860,7 +865,6 @@
             }
         }
 
-        // 2. यदि ब्राउज़र फाइल शेयरिंग सपोर्ट न करे तो टेक्स्ट शेयर
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -874,7 +878,6 @@
             }
         }
 
-        // 3. फॉलबैक - डायरेक्ट WhatsApp वेब या ऐप
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
     }
 
@@ -933,7 +936,6 @@
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     
-    // केवल एडमिन के क्लिक करने पर रिपोर्ट लोड होंगी
     function triggerOpenReportsModal() { 
         openPortalModal('reports-modal'); 
         const reportsList = document.getElementById('reports-list');
@@ -1148,7 +1150,6 @@
         renderNews(newsList);
     }
 
-    // Step 3: लॉगआउट करने पर भी एडमिन बटन छिपा ही रहेगा
     async function logoutAdmin() {
         await auth.signOut();
         isAdminLoggedIn = false;
@@ -1174,7 +1175,6 @@
     }
 
     function initRealtimeData() {
-        // केवल 20 ताज़ा खबरें ही रियल-टाइम लोड होंगी
         db.collection('news_posts')
             .orderBy('createdAt', 'desc')
             .limit(20)
@@ -1323,7 +1323,6 @@
         initRealtimeData();
     });
 
-    // Step 2: Ctrl + Shift + A दबाने पर एडमिन लॉगिन मॉडल खोलने का लिसनर
     window.addEventListener('keydown', function (e) {
         if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
             e.preventDefault();
