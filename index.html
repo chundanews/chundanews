@@ -242,42 +242,42 @@
     </div>
 </main>
 
-<footer class="bg-gray-950 text-gray-300 border-t border-gray-800 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 py-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="md:col-span-1">
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fa-solid fa-newspaper text-red-500 text-xl"></i>
-                    <h3 class="text-lg font-black text-white">CHUNDA KSHETRA NEWS</h3>
+<footer class="bg-gray-950 text-gray-400 border-t border-gray-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div class="md:col-span-7 space-y-2">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-newspaper text-red-600 text-lg"></i>
+                    <h3 class="text-sm font-black text-white tracking-wide">CHUNDA KSHETRA NEWS</h3>
                 </div>
-                <p class="text-xs text-gray-400 leading-relaxed">
-                    स्थानीय जनसमस्याओं, शिक्षा, रोज़गार, कृषि एवं क्षेत्रीय हलचल को सटीकता और निष्पक्षता से प्रस्तुत करने वाला अग्रणी डिजिटल नेटवर्क।
+                <p class="text-[11px] text-gray-400 leading-relaxed max-w-xl">
+                    ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर एवं संपूर्ण दक्षिण राजस्थान की जनसमस्याओं, रोज़गार, कृषि एवं क्षेत्रीय हलचल को निष्पक्ष व प्रामाणिक रूप से प्रस्तुत करने वाला अग्रणी डिजिटल नेटवर्क।
                 </p>
             </div>
 
-            <div>
-                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3 border-b border-gray-800 pb-1.5">त्वरित नेविगेशन</h4>
-                <ul class="text-xs space-y-2">
-                    <li><button onclick="filterNews('all'); window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-red-400">सभी खबरें</button></li>
-                    <li><button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-400">क्षेत्रीय हलचल</button></li>
-                    <li><button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400">शिक्षा व रोज़गार</button></li>
-                    <li><button onclick="openPortalModal('citizen-modal')" class="hover:text-yellow-400">नागरिक पत्रकार (खबर भेजें)</button></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-3 border-b border-gray-800 pb-1.5">नीति एवं नियम (Legal)</h4>
-                <ul class="text-xs space-y-2">
-                    <li><button onclick="openPortalModal('about-modal')" class="hover:text-red-400">हमारे बारे में (About Us)</button></li>
-                    <li><button onclick="openPortalModal('privacy-modal')" class="hover:text-red-400">गोपनीयता नीति (Privacy Policy)</button></li>
-                    <li><button onclick="openPortalModal('grievance-modal')" class="hover:text-red-400">शिकायत निवारण (Grievance)</button></li>
-                </ul>
+            <div class="md:col-span-5 flex flex-col md:items-end justify-center">
+                <span class="text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2">त्वरित नेविगेशन</span>
+                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                    <button onclick="filterNews('all'); window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-red-400">ताज़ा खबरें</button>
+                    <button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-400">क्षेत्रीय हलचल</button>
+                    <button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400">शिक्षा व रोज़गार</button>
+                    <button onclick="openPortalModal('citizen-modal')" class="hover:text-amber-400">✍️ खबर भेजें</button>
+                </div>
             </div>
         </div>
 
-        <div class="border-t border-gray-800 mt-8 pt-4 flex flex-col sm:flex-row justify-between items-center text-[11px] text-gray-500">
-            <p>© 2026 CHUNDA KSHETRA NEWS. सर्वाधिकार सुरक्षित।</p>
-            <p class="mt-2 sm:mt-0">निष्पक्ष • सटीक • स्थानीय आवाज़</p>
+        <!-- अत्यंत सटल एवं कानूनी रूप से मान्य प्राइवेसी/टर्म्स स्ट्रिप -->
+        <div class="border-t border-gray-900 mt-6 pt-4 flex flex-col sm:flex-row justify-between items-center text-[10px] text-gray-500 gap-3">
+            <p>© 2026 CHUNDA KSHETRA NEWS. All Rights Reserved.</p>
+            <div class="flex items-center gap-3">
+                <button onclick="openPortalModal('about-modal')" class="hover:text-gray-300 transition">हमारे बारे में</button>
+                <span>•</span>
+                <button onclick="openPortalModal('privacy-modal')" class="hover:text-gray-300 transition">गोपनीयता नीति (Privacy Policy)</button>
+                <span>•</span>
+                <button onclick="openPortalModal('terms-modal')" class="hover:text-gray-300 transition">नियम एवं शर्तें (Terms)</button>
+                <span>•</span>
+                <button onclick="openPortalModal('grievance-modal')" class="hover:text-gray-300 transition">शिकायत निवारण (Grievance)</button>
+            </div>
         </div>
     </div>
 </footer>
@@ -439,27 +439,77 @@
     </div>
 </div>
 
-<!-- 8. Policy Modals -->
+<!-- 8. LEGAL POLICY MODALS -->
 <div id="about-modal" class="portal-modal">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">हमारे बारे में (About Us)</h3>
-        <p>चूंडा क्षेत्र न्यूज़ (Chunda Kshetra News) स्थानीय और ग्रामीण अंचल की खबरों को डिजिटल मंच पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र समाचार नेटवर्क है।</p>
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
+        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">हमारे बारे में (About Us)</h3>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            <b>CHUNDA KSHETRA NEWS</b> (chundanewslive.in) दक्षिण राजस्थान के ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा एवं आसपास के अंचल की स्थानीय आवाज़ को डिजिटल पटल पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र क्षेत्रीय समाचार पोर्टल है। हमारा संकल्प क्षेत्र के विकास, जनसमस्याओं, शिक्षा, रोज़गार और कृषि हलचल से जुड़ी हर खबर को निष्पक्ष, प्रामाणिक और त्वरित रूप से जनता तक पहुँचाना है।
+        </p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('about-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
 
 <div id="privacy-modal" class="portal-modal">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">गोपनीयता नीति (Privacy Policy)</h3>
-        <p>हम अपने पाठकों की गोपनीयता का पूरा सम्मान करते हैं।</p>
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
+        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">गोपनीयता नीति (Privacy Policy)</h3>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            CHUNDA KSHETRA NEWS (chundanewslive.in) पर अपने पाठकों की गोपनीयता का सम्मान करना हमारी सर्वोच्च प्राथमिकता है। यह गोपनीयता नीति बताती है कि जब आप दक्षिण राजस्थान (ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर एवं आसपास के अंचल) की स्थानीय खबरों के लिए हमारे पोर्टल का उपयोग करते हैं, तो हम किस प्रकार की जानकारी एकत्र करते हैं।
+        </p>
+        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">एकत्र की जाने वाली जानकारी:</h4>
+        <ul class="list-disc pl-4 space-y-1.5 text-gray-600 dark:text-gray-300">
+            <li><b>नागरिक पत्रकारिता (Citizen Reports):</b> जब आप 'खबर भेजें' विकल्प के माध्यम से समाचार या समस्या सबमिट करते हैं, तो हम आपका नाम, संपर्क नंबर और स्थान केवल सूचना के सत्यापन के उद्देश्य से एकत्र करते हैं। यह जानकारी कभी बेची या तीसरे पक्ष को साझा नहीं की जाती।</li>
+            <li><b>लॉग फाइल्स (Log Files):</b> अधिकांश वेबसाइटों की तरह, हम विज़िटर के आईपी एड्रेस, ब्राउज़र प्रकार, डिवाइस प्रकार, ऑपरेटिंग सिस्टम और पेज देखने के समय का सामान्य तकनीकी डेटा एकत्र करते हैं ताकि पोर्टल की गति और सुरक्षा बनी रहे।</li>
+        </ul>
+        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">Cookies और Web Beacons:</h4>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            हम उपयोगकर्ता प्राथमिकताओं (जैसे डार्क मोड या टेक्स्ट साइज़) को याद रखने के लिए स्थानीय कुकीज़ (Cookies) का उपयोग करते हैं।
+        </p>
+        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">Google AdSense और थर्ड-पार्टी विज्ञापन (Double-Click DART Cookie):</h4>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            Google एक थर्ड-पार्टी वेंडर के रूप में हमारी साइट पर विज्ञापन दिखाने के लिए कुकीज़ का उपयोग करता है। Google DART कुकीज़ का उपयोग हमारे पाठकों को इस साइट और इंटरनेट पर अन्य साइटों के विज़िट के आधार पर लक्षित विज्ञापन दिखाने के लिए करता है। पाठक Google विज्ञापन और सामग्री नेटवर्क गोपनीयता नीति पर जाकर DART कुकी के उपयोग को ऑप्ट-आउट कर सकते हैं।
+        </p>
+        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">वेब पुश नोटिफिकेशन:</h4>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            यदि आप ताज़ा समाचारों के लिए नोटिफिकेशन स्वीकार करते हैं, तो केवल एक सुरक्षित FCM टोकन जनरेट होता है। आप अपनी ब्राउज़र सेटिंग से कभी भी इसे बंद कर सकते हैं।
+        </p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('privacy-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
 
+<div id="terms-modal" class="portal-modal">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
+        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">नियम एवं शर्तें (Terms and Conditions)</h3>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            CHUNDA KSHETRA NEWS पोर्टल का उपयोग करने पर आप निम्नलिखित शर्तों से बाध्य होते हैं:
+        </p>
+        <ul class="list-disc pl-4 space-y-1.5 text-gray-600 dark:text-gray-300">
+            <li><b>सामग्री का सर्वाधिकार (Copyright):</b> पोर्टल पर प्रकाशित समाचार, आलेख, छवियां और वीडियो नेटवर्क की बौद्धिक संपदा हैं। पूर्व अनुमति के बिना व्यावसायिक उपयोग के लिए सामग्री की नकल करना प्रतिबंधित है।</li>
+            <li><b>सामग्री की सटीकता (Content Disclaimer):</b> हम ऋषभदेव, उदयपुर, खैरवाड़ा, सलूंबर एवं सेमारी क्षेत्र की स्थानीय खबरों को पूर्ण निष्पक्षता और तथ्यों की पुष्टि के बाद ही प्रकाशित करने का प्रयास करते हैं। हालांकि, त्वरित रिपोर्टिंग के दौरान प्राप्त किसी अप्रत्याशित त्रुटि की जानकारी मिलने पर हम उसमें आवश्यक सुधार करने के लिए प्रतिबद्ध हैं।</li>
+            <li><b>नागरिक पत्रकारिता संबंधी नियम:</b> पाठकों द्वारा भेजे गए समाचार, फोटो या वीडियो की प्रामाणिकता की ज़िम्मेदारी प्रेषक की होगी। मानहानिकारक, भ्रामक, सामाजिक सौहार्द बिगाड़ने वाली या गैर-कानूनी सामग्री को बिना किसी सूचना के अस्वीकार या पुलिस/प्रशासन को संदर्भित किया जा सकता है।</li>
+            <li><b>बाहरी लिंक (External Links):</b> सरकारी भर्तियों या अन्य संदर्भों के लिए दिए गए बाहरी लिंक की सामग्री या उनकी नीतियों के लिए CHUNDA KSHETRA NEWS उत्तरदायी नहीं होगा।</li>
+        </ul>
+        <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('terms-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
+    </div>
+</div>
+
 <div id="grievance-modal" class="portal-modal">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">शिकायत निवारण (Grievance Redressal)</h3>
-        <p>किसी भी प्रकाशित समाचार पर आपत्ति अथवा सुधार हेतु आप संपर्क कर सकते हैं: support@chundanews.in</p>
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
+        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">शिकायत निवारण एवं संपर्क (Contact & Grievance Redressal)</h3>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            भारत सरकार के <b>Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021</b> के अनुपालन में, पोर्टल पर प्रकाशित किसी भी समाचार सामग्री पर आपत्ति, सुधार अथवा शिकायत दर्ज करने के लिए शिकायत निवारण तंत्र स्थापित है।
+        </p>
+        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700 space-y-1.5">
+            <p><b>कवरेज केंद्र:</b> ऋषभदेव, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा, उदयपुर एवं संपूर्ण दक्षिण राजस्थान अंचल।</p>
+            <p><b>पोर्टल:</b> CHUNDA KSHETRA NEWS</p>
+            <p><b>शिकायत निवारण अधिकारी (Grievance Officer):</b> संपादक / शिकायत निवारण अधिकारी</p>
+            <p><b>ईमेल आईडी:</b> <a href="mailto:mahi143vaishnav@gmail.com" class="text-red-600 font-bold">mahi143vaishnav@gmail.com</a></p>
+            <p><b>आधिकारिक सहायता ईमेल:</b> <a href="mailto:chundakshetranews@gmail.com" class="text-red-600 font-bold">chundakshetranews@gmail.com</a></p>
+        </div>
+        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">शिकायत दर्ज करने की प्रक्रिया:</h4>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            शिकायतकर्ता को ईमेल में प्रकाशित खबर की हेडलाइन/लिंक, प्रकाशन की तारीख और अपनी आपत्ति का स्पष्ट आधार (तथ्यों के साथ) भेजना अनिवार्य है। नियमानुसार, प्राप्त शिकायतों की पावती 24 घंटे के भीतर भेजी जाएगी और उचित जांच के उपरांत 15 दिनों के अंदर निवारण/सुधार सुनिश्चित किया जाएगा।
+        </p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('grievance-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -1119,7 +1169,7 @@
     }
 
     function initRealtimeData() {
-        // ऑप्टिमाइज़्ड: केवल 20 ताज़ा खबरें ही रियल-टाइम लोड होंगी
+        // केवल 20 ताज़ा खबरें ही रियल-टाइम लोड होंगी
         db.collection('news_posts')
             .orderBy('createdAt', 'desc')
             .limit(20)
