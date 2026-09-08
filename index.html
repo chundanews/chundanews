@@ -860,7 +860,7 @@
                     }
                 }
             } catch (err) {
-                if (err.name === 'AbortError') return; // यूज़र द्वारा शेयर कैंसिल करने पर
+                if (err.name === 'AbortError') return;
                 console.log("Image share bypass to text share:", err);
             }
         }
@@ -937,7 +937,36 @@
     
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
-    function triggerOpenReportsModal() { openPortalModal('reports-modal'); }
+    
+    // केवल एडमिन के क्लिक करने पर रिपोर्ट लोड होंगी
+    function triggerOpenReportsModal() { 
+        openPortalModal('reports-modal'); 
+        const reportsList = document.getElementById('reports-list');
+        reportsList.innerHTML = '<p class="text-center text-gray-400 py-6">रिपोर्टें लोड हो रही हैं...</p>';
+
+        db.collection('citizen_reports').orderBy('timestamp', 'desc').get().then(snapshot => {
+            if (!snapshot.empty) {
+                reportsList.innerHTML = snapshot.docs.map(doc => {
+                    const report = doc.data();
+                    return `
+                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
+                            <div class="flex justify-between font-bold">
+                                <span>${escapeHTML(report.name)} (${escapeHTML(report.location || report.area || '')})</span>
+                                <span class="text-[10px] text-gray-500">${escapeHTML(report.date || '')}</span>
+                            </div>
+                            <p class="text-red-600 my-1 font-mono">${escapeHTML(report.phone || '')}</p>
+                            <p class="text-gray-700 dark:text-gray-300">${escapeHTML(report.details || report.msg || '')}</p>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                reportsList.innerHTML = '<p class="text-center text-gray-400 py-6">कोई नई रिपोर्ट प्राप्त नहीं हुई है।</p>';
+            }
+        }).catch(err => {
+            console.error("Reports error:", err);
+            reportsList.innerHTML = '<p class="text-center text-red-500 py-6">रिपोर्ट देखने के लिए एडमिन लॉगिन आवश्यक है।</p>';
+        });
+    }
 
     async function handleNewsSubmit(e) {
         e.preventDefault();
@@ -1207,25 +1236,6 @@
                 document.getElementById('match-title').innerText = data.title || '';
                 document.getElementById('match-score').innerText = data.score || '';
                 document.getElementById('match-status').innerText = data.status || '';
-            }
-        });
-
-        db.collection('citizen_reports').onSnapshot(snapshot => {
-            const reportsList = document.getElementById('reports-list');
-            if (!snapshot.empty) {
-                reportsList.innerHTML = snapshot.docs.map(doc => {
-                    const report = doc.data();
-                    return `
-                        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                            <div class="flex justify-between font-bold">
-                                <span>${escapeHTML(report.name)} (${escapeHTML(report.location || report.area || '')})</span>
-                                <span class="text-[10px] text-gray-500">${escapeHTML(report.date || '')}</span>
-                            </div>
-                            <p class="text-red-600 my-1 font-mono">${escapeHTML(report.phone || '')}</p>
-                            <p class="text-gray-700 dark:text-gray-300">${escapeHTML(report.details || report.msg || '')}</p>
-                        </div>
-                    `;
-                }).join('');
             }
         });
     }
