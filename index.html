@@ -108,7 +108,9 @@
                 🔔
             </button>
             <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
-            <button id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
+            
+            <!-- Step 1: एडमिन लॉगिन बटन को पब्लिक व्यू से पूरी तरह छिपा दिया गया है -->
+            <button id="admin-login-btn" style="display:none;" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
                 🔒 एडमिन लॉगिन
             </button>
         </div>
@@ -1142,16 +1144,19 @@
         isAdminLoggedIn = true;
         document.getElementById('admin-user-email').innerText = email;
         document.getElementById('admin-action-bar').style.display = 'flex';
-        document.getElementById('admin-login-btn').innerText = 'एडमिन सक्रिय';
         closePortalModal('admin-modal');
         renderNews(newsList);
     }
 
+    // Step 3: लॉगआउट करने पर भी एडमिन बटन छिपा ही रहेगा
     async function logoutAdmin() {
         await auth.signOut();
         isAdminLoggedIn = false;
         document.getElementById('admin-action-bar').style.display = 'none';
-        document.getElementById('admin-login-btn').innerText = '🔒 एडमिन लॉगिन';
+        
+        const adminBtn = document.getElementById('admin-login-btn');
+        if (adminBtn) adminBtn.style.display = 'none';
+        
         renderNews(newsList);
     }
 
@@ -1316,6 +1321,14 @@
             }
         });
         initRealtimeData();
+    });
+
+    // Step 2: Ctrl + Shift + A दबाने पर एडमिन लॉगिन मॉडल खोलने का लिसनर
+    window.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+            e.preventDefault();
+            openPortalModal('admin-modal');
+        }
     });
 </script>
 
