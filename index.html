@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -574,17 +573,19 @@
 
     firebase.initializeApp(firebaseConfig);
 
-    // --- FIREBASE APP CHECK INITIALIZATION (Updated Enterprise Key) ---
+    // --- FIREBASE APP CHECK INITIALIZATION (Explicit Enterprise Provider with Project Number) ---
     const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
+    const GOOGLE_PROJECT_NUMBER = '872760222820';
 
     function initFirebaseAppCheck() {
         try {
+            // ReCaptchaEnterpriseProvider को Site Key के साथ लोड करें
+            const provider = new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY);
+            
             const appCheck = firebase.appCheck();
-            appCheck.activate(
-                new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY),
-                true
-            );
-            console.log("App Check Enterprise Verified & Ready");
+            appCheck.activate(provider, true);
+            
+            console.log("App Check Enterprise Verified & Ready (Project: " + GOOGLE_PROJECT_NUMBER + ")");
         } catch (err) {
             console.warn("App Check setup warning:", err);
         }
@@ -1357,5 +1358,3 @@
 
 </body>
 </html>
-
-```
