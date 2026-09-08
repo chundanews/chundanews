@@ -1147,35 +1147,39 @@
     }
 
     function initRealtimeData() {
-        db.collection('news_posts').onSnapshot(snapshot => {
-            if (!snapshot.empty) {
-                newsList = snapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return { id: doc.id, ...data };
-                });
+        // ऑप्टिमाइज़्ड: केवल 20 ताज़ा खबरें ही रियल-टाइम लोड होंगी
+        db.collection('news_posts')
+            .orderBy('createdAt', 'desc')
+            .limit(20)
+            .onSnapshot(snapshot => {
+                if (!snapshot.empty) {
+                    newsList = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        return { id: doc.id, ...data };
+                    });
 
-                newsList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    newsList.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-                const lead = newsList.find(n => n.isLead) || newsList[0];
-                setLeadStory(lead);
+                    const lead = newsList.find(n => n.isLead) || newsList[0];
+                    setLeadStory(lead);
 
-                const breaking = newsList.filter(n => n.isBreaking && isTodayDate(n.date, n.createdAt));
-                if (breaking.length > 0) {
-                    document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
+                    const breaking = newsList.filter(n => n.isBreaking && isTodayDate(n.date, n.createdAt));
+                    if (breaking.length > 0) {
+                        document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
+                    } else {
+                        document.getElementById('breaking-ticker').innerText = 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
+                    }
+
+                    filterNews(currentCategory);
                 } else {
-                    document.getElementById('breaking-ticker').innerText = 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
+                    renderNews([]);
                 }
-
-                filterNews(currentCategory);
-            } else {
-                renderNews([]);
-            }
-        }, error => {
-            console.error("Firestore news_posts error:", error);
-            document.getElementById('news-container').innerHTML = `<div class="col-span-2 text-center py-12 text-red-500 font-bold">
-                डेटाबेस से कनेक्ट नहीं हो सका। कृपया Firebase Rules में अनुमति जांचें।
-            </div>`;
-        });
+            }, error => {
+                console.error("Firestore news_posts error:", error);
+                document.getElementById('news-container').innerHTML = `<div class="col-span-2 text-center py-12 text-red-500 font-bold">
+                    डेटाबेस से कनेक्ट नहीं हो सका। कृपया Firebase Rules में अनुमति जांचें।
+                </div>`;
+            });
 
         db.collection('job_alerts').onSnapshot(snapshot => {
             const jobContainer = document.getElementById('job-alerts-list');
