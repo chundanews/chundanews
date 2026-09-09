@@ -123,6 +123,7 @@
         <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
             <div class="flex overflow-x-auto gap-4 md:gap-6 py-2.5 text-xs font-bold whitespace-nowrap">
                 <button onclick="filterNews('all')" class="hover:text-red-500 transition">सभी खबरें</button>
+                <button onclick="filterNews('चुनाव अपडेट')" class="text-amber-400 hover:text-amber-300 transition flex items-center gap-1"><i class="fa-solid fa-check-to-slot"></i> चुनाव अपडेट</button>
                 <button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-500 transition">क्षेत्रीय</button>
                 <button onclick="filterNews('तहसील समाचार')" class="hover:text-red-500 transition">तहसील समाचार</button>
                 <button onclick="filterNews('ज़िला समाचार')" class="hover:text-red-500 transition">ज़िला समाचार</button>
@@ -216,6 +217,21 @@
         </div>
 
         <aside class="lg:col-span-4 space-y-6">
+            <!-- ELECTION SPECIAL WIDGET -->
+            <div class="bg-white dark:bg-gray-900 rounded-xl border border-amber-500 dark:border-amber-600 p-4 shadow-sm">
+                <div class="bg-gradient-to-r from-amber-600 to-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-black flex items-center justify-between mb-3">
+                    <span>🗳️ निकाय व पंचायत चुनाव विशेष</span>
+                    <span class="bg-white text-amber-800 px-1.5 py-0.2 rounded text-[9px] font-bold">LIVE</span>
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900">
+                        <p class="font-bold text-amber-900 dark:text-amber-200">नगरपालिका / नगर निगम चुनाव</p>
+                        <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">नामांकन, वार्डवार सूची, मतदान और चुनाव परिणाम के ताज़ा अपडेट्स।</p>
+                        <button onclick="filterNews('चुनाव अपडेट')" class="mt-2 w-full bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold">तमाम चुनाव खबरें देखें</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 shadow-sm">
                 <div class="bg-gradient-to-r from-red-600 to-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-black flex items-center justify-between mb-3">
                     <span>🏏 क्षेत्रीय खेल / टूर्नामेंट स्कोर</span>
@@ -264,8 +280,8 @@
                 <span class="text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2">त्वरित नेविगेशन</span>
                 <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
                     <button onclick="filterNews('all'); window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-red-400">ताज़ा खबरें</button>
+                    <button onclick="filterNews('चुनाव अपडेट')" class="hover:text-amber-400">🗳️ चुनाव अपडेट</button>
                     <button onclick="filterNews('क्षेत्रीय')" class="hover:text-red-400">क्षेत्रीय हलचल</button>
-                    <button onclick="filterNews('शिक्षा व रोज़गार')" class="hover:text-red-400">शिक्षा व रोज़गार</button>
                     <button onclick="openPortalModal('citizen-modal')" class="hover:text-amber-400">✍️ खबर भेजें</button>
                 </div>
             </div>
@@ -295,6 +311,7 @@
             <input type="text" id="news-title" required placeholder="मुख्य हेडलाइन" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="grid grid-cols-2 gap-2">
                 <select id="news-category" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+                    <option>चुनाव अपडेट</option>
                     <option>क्षेत्रीय</option>
                     <option>तहसील समाचार</option>
                     <option>ज़िला समाचार</option>
@@ -465,18 +482,6 @@
             <li><b>नागरिक पत्रकारिता (Citizen Reports):</b> जब आप 'खबर भेजें' विकल्प के माध्यम से समाचार या समस्या सबमिट करते हैं, तो हम आपका नाम, संपर्क नंबर और स्थान केवल सूचना के सत्यापन के उद्देश्य से एकत्र करते हैं। यह जानकारी कभी बेची या तीसरे पक्ष को साझा नहीं की जाती।</li>
             <li><b>लॉग फाइल्स (Log Files):</b> अधिकांश वेबसाइटों की तरह, हम विज़िटर के आईपी एड्रेस, ब्राउज़र प्रकार, डिवाइस प्रकार, ऑपरेटिंग सिस्टम और पेज देखने के समय का सामान्य तकनीकी डेटा एकत्र करते हैं ताकि पोर्टल की गति और सुरक्षा बनी रहे।</li>
         </ul>
-        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">Cookies और Web Beacons:</h4>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            हम उपयोगकर्ता प्राथमिकताओं (जैसे डार्क मोड या टेक्स्ट साइज़) को याद रखने के लिए स्थानीय कुकीज़ (Cookies) का उपयोग करते हैं।
-        </p>
-        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">Google AdSense और थर्ड-पार्टी विज्ञापन (Double-Click DART Cookie):</h4>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            Google एक थर्ड-पार्टी वेंडर के रूप में हमारी साइट पर विज्ञापन दिखाने के लिए कुकीज़ का उपयोग करता है। Google DART कुकीज़ का उपयोग हमारे पाठकों को इस साइट और इंटरनेट पर अन्य साइटों के विज़िट के आधार पर लक्षित विज्ञापन दिखाने के लिए करता है। पाठक Google विज्ञापन और सामग्री नेटवर्क गोपनीयता नीति पर जाकर DART कुकी के उपयोग को ऑप्ट-आउट कर सकते हैं।
-        </p>
-        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">वेब पुश नोटिफिकेशन:</h4>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            यदि आप ताज़ा समाचारों के लिए नोटिफिकेशन स्वीकार करते हैं, तो केवल एक सुरक्षित FCM टोकन जनरेट होता है। आप अपनी ब्राउज़र सेटिंग से कभी भी इसे बंद कर सकते हैं।
-        </p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('privacy-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -487,12 +492,6 @@
         <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
             CHUNDA KSHETRA NEWS पोर्टल का उपयोग करने पर आप निम्नलिखित शर्तों से बाध्य होते हैं:
         </p>
-        <ul class="list-disc pl-4 space-y-1.5 text-gray-600 dark:text-gray-300">
-            <li><b>सामग्री का सर्वाधिकार (Copyright):</b> पोर्टल पर प्रकाशित समाचार, आलेख, छवियां और वीडियो नेटवर्क की बौद्धिक संपदा हैं। पूर्व अनुमति के बिना व्यावसायिक उपयोग के लिए सामग्री की नकल करना प्रतिबंधित है।</li>
-            <li><b>सामग्री की सटीकता (Content Disclaimer):</b> हम ऋषभदेव, उदयपुर, खैरवाड़ा, सलूंबर एवं सेमारी क्षेत्र की स्थानीय खबरों को पूर्ण निष्पक्षता और तथ्यों की पुष्टि के बाद ही प्रकाशित करने का प्रयास करते हैं। हालांकि, त्वरित रिपोर्टिंग के दौरान प्राप्त किसी अप्रत्याशित त्रुटि की जानकारी मिलने पर हम उसमें आवश्यक सुधार करने के लिए प्रतिबद्ध हैं।</li>
-            <li><b>नागरिक पत्रकारिता संबंधी नियम:</b> पाठकों द्वारा भेजे गए समाचार, फोटो या वीडियो की प्रामाणिकता की ज़िम्मेदारी प्रेषक की होगी। मानहानिकारक, भ्रामक, सामाजिक सौहार्द बिगाड़ने वाली या गैर-कानूनी सामग्री को बिना किसी सूचना के अस्वीकार या पुलिस/प्रशासन को संदर्भित किया जा सकता है।</li>
-            <li><b>बाहरी लिंक (External Links):</b> सरकारी भर्तियों या अन्य संदर्भों के लिए दिए गए बाहरी लिंक की सामग्री या उनकी नीतियों के लिए CHUNDA KSHETRA NEWS उत्तरदायी नहीं होगा।</li>
-        </ul>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('terms-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -502,17 +501,6 @@
         <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">शिकायत निवारण एवं संपर्क (Contact & Grievance Redressal)</h3>
         <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
             भारत सरकार के <b>Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021</b> के अनुपालन में, पोर्टल पर प्रकाशित किसी भी समाचार सामग्री पर आपत्ति, सुधार अथवा शिकायत दर्ज करने के लिए शिकायत निवारण तंत्र स्थापित है।
-        </p>
-        <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700 space-y-1.5">
-            <p><b>कवरेज केंद्र:</b> ऋषभदेव, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा, उदयपुर एवं संपूर्ण दक्षिण राजस्थान अंचल।</p>
-            <p><b>पोर्टल:</b> CHUNDA KSHETRA NEWS</p>
-            <p><b>शिकायत निवारण अधिकारी (Grievance Officer):</b> संपादक / शिकायत निवारण अधिकारी</p>
-            <p><b>ईमेल आईडी:</b> <a href="mailto:mahi143vaishnav@gmail.com" class="text-red-600 font-bold">mahi143vaishnav@gmail.com</a></p>
-            <p><b>आधिकारिक सहायता ईमेल:</b> <a href="mailto:chundakshetranews@gmail.com" class="text-red-600 font-bold">chundakshetranews@gmail.com</a></p>
-        </div>
-        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">शिकायत दर्ज करने की प्रक्रिया:</h4>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            शिकायतकर्ता को ईमेल में प्रकाशित खबर की हेडलाइन/लिंक, प्रकाशन की तारीख और अपनी आपत्ति का स्पष्ट आधार (तथ्यों के साथ) भेजना अनिवार्य है। नियमानुसार, प्राप्त शिकायतों की पावती 24 घंटे के भीतर भेजी जाएगी और उचित जांच के उपरांत 15 दिनों के अंदर निवारण/सुधार सुनिश्चित किया जाएगा।
         </p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('grievance-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
@@ -573,19 +561,14 @@
 
     firebase.initializeApp(firebaseConfig);
 
-    // --- FIREBASE APP CHECK INITIALIZATION (Explicit Enterprise Provider with Project Number) ---
     const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
     const GOOGLE_PROJECT_NUMBER = '872760222820';
 
     function initFirebaseAppCheck() {
         try {
-            // ReCaptchaEnterpriseProvider को Site Key के साथ लोड करें
             const provider = new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY);
-            
             const appCheck = firebase.appCheck();
             appCheck.activate(provider, true);
-            
-            console.log("App Check Enterprise Verified & Ready (Project: " + GOOGLE_PROJECT_NUMBER + ")");
         } catch (err) {
             console.warn("App Check setup warning:", err);
         }
@@ -620,7 +603,6 @@
     let uploadedCompressedImages = [];
     let currentActiveNewsId = null;
 
-    // --- 2. THEME & UI HELPERS ---
     function toggleDarkMode() {
         document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
@@ -653,7 +635,6 @@
     }
     updateLivePanchang();
 
-    // --- 3. SPEECH & AI VOICE ENGINE ---
     function startAiVoiceBulletin() {
         if (!('speechSynthesis' in window)) {
             alert("आपके ब्राउज़र में AI वॉइस सपोर्ट उपलब्ध नहीं है।");
@@ -687,7 +668,6 @@
         };
     }
 
-    // --- 4. HIGH-EFFICIENCY IMAGE COMPRESSION (<50KB) + WATERMARK ---
     function processImageFile(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -759,7 +739,6 @@
         });
     }
 
-    // --- 5. RENDER & DATA HANDLING ---
     function renderNews(list) {
         const container = document.getElementById('news-container');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
@@ -886,7 +865,6 @@
                 }
             } catch (err) {
                 if (err.name === 'AbortError') return;
-                console.log("Image share bypass to text share:", err);
             }
         }
 
@@ -926,7 +904,6 @@
         renderNews(filtered);
     }
 
-    // --- 6. ADMIN & FORM SUBMISSIONS ---
     function resetPostModalState() {
         ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => {
             const el = document.getElementById(id);
@@ -943,7 +920,7 @@
         }
 
         document.getElementById('news-reporter').value = 'विशेष संवाददाता';
-        document.getElementById('news-category').value = 'क्षेत्रीय';
+        document.getElementById('news-category').value = 'चुनाव अपडेट';
         document.getElementById('news-breaking').checked = false;
         document.getElementById('news-lead').checked = false;
         
@@ -1051,7 +1028,7 @@
         document.getElementById('post-modal-title').innerText = "खबर एडिट करें";
         document.getElementById('edit-doc-id').value = n.id;
         document.getElementById('news-title').value = n.title || '';
-        document.getElementById('news-category').value = n.category || 'क्षेत्रीय';
+        document.getElementById('news-category').value = n.category || 'चुनाव अपडेट';
         document.getElementById('news-reporter').value = n.reporter || 'विशेष संवाददाता';
         document.getElementById('news-content').value = n.content || '';
         document.getElementById('news-breaking').checked = !!n.isBreaking;
@@ -1108,13 +1085,9 @@
         }).catch(err => alert("स्कोर अपडेट त्रुटि: " + err.message));
     }
 
-    // --- ANTI-SPAM CITIZEN REPORT SUBMISSION ---
     async function handleCitizenSubmit(e) {
         e.preventDefault();
-
-        if (document.getElementById('citizen-hp').value) {
-            return; 
-        }
+        if (document.getElementById('citizen-hp').value) return;
 
         const lastSubmitted = localStorage.getItem('last_report_time');
         const now = Date.now();
@@ -1186,7 +1159,6 @@
         renderNews(newsList);
     }
 
-    // --- 7. FIRESTORE REALTIME SYNC ---
     function isTodayDate(itemDate, itemCreatedAt) {
         const todayStr = new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         if (itemDate && String(itemDate).trim() === todayStr) return true;
@@ -1228,9 +1200,6 @@
                 }
             }, error => {
                 console.error("Firestore news_posts error:", error);
-                document.getElementById('news-container').innerHTML = `<div class="col-span-2 text-center py-12 text-red-500 font-bold">
-                    डेटाबेस से कनेक्ट नहीं हो सका। कृपया Firebase Rules में अनुमति जांचें।
-                </div>`;
             });
 
         db.collection('job_alerts').onSnapshot(snapshot => {
@@ -1263,9 +1232,7 @@
         });
     }
 
-    // --- 8. PWA INSTALLATION SYSTEM ---
     let deferredPrompt = null;
-
     window.addEventListener('DOMContentLoaded', () => {
         const pwaBtn = document.getElementById('pwa-install-btn');
         if (pwaBtn) pwaBtn.style.display = 'inline-flex';
@@ -1292,7 +1259,6 @@
         }
     }
 
-    // --- 9. WEB PUSH NOTIFICATIONS SYSTEM ---
     async function enablePushNotifications() {
         if (!('Notification' in window)) {
             alert("यह ब्राउज़र वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
@@ -1332,7 +1298,6 @@
         }
     }
 
-    // --- 10. AUTH LISTENER & INITIAL LOAD ---
     window.addEventListener('DOMContentLoaded', () => {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
