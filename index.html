@@ -336,18 +336,18 @@
             
             <input type="url" id="news-image" placeholder="या ऑनलाइन इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             
-            <!-- Rich Text Formatting Toolbar Added -->
-            <div class="space-y-1">
-                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-t border-x border-t dark:border-gray-700 text-xs">
-                    <span class="text-[10px] font-bold text-gray-500 mr-2">फॉर्मेटिंग:</span>
-                    <button type="button" onclick="formatText('strong')" class="px-2 py-0.5 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded font-bold hover:bg-gray-200" title="Bold"><b>B</b></button>
-                    <button type="button" onclick="formatText('em')" class="px-2 py-0.5 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded italic hover:bg-gray-200" title="Italic"><i>I</i></button>
-                    <button type="button" onclick="formatText('ul')" class="px-2 py-0.5 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded hover:bg-gray-200" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+            <!-- Rich Text Editor Box Added -->
+            <label class="block font-semibold text-gray-700 dark:text-gray-300">समाचार का पूरा विवरण:</label>
+            <div class="border dark:border-gray-700 dark:bg-gray-800 rounded overflow-hidden">
+                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 p-1.5 border-b dark:border-gray-600 text-xs">
+                    <button type="button" onclick="document.execCommand('bold', false, null)" class="px-2.5 py-1 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded font-bold hover:bg-gray-200" title="Bold"><b>B</b></button>
+                    <button type="button" onclick="document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded italic hover:bg-gray-200" title="Italic"><i>I</i></button>
+                    <button type="button" onclick="document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded underline hover:bg-gray-200" title="Underline"><u>U</u></button>
                 </div>
-                <textarea id="news-content" rows="5" required placeholder="समाचार का पूरा विवरण" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded-b p-2"></textarea>
+                <div id="news-content-editor" contenteditable="true" class="w-full p-2.5 min-h-[120px] max-h-[250px] overflow-y-auto focus:outline-none text-xs"></div>
             </div>
             
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 mt-2">
                 <label class="flex items-center gap-1.5 font-bold text-red-600"><input type="checkbox" id="news-breaking"> ब्रेकिंग टिकर में जोड़ें</label>
                 <label class="flex items-center gap-1.5 font-bold text-indigo-600"><input type="checkbox" id="news-lead"> ⭐ मुख्य लीड स्टोरी बनाएं</label>
             </div>
@@ -558,26 +558,6 @@
             console.error("Blob conversion error:", e);
             return null;
         }
-    }
-
-    // --- TEXT FORMATTING HELPER FOR NEWS CONTENT ---
-    function formatText(tag) {
-        const textarea = document.getElementById('news-content');
-        if (!textarea) return;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selectedText = textarea.value.substring(start, end);
-        
-        let replacement = '';
-        if (tag === 'ul') {
-            replacement = `\n• ${selectedText || 'लिस्ट आइटम'}\n`;
-        } else {
-            replacement = `<${tag}>${selectedText || 'टेक्स्ट'}</${tag}>`;
-        }
-        
-        textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
-        textarea.focus();
-        textarea.setSelectionRange(start + replacement.length, start + replacement.length);
     }
 
     // --- 1. FIREBASE CONFIGURATION ---
@@ -797,7 +777,7 @@
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReaderModal('${safeId}')">
                             ${escapeHTML(item.title)}
                         </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${escapeHTML(item.content)}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${item.content || ''}</p>
                     </div>
                 </div>
                 <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
@@ -826,7 +806,7 @@
         document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
         document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('lead-date').innerText = item.date || "आज";
-        document.getElementById('lead-excerpt').innerText = item.content || '';
+        document.getElementById('lead-excerpt').innerHTML = item.content || '';
         document.getElementById('lead-image').src = sanitizeUrl(item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800");
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
         document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
@@ -846,7 +826,7 @@
         document.getElementById('read-category').innerText = item.category || 'सामान्य';
         document.getElementById('read-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('read-date').innerText = item.date || "आज";
-        document.getElementById('read-content').innerText = item.content || '';
+        document.getElementById('read-content').innerHTML = item.content || '';
 
         const gallery = document.getElementById('read-gallery-box');
         gallery.innerHTML = '';
@@ -937,10 +917,13 @@
     }
 
     function resetPostModalState() {
-        ['news-title', 'news-content', 'news-image', 'edit-doc-id'].forEach(id => {
+        ['news-title', 'news-image', 'edit-doc-id'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
+        const editor = document.getElementById('news-content-editor');
+        if (editor) editor.innerHTML = '';
+
         const fileInput = document.getElementById('news-files');
         if (fileInput) fileInput.value = '';
         
@@ -1020,7 +1003,7 @@
                 title: document.getElementById('news-title').value.trim(),
                 category: document.getElementById('news-category').value,
                 reporter: document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता',
-                content: document.getElementById('news-content').value.trim(),
+                content: document.getElementById('news-content-editor').innerHTML.trim(),
                 isBreaking: document.getElementById('news-breaking').checked,
                 isLead: document.getElementById('news-lead').checked,
                 date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -1062,7 +1045,7 @@
         document.getElementById('news-title').value = n.title || '';
         document.getElementById('news-category').value = n.category || 'चुनाव अपडेट';
         document.getElementById('news-reporter').value = n.reporter || 'विशेष संवाददाता';
-        document.getElementById('news-content').value = n.content || '';
+        document.getElementById('news-content-editor').innerHTML = n.content || '';
         document.getElementById('news-breaking').checked = !!n.isBreaking;
         document.getElementById('news-lead').checked = !!n.isLead;
         document.getElementById('news-image').value = n.image && !n.image.startsWith('data:image') ? n.image : '';
