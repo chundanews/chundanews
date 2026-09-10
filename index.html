@@ -765,6 +765,11 @@
             const displayImg = sanitizeUrl(rawImg);
             const safeId = escapeHTML(item.id);
             
+            // HTML टैग हटाकर केवल सादा टेक्स्ट निकालने का तरीका ताकि कार्ड में केवल 2-3 लाइनें दिखें
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = item.content || '';
+            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
             return `
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
                 <div>
@@ -777,7 +782,7 @@
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 hover:text-red-600 cursor-pointer" onclick="openReaderModal('${safeId}')">
                             ${escapeHTML(item.title)}
                         </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${item.content || ''}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">${escapeHTML(plainText)}</p>
                     </div>
                 </div>
                 <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
@@ -806,7 +811,11 @@
         document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
         document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('lead-date').innerText = item.date || "आज";
-        document.getElementById('lead-excerpt').innerHTML = item.content || '';
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.content || '';
+        document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
+
         document.getElementById('lead-image').src = sanitizeUrl(item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800");
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
         document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
@@ -849,7 +858,10 @@
         if (!item) return;
 
         const shareTitle = `📰 *${item.title}*`;
-        const shareExcerpt = item.content ? (item.content.length > 140 ? item.content.substring(0, 140) + '...' : item.content) : '';
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.content || '';
+        const cleanContent = tempDiv.textContent || tempDiv.innerText || '';
+        const shareExcerpt = cleanContent ? (cleanContent.length > 140 ? cleanContent.substring(0, 140) + '...' : cleanContent) : '';
         const pageUrl = window.location.href;
         const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${pageUrl}`;
         const rawImg = item.images?.[0] || item.image;
