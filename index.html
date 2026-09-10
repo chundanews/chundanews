@@ -336,7 +336,16 @@
             
             <input type="url" id="news-image" placeholder="या ऑनलाइन इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             
-            <textarea id="news-content" rows="5" required placeholder="समाचार का पूरा विवरण" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2"></textarea>
+            <!-- Rich Text Formatting Toolbar Added -->
+            <div class="space-y-1">
+                <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-t border-x border-t dark:border-gray-700 text-xs">
+                    <span class="text-[10px] font-bold text-gray-500 mr-2">फॉर्मेटिंग:</span>
+                    <button type="button" onclick="formatText('strong')" class="px-2 py-0.5 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded font-bold hover:bg-gray-200" title="Bold"><b>B</b></button>
+                    <button type="button" onclick="formatText('em')" class="px-2 py-0.5 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded italic hover:bg-gray-200" title="Italic"><i>I</i></button>
+                    <button type="button" onclick="formatText('ul')" class="px-2 py-0.5 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded hover:bg-gray-200" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                </div>
+                <textarea id="news-content" rows="5" required placeholder="समाचार का पूरा विवरण" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded-b p-2"></textarea>
+            </div>
             
             <div class="flex items-center gap-4">
                 <label class="flex items-center gap-1.5 font-bold text-red-600"><input type="checkbox" id="news-breaking"> ब्रेकिंग टिकर में जोड़ें</label>
@@ -551,6 +560,26 @@
         }
     }
 
+    // --- TEXT FORMATTING HELPER FOR NEWS CONTENT ---
+    function formatText(tag) {
+        const textarea = document.getElementById('news-content');
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+        
+        let replacement = '';
+        if (tag === 'ul') {
+            replacement = `\n• ${selectedText || 'लिस्ट आइटम'}\n`;
+        } else {
+            replacement = `<${tag}>${selectedText || 'टेक्स्ट'}</${tag}>`;
+        }
+        
+        textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+        textarea.focus();
+        textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+    }
+
     // --- 1. FIREBASE CONFIGURATION ---
     const firebaseConfig = {
         apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
@@ -559,7 +588,7 @@
         storageBucket: "chunda-news.firebasestorage.app",
         messagingSenderId: "872760222820",
         appId: "1:872760222820:web:5e316ef1eb27d5a7046b71",
-        measurementId: "G-N7CHP0LVYX" // <-- Yahan Sahi ID Update Kar Di Gayi Hai
+        measurementId: "G-N7CHP0LVYX"
     };
 
     firebase.initializeApp(firebaseConfig);
