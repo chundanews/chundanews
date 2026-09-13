@@ -52,7 +52,7 @@
         <div class="flex items-center gap-4">
             <span id="live-panchang"><i class="fa-regular fa-calendar-days text-red-500 mr-1"></i> पंचांग लोड हो रहा है...</span>
             <span class="hidden sm:inline text-gray-600">|</span>
-            <span><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर / ऋषभदेव: 28°C</span>
+            <span id="live-weather-display"><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: लोड हो रहा है...</span>
         </div>
         <div class="flex items-center gap-3">
             <button onclick="startAiVoiceBulletin()" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
@@ -305,7 +305,7 @@
     </div>
 </footer>
 
-<!-- 1. Post News Modal -->
+<!-- Modals -->
 <div id="post-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-800">
         <h3 id="post-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नई खबर पोस्ट करें</h3>
@@ -336,7 +336,6 @@
             
             <input type="url" id="news-image" placeholder="या ऑनलाइन इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             
-            <!-- Rich Text Editor Box Added -->
             <label class="block font-semibold text-gray-700 dark:text-gray-300">समाचार का पूरा विवरण:</label>
             <div class="border dark:border-gray-700 dark:bg-gray-800 rounded overflow-hidden">
                 <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 p-1.5 border-b dark:border-gray-600 text-xs">
@@ -360,7 +359,6 @@
     </div>
 </div>
 
-<!-- 2. Job Alert Modal -->
 <div id="job-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="job-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
@@ -377,7 +375,6 @@
     </div>
 </div>
 
-<!-- 3. Live Score Update Modal -->
 <div id="score-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="score-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
@@ -393,7 +390,6 @@
     </div>
 </div>
 
-<!-- 4. Citizen Reporter Modal -->
 <div id="citizen-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="citizen-modal-title" class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
@@ -412,7 +408,6 @@
     </div>
 </div>
 
-<!-- 5. Admin Login Modal -->
 <div id="admin-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="admin-modal-heading" class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
@@ -427,7 +422,6 @@
     </div>
 </div>
 
-<!-- 6. Reports View Modal -->
 <div id="reports-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[85vh] flex flex-col">
         <div class="flex justify-between items-center pb-2 border-b dark:border-gray-800 mb-3">
@@ -440,7 +434,6 @@
     </div>
 </div>
 
-<!-- 7. News Full Reader Card Modal -->
 <div id="read-modal" class="portal-modal">
     <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 relative max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
@@ -472,12 +465,12 @@
     </div>
 </div>
 
-<!-- 8. LEGAL POLICY MODALS (UPDATED) -->
+<!-- Policy Modals -->
 <div id="about-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
         <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">हमारे बारे में (About Us)</h3>
         <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            <b>CHUNDA KSHETRA NEWS</b> (chundanewslive.in) दक्षिण राजस्थान के ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा एवं आसपास के अंचल की स्थानीय आवाज़ को डिजिटल पटल पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र क्षेत्रीय समाचार पोर्टल है। हमारा संकल्प क्षेत्र के विकास, जनसमस्याओं, शिक्षा, रोज़गार और कृषि हलचल से जुड़ी हर खबर को निष्पक्ष, प्रामाणिक और त्वरित रूप से जनता तक पहुँचाना है।
+            <b>CHUNDA KSHETRA NEWS</b> (chundanewslive.in) दक्षिण राजस्थान के ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा एवं आसपास के अंचल की स्थानीय आवाज़ को डिजिटल पटल पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र क्षेत्रीय समाचार पोर्टल है।
         </p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('about-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
@@ -486,63 +479,23 @@
 <div id="privacy-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
         <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">गोपनीयता नीति (Privacy Policy)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            CHUNDA KSHETRA NEWS (chundanewslive.in) पर अपने पाठकों की गोपनीयता का सम्मान करना हमारी सर्वोच्च प्राथमिकता है। यह गोपनीयता नीति बताती है कि जब आप दक्षिण राजस्थान (ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर एवं आसपास के अंचल) की स्थानीय खबरों के लिए हमारे पोर्टल का उपयोग करते हैं, तो हम किस प्रकार की जानकारी एकत्र करते हैं।
-        </p>
-        <h4 class="font-bold text-gray-800 dark:text-gray-200 mt-2">एकत्र की जाने वाली जानकारी:</h4>
-        <ul class="list-disc pl-4 space-y-1.5 text-gray-600 dark:text-gray-300">
-            <li><b>नागरिक पत्रकारिता (Citizen Reports):</b> जब आप 'खबर भेजें' विकल्प के माध्यम से समाचार या समस्या सबमिट करते हैं, तो हम आपका नाम, संपर्क नंबर और स्थान केवल सूचना के सत्यापन के उद्देश्य से एकत्र करते हैं। यह जानकारी कभी बेची या तीसरे पक्ष को साझा नहीं की जाती।</li>
-            <li><b>लॉग फाइल्स (Log Files):</b> अधिकांश वेबसाइटों की तरह, हम विज़िटर के आईपी एड्रेस, ब्राउज़र प्रकार, डिवाइस प्रकार, ऑपरेटिंग सिस्टम और पेज देखने के समय का सामान्य तकनीकी डेटा एकत्र करते हैं ताकि पोर्टल की गति और सुरक्षा बनी रहे।</li>
-        </ul>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">CHUNDA KSHETRA NEWS पर आपके पाठकों की गोपनीयता का सम्मान करना हमारी सर्वोच्च प्राथमिकता है।</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('privacy-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
 
-<!-- Updated Terms & Conditions Modal -->
 <div id="terms-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
         <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">नियम एवं शर्तें (Terms & Conditions)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            <b>प्रस्तावना:</b><br>
-            'चुंडा क्षेत्र न्यूज' (Chunda Kshetra News) वेबसाइट या इसके मोबाइल ऐप का उपयोग करने वाले सभी उपयोगकर्ताओं (Users) पर ये नियम और शर्तें लागू होती हैं। इस वेबसाइट को एक्सेस करके आप हमारे इन नियमों से बंधे होने की सहमति देते हैं।
-        </p>
-        <p class="font-bold text-gray-800 dark:text-gray-200 mt-2">1. सामग्री का उपयोग (Use of Content):</p>
-        <ul class="list-disc pl-4 space-y-1 text-gray-600 dark:text-gray-300">
-            <li>इस पोर्टल पर प्रकाशित सभी समाचार, लेख, ग्राफिक्स, लोगो और वीडियो 'चुंडा क्षेत्र न्यूज' की बौद्धिक संपदा हैं।</li>
-            <li>बिना पूर्व लिखित अनुमति के इस मंच की किसी भी सामग्री का कमर्शियल उपयोग, पुनर्प्रकाशित करना या कॉपी करना वर्जित है। हालांकि, व्यक्तिगत और शैक्षणिक उपयोग के लिए लिंक शेयर किया जा सकता है।</li>
-        </ul>
-
-        <p class="font-bold text-gray-800 dark:text-gray-200 mt-2">2. थर्ड-पार्टी लिंक्स (Third-Party Links):</p>
-        <p class="text-gray-600 dark:text-gray-300">हमारी वेबसाइट पर अन्य बाहरी वेबसाइटों या विज्ञापनों के लिंक हो सकते हैं। हम उन बाहरी साइटों की गोपनीयता नीतियों या सामग्री के लिए उत्तरदायी नहीं हैं।</p>
-
-        <p class="font-bold text-gray-800 dark:text-gray-200 mt-2">3. डिस्क्लेमर (Disclaimer):</p>
-        <p class="text-gray-600 dark:text-gray-300">'चुंडा क्षेत्र न्यूज' पर दी गई जानकारी सामान्य सूचना के उद्देश्यों के लिए है। हम दी गई खबरों की सटीकता और पूर्णता के लिए पूरा प्रयास करते हैं, फिर भी किसी तकनीकी त्रुटि या मानवीय भूल के लिए पोर्टल किसी प्रत्यक्ष या अप्रत्यक्ष नुकसान की जिम्मेदारी नहीं लेता है।</p>
-
-        <p class="font-bold text-gray-800 dark:text-gray-200 mt-2">4. नियमों में बदलाव (Changes to Terms):</p>
-        <p class="text-gray-600 dark:text-gray-300">प्रबंधन के पास बिना किसी पूर्व सूचना के इन नियमों और शर्तों में बदलाव करने का पूरा अधिकार सुरक्षित है। समय-समय पर इस पेज को देखते रहना उपयोगकर्ता की जिम्मेदारी है।</p>
-
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">'चुंडा क्षेत्र न्यूज' वेबसाइट या इसके मोबाइल ऐप का उपयोग करने वाले सभी उपयोगकर्ताओं पर ये नियम लागू होते हैं।</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('terms-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
 
-<!-- Updated Grievance Redressal Modal -->
 <div id="grievance-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
         <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">शिकायत निवारण नीति (Grievance Redressal)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            <b>चुंडा क्षेत्र न्यूज</b> अपने पाठकों, स्रोतों और नागरिकों के अधिकारों का सम्मान करता है। यदि आपको हमारे किसी भी समाचार लेख, वीडियो, तस्वीर या सामग्री से संबंधित कोई आपत्ति है, या कोई तथ्यात्मक त्रुटि (Fact Error) नजर आती है, तो आप हमारी शिकायत निवारण टीम से संपर्क कर सकते हैं। हम आपकी शिकायत पर त्वरित कार्रवाई करने के लिए प्रतिबद्ध हैं।
-        </p>
-        <p class="font-bold text-gray-800 dark:text-gray-200 mt-2">शिकायत दर्ज करने की प्रक्रिया:</p>
-        <p class="text-gray-600 dark:text-gray-300">अपनी शिकायत दर्ज कराने के लिए कृपया हमें निम्नलिखित विवरण के साथ ईमेल करें:</p>
-        <ul class="list-decimal pl-4 space-y-1 text-gray-600 dark:text-gray-300">
-            <li>शिकायतकर्ता का पूरा नाम और संपर्क विवरण (फोन नंबर और ईमेल)।</li>
-            <li>आपत्तिजनक लेख/वीडियो का शीर्षक और उसका वेब लिंक (URL)।</li>
-            <li>आपत्ति का स्पष्ट कारण और उससे जुड़े दस्तावेज या साक्ष्य (यदि कोई हों)।</li>
-        </ul>
-        <p class="font-bold text-gray-800 dark:text-gray-200 mt-2">संपर्क विवरण (Grievance Officer):</p>
-        <p class="text-gray-600 dark:text-gray-300"><b>ईमेल आईडी:</b> chundakshetranews@gmail.com</p>
-        <p class="text-gray-500 italic mt-1">नोट: प्राप्त होने वाली शिकायतों की प्रारंभिक जांच 48 से 72 घंटों के भीतर, नियमानुसार कर ली जाएगी।</p>
-
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed"><b>ईमेल आईडी:</b> chundakshetranews@gmail.com</p>
         <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('grievance-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
@@ -643,6 +596,29 @@
     let leadNewsItem = null;
     let uploadedCompressedImages = [];
     let currentActiveNewsId = null;
+
+    // --- LIVE WEATHER FETCH FUNCTION ---
+    async function fetchLiveWeather() {
+        const apiKey = "52b1d50ae8c6830d4b1a310ab4735bbb";
+        const city = "Udaipur";
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=hi&appid=${apiKey}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.cod === 200) {
+                const temp = Math.round(data.main.temp);
+                const description = data.weather[0].description;
+                const weatherElement = document.getElementById('live-weather-display');
+                if (weatherElement) {
+                    weatherElement.innerHTML = `<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: ${temp}°C (${description})`;
+                }
+            }
+        } catch (error) {
+            console.error("Weather fetch error:", error);
+        }
+    }
 
     function toggleDarkMode() {
         document.documentElement.classList.toggle('dark');
@@ -1292,6 +1268,9 @@
     window.addEventListener('DOMContentLoaded', () => {
         const pwaBtn = document.getElementById('pwa-install-btn');
         if (pwaBtn) pwaBtn.style.display = 'inline-flex';
+        
+        // Fetch Live Weather on Page Load
+        fetchLiveWeather();
     });
 
     window.addEventListener('beforeinstallprompt', (e) => {
