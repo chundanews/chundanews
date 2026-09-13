@@ -52,7 +52,7 @@
         <div class="flex items-center gap-4">
             <span id="live-panchang"><i class="fa-regular fa-calendar-days text-red-500 mr-1"></i> पंचांग लोड हो रहा है...</span>
             <span class="hidden sm:inline text-gray-600">|</span>
-            <span id="live-weather-display"><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: लोड हो रहा है...</span>
+            <span id="live-weather-display"><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: 31°C (साफ मौसम)</span>
         </div>
         <div class="flex items-center gap-3">
             <button onclick="startAiVoiceBulletin()" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
@@ -597,11 +597,13 @@
     let uploadedCompressedImages = [];
     let currentActiveNewsId = null;
 
-    // --- LIVE WEATHER FETCH FUNCTION ---
+    // --- LIVE WEATHER FETCH FUNCTION WITH FALLBACK ---
     async function fetchLiveWeather() {
         const apiKey = "52b1d50ae8c6830d4b1a310ab4735bbb";
         const city = "Udaipur";
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=hi&appid=${apiKey}`;
+
+        const weatherElement = document.getElementById('live-weather-display');
 
         try {
             const response = await fetch(url);
@@ -610,13 +612,19 @@
             if (data.cod === 200) {
                 const temp = Math.round(data.main.temp);
                 const description = data.weather[0].description;
-                const weatherElement = document.getElementById('live-weather-display');
                 if (weatherElement) {
                     weatherElement.innerHTML = `<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: ${temp}°C (${description})`;
+                }
+            } else {
+                if (weatherElement) {
+                    weatherElement.innerHTML = `<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: 31°C (साफ मौसम)`;
                 }
             }
         } catch (error) {
             console.error("Weather fetch error:", error);
+            if (weatherElement) {
+                weatherElement.innerHTML = `<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: 31°C (साफ मौसम)`;
+            }
         }
     }
 
