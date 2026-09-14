@@ -171,7 +171,10 @@
         <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
         <button onclick="triggerOpenElectionModal()" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
         <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
-        <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500">📥 प्राप्त रिपोर्ट</button>
+        <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
+            📥 प्राप्त रिपोर्ट 
+            <span id="citizen-reports-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0.2 rounded-full hidden">0</span>
+        </button>
         <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
     </div>
 </div>
@@ -1045,6 +1048,14 @@
     
     function triggerOpenReportsModal() { 
         openPortalModal('reports-modal'); 
+
+        // Clear notification badge count when opened
+        db.collection('citizen_reports').get().then(snapshot => {
+            localStorage.setItem('admin_seen_reports_count', snapshot.size.toString());
+            const badge = document.getElementById('citizen-reports-badge');
+            if (badge) badge.classList.add('hidden');
+        });
+
         const reportsList = document.getElementById('reports-list');
         reportsList.innerHTML = '<p class="text-center text-gray-400 py-6">रिपोर्टें लोड हो रही हैं...</p>';
 
@@ -1291,6 +1302,10 @@
         document.getElementById('admin-user-email').innerText = email;
         document.getElementById('admin-action-bar').style.display = 'flex';
         closePortalModal('admin-modal');
+        
+        // Start live real-time listening for citizen reports
+        initAdminCitizenReportListener();
+
         renderNews(newsList);
     }
 
@@ -1303,6 +1318,68 @@
         if (adminBtn) adminBtn.style.display = 'none';
         
         renderNews(newsList);
+    }
+
+    // --- ADMIN REAL-TIME CITIZEN REPORT NOTIFICATION LISTENER ---
+    function initAdminCitizenReportListener() {
+        db.collection('citizen_reports')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot(snapshot => {
+                if (!snapshot.empty) {
+                    const totalReports = snapshot.size;
+                    const lastSeenCount = parseInt(localStorage.getItem('admin_seen_reports_count') || '0');
+                    const badge = document.getElementById('citizen-reports-badge');
+
+                    if (totalReports > lastSeenCount && isAdminLoggedIn) {
+                        playAdminNotificationSound();
+                        showBrowserNotification("📢 नई नागरिक खबर प्राप्त!", "एक नए नागरिक ने रिपोर्ट भेजी है। एडमिन पैनल चेक करें।");
+                    }
+
+                    if (badge) {
+                        const unreadCount = totalReports - lastSeenCount;
+                        if (unreadCount > 0) {
+                            badge.textContent = unreadCount;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    }
+                }
+            }, err => {
+                console.log("Admin listener note:", err);
+            });
+    }
+
+    function playAdminNotificationSound() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+            
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        } catch (e) {
+            console.warn("Audio context not allowed yet");
+        }
+    }
+
+    function showBrowserNotification(title, body) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, {
+                body: body,
+                icon: '/favicon.ico'
+            });
+        }
     }
 
     function isTodayDate(itemDate, itemCreatedAt) {
