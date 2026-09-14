@@ -141,7 +141,7 @@
             <div class="flex items-center gap-3 py-1">
                 <div class="flex items-center gap-1.5 bg-gray-900 border border-gray-700 rounded px-2 py-1">
                     <i class="fa-regular fa-calendar text-red-500 text-xs"></i>
-                    <input type="date" id="news-calendar-picker" onchange="filterNewsByDate(this.value)" onclick="this.showPicker && this.showPicker()" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
+                    <input type="date" id="news-calendar-picker" onchange="filterNewsByDate(this.value)" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
                     <button onclick="resetCalendarFilter()" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
                 </div>
                 <div class="hidden lg:block relative w-44">
@@ -941,36 +941,27 @@
         }
     }
 
-    // --- CALENDAR DATE FILTER FUNCTION ---
+    // --- ACCURATE CALENDAR DATE COMPARISON FIX ---
     function filterNewsByDate(selectedDateStr) {
         if (!selectedDateStr) return;
         
-        const parts = selectedDateStr.split('-');
-        if (parts.length !== 3) return;
-        
-        const year = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const day = parseInt(parts[2], 10);
-
-        const dateObj = new Date(year, month, day);
-        
-        const formattedTargetDate = dateObj.toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-        const alternateTargetDate = dateObj.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        // चयनित तारीख को YYYY, MM, DD में तोड़ें (ताकि समयक्षेत्र या अंक की गड़बड़ न हो)
+        const [selYear, selMonth, selDay] = selectedDateStr.split('-').map(Number);
 
         const filtered = newsList.filter(item => {
-            if (!item.date) {
-                if (item.createdAt) {
-                    const itemDate = new Date(item.createdAt);
-                    return itemDate.toDateString() === dateObj.toDateString();
-                }
-                return false;
-            }
-            
-            const itemDateStr = String(item.date).trim();
-            return itemDateStr === formattedTargetDate || itemDateStr === alternateTargetDate || (itemDateStr.includes(day.toString()) && itemDateStr.includes(year.toString()));
+            if (!item.createdAt) return false;
+            // सीधे पोस्ट के असली timestamp से तारीख की तुलना करें
+            const itemDate = new Date(item.createdAt);
+            return itemDate.getFullYear() === selYear &&
+                   (itemDate.getMonth() + 1) === selMonth &&
+                   itemDate.getDate() === selDay;
         });
 
-        document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> दिनांक: ${escapeHTML(dateObj.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }))}`;
+        // सुंदर हिंदी डिस्प्ले फॉर्मेट तैयार करें
+        const targetDateObj = new Date(selYear, selMonth - 1, selDay);
+        const formattedTargetDate = targetDateObj.toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+        document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> दिनांक: ${escapeHTML(formattedTargetDate)}`;
         renderNews(filtered);
     }
 
@@ -1325,6 +1316,7 @@
         const pwaBtn = document.getElementById('pwa-install-btn');
         if (pwaBtn) pwaBtn.style.display = 'inline-flex';
         
+        // Fetch Live Weather on Page Load
         fetchLiveWeather();
     });
 
