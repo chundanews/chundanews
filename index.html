@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+    <!-- Content Security Policy (CSP) for Enhanced Security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-N7CHP0LVYX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -700,7 +703,7 @@
         window.speechSynthesis.cancel();
         let speechText = "चूंडा क्षेत्र न्यूज़ पर आज की मुख्य सुर्खियां। ";
         if (leadNewsItem) {
-            speechText += "प्रमुख समाचार: " + leadNewsItem.title + "। ";
+            speechText += "प्रमुख समाचार: " + leadNewsItem.title + "。 ";
         }
         const headlines = newsList.slice(0, 4).map(n => n.title).join("। ");
         speechText += headlines ? ("अन्य मुख्य खबरें: " + headlines) : "अन्य खबरें लोड हो रही हैं।";
@@ -1049,7 +1052,6 @@
     function triggerOpenReportsModal() { 
         openPortalModal('reports-modal'); 
 
-        // Clear notification badge count when opened
         db.collection('citizen_reports').get().then(snapshot => {
             localStorage.setItem('admin_seen_reports_count', snapshot.size.toString());
             const badge = document.getElementById('citizen-reports-badge');
@@ -1098,7 +1100,7 @@
         try {
             await db.collection('citizen_reports').doc(id).delete();
             alert("नागरिक रिपोर्ट सफलतापूर्वक हटा दी गई!");
-            loadCitizenReportsList(); // Refresh list inside modal
+            loadCitizenReportsList();
         } catch (err) {
             alert("रिपोर्ट हटाने में समस्या: " + err.message);
         }
