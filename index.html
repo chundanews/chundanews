@@ -169,6 +169,7 @@
     <div class="flex flex-wrap gap-2 text-xs">
         <button onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
         <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
+        <button onclick="triggerOpenElectionModal()" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
         <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
         <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500">📥 प्राप्त रिपोर्ट</button>
         <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
@@ -235,7 +236,7 @@
                     <span>🗳️ निकाय व पंचायत चुनाव विशेष</span>
                     <span class="bg-white text-amber-800 px-1.5 py-0.2 rounded text-[9px] font-bold">LIVE</span>
                 </div>
-                <div class="space-y-2 text-xs">
+                <div id="election-widget-list" class="space-y-2 text-xs">
                     <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900">
                         <p class="font-bold text-amber-900 dark:text-amber-200">नगरपालिका / नगर निगम चुनाव</p>
                         <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">नामांकन, वार्डवार सूची, मतदान और चुनाव परिणाम के ताज़ा अपडेट्स।</p>
@@ -384,6 +385,24 @@
     </div>
 </div>
 
+<!-- ELECTION DOC UPLOAD MODAL -->
+<div id="election-modal" class="portal-modal">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
+        <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">🗳️ चुनाव दस्तावेज़ / PDF अपलोड करें</h3>
+        <form onsubmit="handleElectionSubmit(event)" class="space-y-3 text-xs">
+            <input type="text" id="elec-title" required placeholder="डॉक्यूमेंट का नाम (उदा. वार्डवार मतदाता सूची)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+            <input type="text" id="elec-subtitle" placeholder="विवरण / अंतिम तिथि (उदा. अंतिम प्रकाशन)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+            <label class="block font-semibold text-gray-700 dark:text-gray-300">PDF फ़ाइल चुनें:</label>
+            <input type="file" id="elec-file" accept="application/pdf" onchange="handleElectionPdf(event)" class="w-full text-xs">
+            <input type="url" id="elec-link" placeholder="या Google Drive / PDF का डायरेक्ट लिंक (https://...)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+            <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
+                <button type="button" onclick="closePortalModal('election-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
+                <button type="submit" id="elec-submit-btn" class="bg-amber-600 text-white px-5 py-1.5 rounded font-bold">अपलोड करें</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="score-modal" class="portal-modal">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="score-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
@@ -527,7 +546,7 @@
     function sanitizeUrl(url) {
         if (!url) return '';
         const trimmed = String(url).trim();
-        if (trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/')) {
+        if (trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/') || trimmed.startsWith('data:application/pdf')) {
             return escapeHTML(trimmed);
         }
         return '#';
@@ -604,6 +623,7 @@
     let currentCategory = 'all';
     let leadNewsItem = null;
     let uploadedCompressedImages = [];
+    let uploadedElectionPdfBase64 = '';
     let currentActiveNewsId = null;
 
     // --- LIVE WEATHER FETCH FUNCTION WITH FALLBACK ---
@@ -771,6 +791,16 @@
             thumb.className = "w-14 h-14 object-cover rounded border border-red-500 shadow-sm";
             previewBox.appendChild(thumb);
         });
+    }
+
+    function handleElectionPdf(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedElectionPdfBase64 = e.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 
     function renderNews(list) {
@@ -941,23 +971,18 @@
         }
     }
 
-    // --- ACCURATE CALENDAR DATE COMPARISON FIX ---
     function filterNewsByDate(selectedDateStr) {
         if (!selectedDateStr) return;
-        
-        // चयनित तारीख को YYYY, MM, DD में तोड़ें (ताकि समयक्षेत्र या अंक की गड़बड़ न हो)
         const [selYear, selMonth, selDay] = selectedDateStr.split('-').map(Number);
 
         const filtered = newsList.filter(item => {
             if (!item.createdAt) return false;
-            // सीधे पोस्ट के असली timestamp से तारीख की तुलना करें
             const itemDate = new Date(item.createdAt);
             return itemDate.getFullYear() === selYear &&
                    (itemDate.getMonth() + 1) === selMonth &&
                    itemDate.getDate() === selDay;
         });
 
-        // सुंदर हिंदी डिस्प्ले फॉर्मेट तैयार करें
         const targetDateObj = new Date(selYear, selMonth - 1, selDay);
         const formattedTargetDate = targetDateObj.toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -1015,6 +1040,7 @@
     }
     
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
+    function triggerOpenElectionModal() { openPortalModal('election-modal'); }
     function triggerOpenScoreModal() { openPortalModal('score-modal'); }
     
     function triggerOpenReportsModal() { 
@@ -1096,6 +1122,47 @@
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerText = editDocId ? "अपडेट करें" : "पोस्ट करें";
+        }
+    }
+
+    async function handleElectionSubmit(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('elec-submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "अपलोड हो रहा है...";
+
+        const linkVal = document.getElementById('elec-link').value.trim();
+        const finalDocUrl = uploadedElectionPdfBase64 || linkVal || "#";
+
+        const elecData = {
+            title: document.getElementById('elec-title').value.trim(),
+            subtitle: document.getElementById('elec-subtitle').value.trim() || 'चुनाव अधिसूचना / सूची',
+            link: finalDocUrl,
+            createdAt: Date.now(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        try {
+            await db.collection('election_docs').add(elecData);
+            alert("चुनाव दस्तावेज़ सफलतापूर्वक जोड़ दिया गया!");
+            e.target.reset();
+            uploadedElectionPdfBase64 = '';
+            closePortalModal('election-modal');
+        } catch (err) {
+            alert("दस्तावेज़ सेव करने में त्रुटि: " + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "अपलोड करें";
+        }
+    }
+
+    async function deleteElectionDoc(id) {
+        if (!confirm('क्या आप इस चुनाव दस्तावेज़ को हटाना चाहते हैं?')) return;
+        try {
+            await db.collection('election_docs').doc(id).delete();
+            alert("दस्तावेज़ हटा दिया गया!");
+        } catch (err) {
+            alert("हटाने में समस्या: " + err.message);
         }
     }
 
@@ -1301,6 +1368,32 @@
             }
         });
 
+        db.collection('election_docs').onSnapshot(snapshot => {
+            const elecContainer = document.getElementById('election-widget-list');
+            if (!snapshot.empty) {
+                let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                docs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                elecContainer.innerHTML = docs.map(doc => `
+                    <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900 mb-2">
+                        <p class="font-bold text-amber-900 dark:text-amber-200">📄 ${escapeHTML(doc.title)}</p>
+                        <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(doc.subtitle || '')}</p>
+                        <div class="flex gap-2 mt-2">
+                            <a href="${sanitizeUrl(doc.link)}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold text-[11px]">दस्तावेज़ देखें / डाउनलोड करें</a>
+                            ${isAdminLoggedIn ? `<button onclick="deleteElectionDoc('${doc.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिटेल डिलीट</button>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                elecContainer.innerHTML = `
+                    <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900">
+                        <p class="font-bold text-amber-900 dark:text-amber-200">नगरपालिका / नगर निगम चुनाव</p>
+                        <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">नामांकन, वार्डवार सूची, मतदान और चुनाव परिणाम के ताज़ा अपडेट्स।</p>
+                        <button onclick="filterNews('चुनाव अपडेट')" class="mt-2 w-full bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold">तमाम चुनाव खबरें देखें</button>
+                    </div>
+                `;
+            }
+        });
+
         db.collection('live_score').doc('current').onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
@@ -1315,8 +1408,6 @@
     window.addEventListener('DOMContentLoaded', () => {
         const pwaBtn = document.getElementById('pwa-install-btn');
         if (pwaBtn) pwaBtn.style.display = 'inline-flex';
-        
-        // Fetch Live Weather on Page Load
         fetchLiveWeather();
     });
 
