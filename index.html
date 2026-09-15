@@ -207,9 +207,14 @@
                     <button id="lead-read-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
                         पूरी खबर पढ़ें →
                     </button>
-                    <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
-                        <i class="fa-solid fa-share-nodes"></i> शेयर करें
-                    </button>
+                    <div class="flex gap-2">
+                        <button id="lead-copy-btn" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                            <i class="fa-solid fa-copy"></i> लिंक कॉपी
+                        </button>
+                        <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                            <i class="fa-solid fa-share-nodes"></i> शेयर
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -489,9 +494,14 @@
         <div id="read-content" class="text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-6"></div>
 
         <div class="pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2">
-            <button id="read-share-whatsapp" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
-                <i class="fa-solid fa-share-nodes"></i> शेयर करें
-            </button>
+            <div class="flex gap-2">
+                <button id="read-copy-link" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
+                    <i class="fa-solid fa-copy"></i> लिंक कॉपी करें
+                </button>
+                <button id="read-share-whatsapp" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
+                    <i class="fa-solid fa-share-nodes"></i> शेयर करें
+                </button>
+            </div>
             <button onclick="closePortalModal('read-modal')" class="bg-gray-200 dark:bg-gray-800 text-xs font-bold px-4 py-2 rounded">
                 बंद करें
             </button>
@@ -809,6 +819,41 @@
         reader.readAsDataURL(file);
     }
 
+    // --- COPY NEWS LINK FEATURE ---
+    function copyNewsLink(id) {
+        const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
+        if (!item) return;
+
+        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+        const shareLink = `${baseUrl}?news_id=${id}`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(shareLink).then(() => {
+                alert("📋 खबर का लिंक सफलतापूर्वक कॉपी हो गया!\nअब आप इसे कहीं भी पेस्ट कर सकते हैं।");
+            }).catch(() => {
+                fallbackCopyText(shareLink);
+            });
+        } else {
+            fallbackCopyText(shareLink);
+        }
+    }
+
+    function fallbackCopyText(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            alert("📋 खबर का लिंक कॉपी हो गया!");
+        } catch (err) {
+            alert("लिंक कॉपी करने में असमर्थ।");
+        }
+        document.body.removeChild(textArea);
+    }
+
     function renderNews(list) {
         const container = document.getElementById('news-container');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
@@ -845,9 +890,14 @@
                 <div class="p-4 pt-0 border-t border-gray-100 dark:border-gray-800">
                     <div class="flex justify-between items-center text-xs py-2">
                         <button onclick="openReaderModal('${safeId}')" class="text-red-600 font-bold hover:underline">विस्तार से पढ़ें →</button>
-                        <button onclick="shareWhatsAppWithImage('${safeId}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-share-nodes"></i> शेयर करें
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="copyNewsLink('${safeId}')" class="text-gray-600 dark:text-gray-300 hover:text-red-600 font-bold flex items-center gap-1" title="लिंक कॉपी करें">
+                                <i class="fa-solid fa-copy"></i> कॉपी
+                            </button>
+                            <button onclick="shareWhatsAppWithImage('${safeId}')" class="text-emerald-600 hover:text-emerald-500 font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-share-nodes"></i> शेयर
+                            </button>
+                        </div>
                     </div>
                     ${isAdminLoggedIn ? `
                         <div class="pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
@@ -876,6 +926,7 @@
 
         document.getElementById('lead-image').src = sanitizeUrl(item.images?.[0] || item.image || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800");
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
+        document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
         document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
     }
 
@@ -907,6 +958,7 @@
             }
         });
 
+        document.getElementById('read-copy-link').onclick = () => copyNewsLink(item.id);
         document.getElementById('read-share-whatsapp').onclick = () => shareWhatsAppWithImage(item.id);
         openPortalModal('read-modal');
     }
@@ -920,8 +972,9 @@
         tempDiv.innerHTML = item.content || '';
         const cleanContent = tempDiv.textContent || tempDiv.innerText || '';
         const shareExcerpt = cleanContent ? (cleanContent.length > 140 ? cleanContent.substring(0, 140) + '...' : cleanContent) : '';
-        const pageUrl = window.location.href;
-        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${pageUrl}`;
+        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+        const newsUrl = `${baseUrl}?news_id=${id}`;
+        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}🎙️ रिपोर्टर: ${item.reporter || 'विशेष संवाददाता'}\n\n👉 पूरी खबर पढ़ें:\n${newsUrl}`;
         const rawImg = item.images?.[0] || item.image;
 
         if (navigator.share && rawImg) {
@@ -955,7 +1008,7 @@
                 await navigator.share({
                     title: item.title,
                     text: shareText,
-                    url: pageUrl
+                    url: newsUrl
                 });
                 return;
             } catch (err) {
@@ -1436,6 +1489,16 @@
                         document.getElementById('breaking-ticker').innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
                     } else {
                         document.getElementById('breaking-ticker').innerText = 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
+                    }
+
+                    // Check if URL has a specific news_id to open automatically
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const newsIdParam = urlParams.get('news_id');
+                    if (newsIdParam) {
+                        const targetNews = newsList.find(n => n.id === newsIdParam);
+                        if (targetNews) {
+                            setTimeout(() => openReaderModal(targetNews.id), 500);
+                        }
                     }
 
                     filterNews(currentCategory);
