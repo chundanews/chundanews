@@ -1,0 +1,31 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid == 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
+    }
+
+    match /news/{uid}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && uid == request.auth.uid
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isAdmin() && uid == request.auth.uid;
+    }
+
+    match /election-docs/{uid}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && uid == request.auth.uid
+        && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+      allow delete: if isAdmin() && uid == request.auth.uid;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

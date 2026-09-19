@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid == 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
+    }
+
+    function isStringField(data, field, maxLen) {
+      return data[field] is string && data[field].size() <= maxLen;
+    }
+
+    match /news_posts/{docId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'title','category','reporter','content','isBreaking','isLead','date',
+          'images','image','views','createdAt'
+        ])
+        && isStringField(request.resource.data, 'title', 220)
+        && isStringField(request.resource.data, 'category', 80)
+        && isStringField(request.resource.data, 'reporter', 100)
+        && isStringField(request.resource.data, 'content', 20000)
+        && request.resource.data.isBreaking is bool
+        && request.resource.data.isLead is bool
+        && isStringField(request.resource.data, 'date', 80)
+        && request.resource.data.views is int
+        && request.resource.data.views >= 0
+        && request.resource.data.createdAt == request.time;
+
+      allow update: if isAdmin()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.views == resource.data.views;
+
+      allow delete: if isAdmin();
+    }
+
+    match /job_alerts/{docId} {
+      allow read: if true;
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['title','posts','lastDate','link','createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 3
+        && request.resource.data.title.size() <= 220
+        && request.resource.data.posts is string
+        && request.resource.data.posts.size() <= 500
+        && request.resource.data.lastDate is string
+        && request.resource.data.lastDate.size() <= 100
+        && request.resource.data.link is string
+        && request.resource.data.link.size() <= 2048
+        && request.resource.data.createdAt == request.time;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /citizen_reports/{docId} {
+      allow create: if request.app != null
+        && request.resource.data.keys().hasOnly([
+          'name','location','details','date','phone','createdAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.location is string
+        && request.resource.data.location.size() >= 2
+        && request.resource.data.location.size() <= 200
+        && request.resource.data.details is string
+        && request.resource.data.details.size() >= 10
+        && request.resource.data.details.size() <= 5000
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() <= 20
+        && request.resource.data.date is string
+        && request.resource.data.date.size() <= 50
+        && request.resource.data.createdAt == request.time;
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /election_docs/{docId} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['title','subtitle','link','createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 220
+        && request.resource.data.subtitle is string
+        && request.resource.data.subtitle.size() <= 500
+        && request.resource.data.link is string
+        && request.resource.data.link.size() <= 2048;
+      allow delete: if isAdmin();
+    }
+
+    match /live_score/{docId} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['title','score','status','updatedAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 300
+        && request.resource.data.score is string
+        && request.resource.data.score.size() <= 300
+        && request.resource.data.status is string
+        && request.resource.data.status.size() <= 300;
+      allow delete: if isAdmin();
+    }
+
+    match /fcm_subscribers/{tokenId} {
+      // Token must be the document ID. Users may create/update their own token
+      // record, but cannot delete arbitrary subscribers.
+      allow create, update: if request.app != null
+        && request.resource.data.keys().hasOnly([
+          'token','platform','subscribedAt'
+        ])
+        && request.resource.id == request.resource.data.token
+        && request.resource.data.token is string
+        && request.resource.data.token.size() >= 20
+        && request.resource.data.token.size() <= 4096
+        && request.resource.data.platform is string
+        && request.resource.data.platform.size() <= 1000
+        && request.resource.data.subscribedAt == request.time;
+      allow read, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

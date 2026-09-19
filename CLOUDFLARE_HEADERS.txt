@@ -1,0 +1,12 @@
+# Recommended Cloudflare response headers for chundanewslive.in
+# Apply as HTTP response headers at Cloudflare (Transform Rule / Worker).
+
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+X-Frame-Options: SAMEORIGIN
+Permissions-Policy: camera=(), microphone=(self), geolocation=(), payment=()
+
+# Do not copy a strict CSP blindly yet. The current static build still uses
+# Tailwind CDN + inline application code. Migrate to a bundled build first,
+# then remove unsafe-inline/unsafe-eval and add nonce/hash-based CSP.
