@@ -517,40 +517,6 @@
     </div>
 </div>
 
-<div id="read-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div id="read-modal-card" class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 relative max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center pb-3 border-b dark:border-gray-800 mb-4">
-            <div class="flex items-center gap-2">
-                <span id="read-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2 py-0.5 rounded"></span>
-                <span id="read-date" class="text-[11px] text-gray-500"></span>
-            </div>
-            <button onclick="closePortalModal('read-modal')" class="text-gray-500 hover:text-black dark:hover:text-white font-bold text-lg leading-none">&times;</button>
-        </div>
-
-        <h2 id="read-title" class="text-2xl font-black text-gray-900 dark:text-white leading-snug mb-3"></h2>
-        <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
-            <span>संवाददाता: <b id="read-reporter" class="text-gray-800 dark:text-gray-200"></b></span>
-        </div>
-
-        <div id="read-gallery-box" class="space-y-3 mb-4"></div>
-        <div id="read-content" class="text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-6"></div>
-
-        <div class="pt-4 border-t dark:border-gray-800 flex flex-wrap justify-between items-center gap-2">
-            <div class="flex gap-2">
-                <button id="read-copy-link" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
-                    <i class="fa-solid fa-copy"></i> लिंक कॉपी करें
-                </button>
-                <button id="read-share-whatsapp" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5">
-                    <i class="fa-solid fa-share-nodes"></i> शेयर करें
-                </button>
-            </div>
-            <button onclick="closePortalModal('read-modal')" class="bg-gray-200 dark:bg-gray-800 text-xs font-bold px-4 py-2 rounded">
-                बंद करें
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- POLICY MODALS -->
 <div id="about-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
@@ -589,7 +555,6 @@
 <script>
     const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 
-    // Secure ImgBB upload via Cloudflare Worker proxy (IMGBB key kept server-side as a Worker secret)
     const UPLOAD_WORKER_URL = 'https://chunda-image-upload.ashokvvaishn.workers.dev';
 
     async function uploadToImgBB(file) {
@@ -644,7 +609,6 @@
         return '';
     }
 
-    // FIXED: Sanitize URL now correctly preserves valid custom links and ImgBB URLs
     function sanitizeUrl(url) {
         const safe = sanitizeUrlRaw(url);
         return safe || '';
@@ -804,7 +768,6 @@
         const m = document.getElementById(id);
         if (m) { m.style.display = 'none'; m.setAttribute('aria-hidden', 'true'); }
         if (!document.querySelector('.portal-modal[style*="display: flex"]')) document.body.style.overflow = '';
-        if (id === 'read-modal') resetHomeSEO();
     }
 
     document.addEventListener('keydown', (e) => {
@@ -860,9 +823,8 @@
     }
 
     function copyNewsLink(id) {
-        const baseUrl = window.location.href.split('#')[0].split('?')[0];
         const safeId = safeNewsId(id);
-        const shareLink = `${baseUrl}?news_id=${encodeURIComponent(safeId)}`;
+        const shareLink = `${window.location.origin}/article.html?id=${encodeURIComponent(safeId)}`;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(shareLink).then(() => {
@@ -887,6 +849,13 @@
             alert("लिंक कॉपी करने में असमर्थ।");
         }
         document.body.removeChild(textArea);
+    }
+
+    // UPDATED: Now redirects to the dedicated article page instead of opening a modal
+    function openReaderModal(id) {
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
+        window.location.href = `article.html?id=${safeId}`;
     }
 
     function renderNews(list) {
@@ -972,90 +941,6 @@
         if (leadNewsItem) openReaderModal(leadNewsItem.id);
     }
 
-    function updateArticleSEO(item) {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const safeId = safeNewsId(item?.id);
-        const articleUrl = safeId ? `${baseUrl}?news_id=${encodeURIComponent(safeId)}` : baseUrl;
-        const title = item?.title ? `${item.title} | CHUNDA KSHETRA NEWS` : 'CHUNDA KSHETRA NEWS';
-        const description = htmlToPlainText(item?.content || '').slice(0, 160) || 'चूंडा क्षेत्र न्यूज़ — ताज़ा, सटीक और क्षेत्रीय समाचार।';
-        document.title = title;
-        document.getElementById('meta-description').setAttribute('content', description);
-        document.getElementById('canonical-link').setAttribute('href', articleUrl);
-        document.getElementById('og-title').setAttribute('content', title);
-        document.getElementById('og-description').setAttribute('content', description);
-        document.getElementById('og-url').setAttribute('content', articleUrl);
-        const rawImg = item?.image || (Array.isArray(item?.images) ? item.images[0] : '') || '';
-        const image = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-        document.getElementById('og-image').setAttribute('content', image);
-        document.getElementById('twitter-title').setAttribute('content', title);
-        document.getElementById('twitter-description').setAttribute('content', description);
-        document.getElementById('twitter-image').setAttribute('content', image);
-        const schema = {
-            '@context':'https://schema.org', '@type':'NewsArticle', headline:item?.title || '', description, datePublished: new Date(timestampToMillis(item?.createdAt) || Date.now()).toISOString(),
-            author:{'@type':'Person', name:item?.reporter || 'विशेष संवाददाता'}, publisher:{'@type':'Organization', name:'CHUNDA KSHETRA NEWS', url:'https://chundanewslive.in/'}, url:articleUrl, image:image
-        };
-        document.getElementById('article-schema').textContent = JSON.stringify(schema);
-    }
-
-    function resetHomeSEO() {
-        document.title = 'CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार';
-        const baseUrl = 'https://chundanewslive.in/';
-        document.getElementById('meta-description').setAttribute('content','चूंडा क्षेत्र न्यूज़ — राजस्थान और क्षेत्रीय स्तर की ताज़ा, सटीक और निष्पक्ष खबरें।');
-        document.getElementById('canonical-link').setAttribute('href',baseUrl);
-        document.getElementById('og-title').setAttribute('content','CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार');
-        document.getElementById('og-description').setAttribute('content','चूंडा क्षेत्र न्यूज़ — ताज़ा, सटीक और क्षेत्रीय समाचार।');
-        document.getElementById('og-url').setAttribute('content',baseUrl);
-        document.getElementById('og-image').setAttribute('content','https://chundanewslive.in/favicon.ico');
-        document.getElementById('twitter-title').setAttribute('content','CHUNDA KSHETRA NEWS');
-        document.getElementById('twitter-description').setAttribute('content','ताज़ा, सटीक और क्षेत्रीय समाचार।');
-        document.getElementById('twitter-image').setAttribute('content','https://chundanewslive.in/favicon.ico');
-        document.getElementById('article-schema').textContent = JSON.stringify({'@context':'https://schema.org','@type':'NewsMediaOrganization',name:'CHUNDA KSHETRA NEWS',url:baseUrl});
-    }
-
-    function openReaderModal(id) {
-        let item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
-        if (!item) return;
-
-        function displayModal(article) {
-            updateArticleSEO(article);
-            document.getElementById('read-title').innerText = article.title || '';
-            document.getElementById('read-category').innerText = article.category || 'सामान्य';
-            document.getElementById('read-reporter').innerText = article.reporter || "विशेष संवाददाता";
-            document.getElementById('read-date').innerText = article.date || "आज";
-            document.getElementById('read-content').innerHTML = sanitizeNewsHtml(article.content || '');
-
-            const gallery = document.getElementById('read-gallery-box');
-            gallery.innerHTML = '';
-            const allImgs = article.image ? [article.image] : (article.images || []);
-            allImgs.forEach(imgSrc => {
-                if (imgSrc) {
-                    const img = document.createElement('img');
-                    img.src = sanitizeUrl(imgSrc) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-                    img.loading = "lazy";
-                    img.className = "w-full max-h-96 object-cover rounded-xl shadow mb-3";
-                    gallery.appendChild(img);
-                }
-            });
-
-            document.getElementById('read-copy-link').onclick = () => copyNewsLink(article.id);
-            document.getElementById('read-share-whatsapp').onclick = () => shareWhatsAppWithImage(article.id);
-            openPortalModal('read-modal');
-        }
-
-        if (item.content && item.content.length >= 1500 && item._isTruncated) {
-            displayModal(item);
-            db.collection('news_posts').doc(id).get().then(doc => {
-                if (doc.exists) {
-                    const fullData = normalizeDoc(doc);
-                    fullData._isTruncated = false;
-                    displayModal(fullData);
-                }
-            }).catch(() => {});
-        } else {
-            displayModal(item);
-        }
-    }
-
     async function shareWhatsAppWithImage(id) {
         const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
         if (!item) return;
@@ -1065,20 +950,16 @@
         tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
         const cleanContent = tempDiv.textContent || tempDiv.innerText || '';
         const shareExcerpt = cleanContent ? (cleanContent.length > 100 ? cleanContent.substring(0, 100) + '...' : cleanContent) : '';
-        const baseUrl = window.location.href.split('#')[0].split('?')[0];
-        const newsUrl = `${baseUrl}?news_id=${id}`;
         
+        const newsUrl = `${window.location.origin}/article.html?id=${id}`;
         const rawImg = item.image || (Array.isArray(item.images) ? item.images[0] : '') || '';
         const imageUrl = sanitizeUrl(rawImg);
 
-        // अत्यंत आकर्षक और स्पष्ट फॉर्मेट जिसमें फोटो का डायरेक्ट लिंक और मुख्य लिंक शामिल है
         const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${item.reporter || 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
 
-        // यदि मोबाइल का नेटिव शेयर (फाइल अटैचमेंट सहित) सपोर्ट करता है
         if (navigator.share) {
             try {
                 let shareData = { title: item.title, text: shareText, url: newsUrl };
-
                 if (imageUrl) {
                     try {
                         const response = await fetch(imageUrl);
@@ -1087,11 +968,8 @@
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
                             shareData.files = [file];
                         }
-                    } catch (imgErr) {
-                        console.warn("File share fallback active:", imgErr);
-                    }
+                    } catch (imgErr) {}
                 }
-
                 await navigator.share(shareData);
                 return;
             } catch (err) {
@@ -1099,7 +977,6 @@
             }
         }
 
-        // WhatsApp डायरेक्ट शेयर फॉलबैक
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
     }
 
@@ -1254,7 +1131,6 @@
                 try {
                     finalImage = await uploadToImgBB(imageFileInput.files[0]);
                 } catch (imgErr) {
-                    console.error("ImgBB Upload Exception:", imgErr);
                     throw new Error("ImgBB फोटो अपलोड विफल: " + imgErr.message);
                 }
             }
@@ -1293,7 +1169,6 @@
             closePortalModal('post-modal');
             loadNewsWithTTL(true);
         } catch (err) {
-            console.error("News Submit Error:", err);
             alert('समाचार सेव नहीं हो सका: ' + err.message);
         } finally {
             submitBtn.disabled = false;
@@ -1387,7 +1262,7 @@
 
     async function handleScoreSubmit(e) {
         e.preventDefault();
-        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है। समय समाप्त।'); return; }
         const title = document.getElementById('score-title').value.trim();
         const score = document.getElementById('score-detail').value.trim();
         const status = document.getElementById('score-status').value.trim();
@@ -1499,7 +1374,6 @@
             localStorage.setItem('cached_news_list', JSON.stringify(lightweightList));
             localStorage.setItem('ckn_news_time', Date.now().toString());
         } catch (e) {
-            console.warn("LocalStorage space full, clearing stale keys...");
             localStorage.removeItem('cached_news_list');
             localStorage.removeItem('ckn_news_time');
         }
@@ -1551,14 +1425,6 @@
                         setLeadStory(lead);
 
                         updateBreakingTicker(fetchedList);
-
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const newsIdParam = urlParams.get('news_id');
-                        if (newsIdParam) {
-                            const targetNews = fetchedList.find(n => n.id === newsIdParam);
-                            if (targetNews) setTimeout(() => openReaderModal(targetNews.id), 200);
-                        }
-
                         renderNews(newsList);
                     }
                 }).catch(err => console.warn("Cache served. Remote offline:", err));
