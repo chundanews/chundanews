@@ -11,18 +11,18 @@
 
     <!-- Content Security Policy (CSP) Optimized with ImgBB Support -->
     <meta http-equiv="Content-Security-Policy" content="
-      default-src 'self' https: data: blob:;
-      base-uri 'self';
-      object-src 'none';
-      img-src 'self' https: data: blob: https://*.ibb.co https://i.ibb.co;
-      style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
-      font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:;
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com;
-      script-src-elem 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com;
-      frame-src 'self' https://www.google.com https://recaptcha.google.com;
-      connect-src 'self' https: wss: https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firestore.googleapis.com https://firebasestorage.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://api.open-meteo.com https://api.imgbb.com https://chunda-image-upload.ashokvvaishn.workers.dev;
-      worker-src 'self' blob:;
-      manifest-src 'self';
+     default-src 'self' https: data: blob:;
+     base-uri 'self';
+     object-src 'none';
+     img-src 'self' https: data: blob: https://*.ibb.co https://i.ibb.co;
+     style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+     font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:;
+     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com;
+     script-src-elem 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com;
+     frame-src 'self' https://www.google.com https://recaptcha.google.com;
+     connect-src 'self' https: wss: https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firestore.googleapis.com https://firebasestorage.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://api.open-meteo.com https://api.imgbb.com https://chunda-image-upload.ashokvvaishn.workers.dev;
+     worker-src 'self' blob:;
+     manifest-src 'self';
     ">
 
     <meta charset="UTF-8">
@@ -236,7 +236,7 @@
                 </div>
                 <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
                     <button id="lead-read-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
-                        पूरी खबर पढ़ें →
+                         पूरी खबर पढ़ें →
                     </button>
                     <div class="flex gap-2">
                         <button id="lead-copy-btn" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
@@ -410,12 +410,13 @@
             
             <div class="bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded border dark:border-gray-700 space-y-2">
                 <div>
-                    <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">📁 डिवाइस से फोटो चुनें (ImgBB ऑटो अपलोड):</label>
-                    <input type="file" id="news-image-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">📁 डिवाइस से एक या अधिक तस्वीरें चुनें (Multiple Upload):</label>
+                    <!-- multiple attribute added -->
+                    <input type="file" id="news-image-files" accept="image/*" multiple class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                 </div>
-                <div class="text-center text-gray-400 font-bold text-[10px]">--- या फिर Direct Link ---</div>
+                <div class="text-center text-gray-400 font-bold text-[10px]">--- या फिर Direct Link (कॉमा लगाकर कई लिंक दे सकते हैं) ---</div>
                 <div>
-                    <input type="url" id="news-image" placeholder="ऑनलाइन डायरेक्ट HTTPS इमेज URL" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+                    <input type="text" id="news-image" placeholder="ऑनलाइन डायरेक्ट HTTPS इमेज URL (एक या अधिक कॉमा से अलग)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
                 </div>
             </div>
             
@@ -665,7 +666,6 @@
         };
     }
 
-    // UPDATED: Safe ID handling for Firestore Document IDs
     function safeNewsId(id) {
         return String(id || '').trim();
     }
@@ -1044,7 +1044,7 @@
     }
 
     function resetPostModalState() {
-        ['news-title', 'news-image', 'news-image-file', 'edit-doc-id'].forEach(id => {
+        ['news-title', 'news-image', 'news-image-files', 'edit-doc-id'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
@@ -1142,27 +1142,44 @@
             const category = document.getElementById('news-category').value;
             const reporter = document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता';
             const content = sanitizeNewsHtml(document.getElementById('news-content-editor').innerHTML.trim());
-            const manualUrl = document.getElementById('news-image').value.trim();
-            const imageFileInput = document.getElementById('news-image-file');
+            const manualUrlInput = document.getElementById('news-image').value.trim();
+            const imageFileInput = document.getElementById('news-image-files');
 
-            let finalImage = manualUrl;
+            let imageUrls = [];
 
-            if (imageFileInput && imageFileInput.files && imageFileInput.files[0]) {
-                submitBtn.innerText = 'फोटो अपलोड हो रही है...';
-                try {
-                    finalImage = await uploadToImgBB(imageFileInput.files[0]);
-                } catch (imgErr) {
-                    throw new Error("ImgBB फोटो अपलोड विफल: " + imgErr.message);
+            // 1. Process manual URLs (comma separated)
+            if (manualUrlInput) {
+                const urls = manualUrlInput.split(',').map(u => u.trim()).filter(u => u);
+                for (let u of urls) {
+                    if (sanitizeUrlRaw(u)) imageUrls.push(u);
                 }
             }
-            
+
+            // 2. Process multiple uploaded files via ImgBB
+            if (imageFileInput && imageFileInput.files && imageFileInput.files.length > 0) {
+                const totalFiles = imageFileInput.files.length;
+                for (let i = 0; i < totalFiles; i++) {
+                    submitBtn.innerText = `फोटो अपलोड हो रही है (${i + 1}/${totalFiles})...`;
+                    try {
+                        const uploadedUrl = await uploadToImgBB(imageFileInput.files[i]);
+                        if (uploadedUrl) imageUrls.push(uploadedUrl);
+                    } catch (imgErr) {
+                        console.warn("ImgBB upload failed for file:", imgErr);
+                    }
+                }
+            }
+
             if (title.length < 5 || title.length > 220) throw new Error('हेडलाइन 5 से 220 अक्षरों के बीच होनी चाहिए।');
             if (reporter.length > 100) throw new Error('रिपोर्टर नाम बहुत लंबा है।');
             if (htmlToPlainText(content).length < 20 || htmlToPlainText(content).length > 20000) throw new Error('समाचार विवरण 20 से 20,000 अक्षरों के बीच होना चाहिए।');
-            if (finalImage && !sanitizeUrlRaw(finalImage)) throw new Error('इमेज URL केवल HTTPS होना चाहिए।');
 
             submitBtn.innerText = 'समाचार सेव हो रहा है...';
-            finalImage = finalImage || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800";
+            
+            // Fallback image if empty
+            if (imageUrls.length === 0) {
+                imageUrls.push("https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800");
+            }
+
             const existing = editDocId ? newsList.find(n => n.id === editDocId) : null;
             
             const newItem = {
@@ -1174,7 +1191,8 @@
                 isLead: document.getElementById('news-lead').checked,
                 date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
                 views: existing ? Number(existing.views || 0) : 0,
-                image: finalImage
+                image: imageUrls[0],     // Primary image for compatibility
+                images: imageUrls        // Full array of multiple images
             };
 
             if (editDocId) {
@@ -1246,7 +1264,16 @@
         document.getElementById('news-content-editor').innerHTML = sanitizeNewsHtml(n.content || '');
         document.getElementById('news-breaking').checked = !!n.isBreaking;
         document.getElementById('news-lead').checked = !!n.isLead;
-        document.getElementById('news-image').value = n.image && sanitizeUrlRaw(n.image) ? n.image : '';
+        
+        // Populate multiple images as comma separated if available
+        let imgVal = '';
+        if (Array.isArray(n.images) && n.images.length > 0) {
+            imgVal = n.images.join(', ');
+        } else if (n.image) {
+            imgVal = n.image;
+        }
+        document.getElementById('news-image').value = imgVal;
+        
         document.getElementById('submit-btn').innerText = 'अपडेट करें';
         openPortalModal('post-modal');
     }
@@ -1388,6 +1415,7 @@
                 isBreaking: item.isBreaking,
                 isLead: item.isLead,
                 image: item.image || item.images?.[0] || '',
+                images: item.images || [],
                 content: (item.content || '').slice(0, 1500),
                 _isTruncated: (item.content || '').length > 1500,
                 createdAt: item.createdAt
