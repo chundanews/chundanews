@@ -665,8 +665,9 @@
         };
     }
 
+    // UPDATED: Safe ID handling for Firestore Document IDs
     function safeNewsId(id) {
-        return String(id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+        return String(id || '').trim();
     }
 
     function loadAnalytics() {
@@ -869,10 +870,9 @@
     function openReaderModal(id) {
         const safeId = safeNewsId(id);
         if (!safeId) return;
-        window.location.href = `article.html?id=${safeId}`;
+        window.location.href = `article.html?id=${encodeURIComponent(safeId)}`;
     }
 
-    // UPDATED: Modern News Card UI rendering function
     function renderNews(list) {
         const container = document.getElementById('news-container');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
@@ -972,7 +972,7 @@
         const cleanContent = tempDiv.textContent || tempDiv.innerText || '';
         const shareExcerpt = cleanContent ? (cleanContent.length > 100 ? cleanContent.substring(0, 100) + '...' : cleanContent) : '';
         
-        const newsUrl = `${window.location.origin}/article.html?id=${id}`;
+        const newsUrl = `${window.location.origin}/article.html?id=${encodeURIComponent(id)}`;
         const rawImg = item.image || (Array.isArray(item.images) ? item.images[0] : '') || '';
         const imageUrl = sanitizeUrl(rawImg);
 
