@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">CHUNDA KSHETRA NEWS</title>
+    <meta id="meta-desc" name="description" content="चूंडा क्षेत्र न्यूज़">
+    <link id="canonical-url" rel="canonical" href="https://chundanewslive.in/article.html">
+    
+    <!-- Open Graph / SEO -->
+    <meta id="og-title" property="og:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-desc" property="og:description" content="चूंडा क्षेत्र न्यूज़">
+    <meta id="og-image" property="og:image" content="https://chundanewslive.in/favicon.ico">
+    <meta id="og-url" property="og:url" content="https://chundanewslive.in/article.html">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800 py-4 px-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-black text-red-600">CHUNDA KSHETRA NEWS</a>
+            <a href="/" class="text-xs bg-gray-200 dark:bg-gray-800 px-3 py-1.5 rounded font-bold">← होमपेज पर लौटें</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+        <article id="article-container" class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border dark:border-gray-800">
+            <div class="text-center py-12 text-gray-500">खबर लोड हो रही है...</div>
+        </article>
+    </main>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbfgRnpUo4BYquhX2sBAyok2WX3fsfnMM",
+            authDomain: "chunda-news.firebaseapp.com",
+            projectId: "chunda-news",
+            storageBucket: "chunda-news.firebasestorage.app",
+            messagingSenderId: "872760222820",
+            appId: "1:872760222820:web:5e316ef1eb27d5a7046b71"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadSingleArticle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const newsId = urlParams.get('id');
+            const container = document.getElementById('article-container');
+
+            if (!newsId) {
+                container.innerHTML = '<p class="text-center text-red-500 py-8">अमान्य या गायब खबर आईडी।</p>';
+                return;
+            }
+
+            try {
+                const doc = await db.collection('news_posts').doc(newsId).get();
+                if (!doc.exists) {
+                    container.innerHTML = '<p class="text-center text-red-500 py-8">यह खबर हटाई जा चुकी है या उपलब्ध नहीं है।</p>';
+                    return;
+                }
+
+                const data = doc.data();
+                const title = data.title || 'शीर्षक उपलब्ध नहीं';
+                const content = data.content || '';
+                const category = data.category || 'सामान्य';
+                const reporter = data.reporter || 'विशेष संवाददाता';
+                const date = data.date || 'आज';
+                const image = data.image || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+
+                // SEO मेटा टैग्स को डायनेमिकली अपडेट करना ताकि क्रॉलर और सोशल मीडिया सही प्रीव्यू दिखाएं
+                document.getElementById('page-title').innerText = title + ' | CHUNDA KSHETRA NEWS';
+                document.getElementById('meta-desc').setAttribute('content', content.replace(/<[^>]*>?/gm, '').slice(0, 160));
+                document.getElementById('og-title').setAttribute('content', title);
+                document.getElementById('og-desc').setAttribute('content', content.replace(/<[^>]*>?/gm, '').slice(0, 160));
+                document.getElementById('og-image').setAttribute('content', image);
+                document.getElementById('canonical-url').setAttribute('href', window.location.href);
+                document.getElementById('og-url').setAttribute('href', window.location.href);
+
+                container.innerHTML = `
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                        <span class="bg-red-100 text-red-700 px-2.5 py-0.5 rounded font-bold">${category}</span>
+                        <span>•</span>
+                        <span>${date}</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-snug mb-4">${title}</h1>
+                    <p class="text-xs text-gray-500 mb-6">संवाददाता: <b class="text-gray-800 dark:text-gray-200">${reporter}</b></p>
+                    
+                    <img src="${image}" alt="${title}" class="w-full max-h-[450px] object-cover rounded-xl mb-6 shadow">
+                    
+                    <div class="text-base leading-relaxed text-gray-700 dark:text-gray-300 space-y-4">
+                        ${content}
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = '<p class="text-center text-red-500 py-8">खबर लोड करने में नेटवर्क त्रुटि हुई।</p>';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadSingleArticle);
+    </script>
+</body>
+</html>
