@@ -9,18 +9,18 @@
     <link rel="preconnect" href="https://i.ibb.co">
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Content Security Policy (CSP) Optimized with ImgBB Support -->
+    <!-- Content Security Policy (CSP) Optimized with ImgBB & Worker Support -->
     <meta http-equiv="Content-Security-Policy" content="
      default-src 'self' https: data: blob:;
      base-uri 'self';
      object-src 'none';
-     img-src 'self' https: data: blob: https://*.ibb.co https://i.ibb.co;
+     img-src 'self' https: data: blob: https://*.ibb.co https://i.ibb.co https://images.unsplash.com;
      style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
      font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:;
      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com;
      script-src-elem 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com;
      frame-src 'self' https://www.google.com https://recaptcha.google.com;
-     connect-src 'self' https: wss: https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firestore.googleapis.com https://firebasestorage.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://api.open-meteo.com https://api.imgbb.com https://chunda-image-upload.ashokvvaishn.workers.dev;
+     connect-src 'self' https: wss: https://chundanewslive.in https://*.chundanewslive.in https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firestore.googleapis.com https://firebasestorage.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://api.open-meteo.com https://api.imgbb.com https://chunda-image-upload.ashokvvaishn.workers.dev;
      worker-src 'self' blob:;
      manifest-src 'self';
     ">
@@ -413,7 +413,7 @@
                     <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">📁 डिवाइस से एक या अधिक तस्वीरें चुनें (Multiple Upload):</label>
                     <input type="file" id="news-image-files" accept="image/*" multiple class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                 </div>
-                <div class="text-center text-gray-400 font-bold text-[10px]">--- या फिर Direct Link (कॉमा लगाकर कई लिंक दे सकते हैं) ---</div>
+                <div class="text-center text-gray-400 font-bold text-[10px]">--- या फिर Direct Link (कॉमा लगाकर कई लिंक दे सकते हैं वार्षिक) ---</div>
                 <div>
                     <input type="text" id="news-image" placeholder="ऑनलाइन डायरेक्ट HTTPS इमेज URL (एक या अधिक कॉमा से अलग)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
                 </div>
@@ -882,7 +882,6 @@
         }
 
         container.innerHTML = list.map(item => {
-            // FIX: Array of images se pehli image ya item.image uthane ka sahi logic
             const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
             const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
             const safeId = escapeHTML(item.id);
