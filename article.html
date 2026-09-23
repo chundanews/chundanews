@@ -91,7 +91,7 @@
                 const data = doc.data();
                 document.title = (data.title || 'विस्तृत खबर') + " - CHUNDA KSHETRA NEWS";
 
-                // Multiple Images handling
+                // Multiple Images handling for article page
                 let imagesHtml = '';
                 if (Array.isArray(data.images) && data.images.length > 0) {
                     imagesHtml = data.images.map(imgUrl => {
