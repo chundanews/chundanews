@@ -411,7 +411,6 @@
             <div class="bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded border dark:border-gray-700 space-y-2">
                 <div>
                     <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">📁 डिवाइस से एक या अधिक तस्वीरें चुनें (Multiple Upload):</label>
-                    <!-- multiple attribute added -->
                     <input type="file" id="news-image-files" accept="image/*" multiple class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                 </div>
                 <div class="text-center text-gray-400 font-bold text-[10px]">--- या फिर Direct Link (कॉमा लगाकर कई लिंक दे सकते हैं) ---</div>
@@ -883,7 +882,8 @@
         }
 
         container.innerHTML = list.map(item => {
-            const rawImg = item.image || (Array.isArray(item.images) ? item.images[0] : '') || '';
+            // FIX: Array of images se pehli image ya item.image uthane ka sahi logic
+            const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
             const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
             const safeId = escapeHTML(item.id);
             
@@ -951,7 +951,7 @@
         tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
         document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
 
-        const rawLeadImg = item.image || (Array.isArray(item.images) ? item.images[0] : '') || '';
+        const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
         document.getElementById('lead-image').src = sanitizeUrl(rawLeadImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
         document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
@@ -973,7 +973,7 @@
         const shareExcerpt = cleanContent ? (cleanContent.length > 100 ? cleanContent.substring(0, 100) + '...' : cleanContent) : '';
         
         const newsUrl = `${window.location.origin}/article.html?id=${encodeURIComponent(id)}`;
-        const rawImg = item.image || (Array.isArray(item.images) ? item.images[0] : '') || '';
+        const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
         const imageUrl = sanitizeUrl(rawImg);
 
         const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${item.reporter || 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
