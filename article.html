@@ -13,6 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
 
@@ -41,13 +42,33 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Initialize App Check to match index.html
         const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
         try {
             const provider = new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY);
             firebase.appCheck().activate(provider, true);
         } catch (err) {
             console.warn("App Check Error:", err);
+        }
+
+        function sanitizeUrl(url) {
+            if (!url) return '';
+            const trimmed = String(url).trim();
+            if (trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/')) {
+                return trimmed;
+            }
+            return '';
+        }
+
+        function sanitizeNewsHtml(html) {
+            if (!html) return '';
+            if (window.DOMPurify) {
+                return DOMPurify.sanitize(String(html), {
+                    ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a'],
+                    ALLOWED_ATTR: ['href','target','rel'],
+                    FORBID_ATTR: ['style','class','id','onclick','onerror','onload']
+                });
+            }
+            return String(html);
         }
 
         async function fetchArticle() {
@@ -63,24 +84,37 @@
             try {
                 const doc = await db.collection('news_posts').doc(id).get();
                 if (!doc.exists) {
-                    container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है।<br><small class="text-gray-400">ID: ${id}</small></p>`;
+                    container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है。<br><small class="text-gray-400">ID: ${id}</small></p>`;
                     return;
                 }
 
                 const data = doc.data();
-                document.title = data.title + " - CHUNDA KSHETRA NEWS";
+                document.title = (data.title || 'विस्तृत खबर') + " - CHUNDA KSHETRA NEWS";
+
+                // Multiple Images handling
+                let imagesHtml = '';
+                if (Array.isArray(data.images) && data.images.length > 0) {
+                    imagesHtml = data.images.map(imgUrl => {
+                        const safeImg = sanitizeUrl(imgUrl);
+                        return safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-4 object-cover max-h-[450px]" alt="News Image" onerror="this.style.display='none'">` : '';
+                    }).join('');
+                } else if (data.image) {
+                    const safeImg = sanitizeUrl(data.image);
+                    imagesHtml = safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[450px]" alt="News Image">` : '';
+                }
 
                 container.innerHTML = `
                     <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-0.5 rounded">${data.category || 'सामान्य'}</span>
-                    <h1 class="text-2xl md:text-3xl font-black mt-3 mb-2 leading-snug">${data.title}</h1>
+                    <h1 class="text-2xl md:text-3xl font-black mt-3 mb-2 leading-snug">${data.title || ''}</h1>
                     <p class="text-xs text-gray-500 mb-4">रिपोर्टर: ${data.reporter || 'विशेष संवाददाता'} | दिनांक: ${data.date || 'आज'}</p>
-                    ${data.image ? `<img src="${data.image}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[400px]" alt="News Image">` : ''}
+                    
+                    ${imagesHtml}
+
                     <div class="text-sm leading-relaxed space-y-4 text-gray-700 dark:text-gray-300">
-                        ${data.content}
+                        ${sanitizeNewsHtml(data.content || '')}
                     </div>
                 `;
             } catch (err) {
-                // Exact error print karega taaki debug karne me asani ho
                 container.innerHTML = `<p class="text-center text-red-500 py-8">खबर लोड करने में नेटवर्क त्रुटि हुई।<br><small class="text-gray-400 font-mono">Error: ${err.message}</small></p>`;
             }
         }
