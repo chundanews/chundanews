@@ -986,6 +986,21 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 15 — Desktop newsroom density */
+@media(min-width:1024px){
+  #news-container{column-gap:20px!important;row-gap:20px!important}
+  #news-container>div.bg-white h3{line-height:1.4!important}
+  #news-container>div.bg-white .p-5{padding:16px 18px 14px!important}
+  #news-container>div.bg-white>div:last-child{padding-left:18px!important;padding-right:18px!important}
+  aside{gap:18px!important}
+  aside>div{box-shadow:0 8px 24px rgba(15,23,42,.055)!important}
+}
+@media(min-width:1280px){
+  #lead-news-section{margin-bottom:30px!important}
+  #news-container>div.bg-white:first-child .aspect-video,
+  #news-container>div.bg-white:first-child .aspect-video img{min-height:260px}
+}
+
 /* Phase 14 — Mobile news feed readability */
 @media(max-width:767px){
   #news-container>div.bg-white .aspect-video{
