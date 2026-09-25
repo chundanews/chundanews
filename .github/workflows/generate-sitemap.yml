@@ -8,6 +8,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'sitemap.xml'
+      - 'news-sitemap.xml'
   workflow_dispatch:
   schedule:
     - cron: '15 * * * *'
@@ -31,10 +32,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- sitemap.xml; then
+          if git diff --quiet -- sitemap.xml news-sitemap.xml; then
             echo "Sitemap is already up to date."
             exit 0
           fi
-          git add sitemap.xml
+          git add sitemap.xml news-sitemap.xml
           git commit -m "chore: refresh sitemap"
           git push origin HEAD:modern-ui-2026
