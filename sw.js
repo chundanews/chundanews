@@ -27,15 +27,22 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   // Same-origin app shell: network first, cached fallback.
+  // Cache navigations and known static assets only; avoid unbounded caching
+  // of arbitrary same-origin URLs.
   if (url.origin === self.location.origin) {
+    const isStaticAsset = /\\.(?:css|js|png|jpe?g|webp|svg|ico|woff2?|ttf|json)$/i.test(url.pathname);
+    const shouldCache = request.mode === 'navigate' || isStaticAsset;
+
     event.respondWith(
       fetch(request).then(response => {
-        if (response.ok) {
+        if (response.ok && shouldCache) {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy)).catch(() => {});
         }
         return response;
-      }).catch(() => caches.match(request).then(cached => cached || (request.mode === 'navigate' ? caches.match('/index.html') : Response.error())))
+      }).catch(() => caches.match(request).then(cached =>
+        cached || (request.mode === 'navigate' ? caches.match('/index.html') : Response.error())
+      ))
     );
   }
 });
