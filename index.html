@@ -970,10 +970,12 @@
         }).join('');
     }
 
-    function renderRelatedNews(currentId) {
+    function renderRelatedNews(currentId, currentCategory) {
         const container = document.getElementById('related-news');
         if (!container) return;
-        const related = newsList.filter(n => n.id !== currentId).slice(0, 4);
+        const sameCategory = currentCategory ? newsList.filter(n => n.id !== currentId && n.category === currentCategory) : [];
+        const fallback = newsList.filter(n => n.id !== currentId);
+        const related = [...sameCategory, ...fallback.filter(n => !sameCategory.some(r => r.id === n.id))].slice(0, 4);
         if (!related.length) { container.innerHTML = ''; return; }
         container.innerHTML = related.map(item => {
             const img = sanitizeUrl((Array.isArray(item.images) && item.images[0]) || item.image || '');
@@ -1057,7 +1059,8 @@
         document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ${cat === 'all' ? 'ताज़ा समाचार फीड' : escapeHTML(cat)}`;
         if (cat === 'all') {
             renderNews(newsList);
-        renderRelatedNews('');
+        const lead = newsList[0];
+        renderRelatedNews(lead?.id || '', lead?.category || '');
         } else {
             renderNews(newsList.filter(n => n.category === cat));
         }
