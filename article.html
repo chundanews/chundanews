@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>विस्तार से खबर - CHUNDA KSHETRA NEWS</title>
+    <meta id="meta-description" name="description" content="CHUNDA KSHETRA NEWS की विस्तृत क्षेत्रीय खबर।">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="theme-color" content="#dc2626">
+    <link id="canonical-link" rel="canonical" href="https://chundanewslive.in/article.html">
+    <meta id="og-title" property="og:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-description" property="og:description" content="CHUNDA KSHETRA NEWS की विस्तृत क्षेत्रीय खबर।">
+    <meta id="og-url" property="og:url" content="https://chundanewslive.in/article.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-image" property="og:image" content="https://chundanewslive.in/favicon.ico">
+    <meta property="og:locale" content="hi_IN">
+    <meta id="twitter-title" name="twitter:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="twitter-description" name="twitter:description" content="CHUNDA KSHETRA NEWS की विस्तृत क्षेत्रीय खबर।">
+    <meta id="twitter-image" name="twitter:image" content="https://chundanewslive.in/favicon.ico">
+    <meta name="twitter:card" content="summary_large_image">
+    <script id="news-article-schema" type="application/ld+json">{}</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Mukta', sans-serif; }</style>
@@ -89,7 +105,37 @@
                 }
 
                 const data = doc.data();
-                document.title = (data.title || 'विस्तृत खबर') + " - CHUNDA KSHETRA NEWS";
+                const articleTitle = String(data.title || 'विस्तृत खबर').trim();
+                const articleCategory = String(data.category || 'सामान्य').trim();
+                const articleDescription = (() => {
+                    const holder = document.createElement('div');
+                    holder.innerHTML = sanitizeNewsHtml(data.content || '');
+                    return (holder.textContent || holder.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+                })();
+                const firstImage = Array.isArray(data.images) && data.images.length ? sanitizeUrl(data.images[0]) : sanitizeUrl(data.image);
+                const canonical = 'https://chundanewslive.in/article.html?id=' + encodeURIComponent(id);
+                document.title = articleTitle + " - CHUNDA KSHETRA NEWS";
+                document.getElementById('meta-description').setAttribute('content', articleDescription || articleTitle);
+                document.getElementById('canonical-link').setAttribute('href', canonical);
+                document.getElementById('og-title').setAttribute('content', articleTitle);
+                document.getElementById('og-description').setAttribute('content', articleDescription || articleTitle);
+                document.getElementById('og-url').setAttribute('content', canonical);
+                document.getElementById('og-image').setAttribute('content', firstImage || 'https://chundanewslive.in/favicon.ico');
+                document.getElementById('twitter-title').setAttribute('content', articleTitle);
+                document.getElementById('twitter-description').setAttribute('content', articleDescription || articleTitle);
+                document.getElementById('twitter-image').setAttribute('content', firstImage || 'https://chundanewslive.in/favicon.ico');
+                const schema = {
+                    '@context':'https://schema.org','@type':'NewsArticle','headline':articleTitle,
+                    'description':articleDescription || articleTitle,
+                    'author':{'@type':'Person','name':String(data.reporter || 'विशेष संवाददाता')},
+                    'publisher':{'@type':'Organization','name':'CHUNDA KSHETRA NEWS','url':'https://chundanewslive.in/'},
+                    'mainEntityOfPage':{'@type':'WebPage','@id':canonical},
+                    'articleSection':articleCategory
+                };
+                if(firstImage) schema.image=[firstImage];
+                if(data.createdAt && data.createdAt.toDate) schema.datePublished=data.createdAt.toDate().toISOString();
+                if(data.updatedAt && data.updatedAt.toDate) schema.dateModified=data.updatedAt.toDate().toISOString();
+                document.getElementById('news-article-schema').textContent = JSON.stringify(schema);
 
                 // Multiple Images handling for article page
                 let imagesHtml = '';
