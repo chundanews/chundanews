@@ -1769,7 +1769,12 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
+            const registerSiteWorker = () => navigator.serviceWorker.register('/sw.js').catch(() => {});
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(registerSiteWorker, { timeout: 2500 });
+            } else {
+                setTimeout(registerSiteWorker, 1200);
+            }
         }
         setTimeout(fetchLiveWeather, 700);
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
