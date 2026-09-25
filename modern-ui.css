@@ -508,52 +508,52 @@ header nav button:hover{
 
 
 /* ===== Phase 4: high-density professional news cards ===== */
-#news-container>div.bg-white{
+#news-container>:is(div.bg-white, article.bg-white){
   border-color:rgba(226,232,240,.9)!important;
   background:rgba(255,255,255,.98)!important;
 }
-.dark #news-container>div.bg-white{
+.dark #news-container>:is(div.bg-white, article.bg-white){
   background:rgba(24,24,27,.98)!important;
   border-color:rgba(63,63,70,.9)!important;
 }
-#news-container>div.bg-white>div:first-child{
+#news-container>:is(div.bg-white, article.bg-white)>div:first-child{
   display:flex;
   flex-direction:column;
   height:100%;
 }
-#news-container>div.bg-white .aspect-video{
+#news-container>:is(div.bg-white, article.bg-white) .aspect-video{
   aspect-ratio:16/9;
 }
-#news-container>div.bg-white .aspect-video img{
+#news-container>:is(div.bg-white, article.bg-white) .aspect-video img{
   transition:transform .45s cubic-bezier(.2,.65,.2,1),filter .25s ease;
 }
-#news-container>div.bg-white:hover .aspect-video img{
+#news-container>:is(div.bg-white, article.bg-white):hover .aspect-video img{
   filter:saturate(1.05);
 }
-#news-container>div.bg-white .p-5{
+#news-container>:is(div.bg-white, article.bg-white) .p-5{
   padding:15px 16px 13px!important;
 }
-#news-container>div.bg-white h3{
+#news-container>:is(div.bg-white, article.bg-white) h3{
   font-size:clamp(.94rem,1.7vw,1.05rem)!important;
   line-height:1.45!important;
   letter-spacing:-.01em;
 }
-#news-container>div.bg-white p.text-xs{
+#news-container>:is(div.bg-white, article.bg-white) p.text-xs{
   font-size:.75rem!important;
   color:#64748b!important;
 }
-.dark #news-container>div.bg-white p.text-xs{
+.dark #news-container>:is(div.bg-white, article.bg-white) p.text-xs{
   color:#a1a1aa!important;
 }
-#news-container>div.bg-white>div:last-child{
+#news-container>:is(div.bg-white, article.bg-white)>div:last-child{
   padding-left:16px!important;
   padding-right:16px!important;
   padding-bottom:14px!important;
 }
-#news-container>div.bg-white>div:last-child button{
+#news-container>:is(div.bg-white, article.bg-white)>div:last-child button{
   min-height:34px;
 }
-#news-container>div.bg-white .absolute.top-3.left-3{
+#news-container>:is(div.bg-white, article.bg-white) .absolute.top-3.left-3{
   border-radius:999px!important;
   background:rgba(185,28,28,.94)!important;
   backdrop-filter:blur(6px);
@@ -561,27 +561,27 @@ header nav button:hover{
 
 /* Desktop: turn the first feed item into a wider editorial card */
 @media(min-width:1024px){
-  #news-container>div.bg-white:first-child{
+  #news-container>:is(div.bg-white, article.bg-white):first-child{
     grid-column:1/-1;
     display:grid!important;
     grid-template-columns:minmax(280px,.95fr) minmax(0,1.05fr);
   }
-  #news-container>div.bg-white:first-child>div:first-child{
+  #news-container>:is(div.bg-white, article.bg-white):first-child>div:first-child{
     display:grid!important;
     grid-template-columns:minmax(280px,.95fr) minmax(0,1.05fr);
     grid-column:1/-1;
   }
-  #news-container>div.bg-white:first-child .aspect-video{
+  #news-container>:is(div.bg-white, article.bg-white):first-child .aspect-video{
     height:100%;
     min-height:245px;
   }
-  #news-container>div.bg-white:first-child .aspect-video img{
+  #news-container>:is(div.bg-white, article.bg-white):first-child .aspect-video img{
     min-height:245px;
   }
-  #news-container>div.bg-white:first-child .p-5{
+  #news-container>:is(div.bg-white, article.bg-white):first-child .p-5{
     padding:20px!important;
   }
-  #news-container>div.bg-white:first-child>div:last-child{
+  #news-container>:is(div.bg-white, article.bg-white):first-child>div:last-child{
     grid-column:2;
     grid-row:1;
     align-self:end;
@@ -591,7 +591,7 @@ header nav button:hover{
 
 /* Keep the editorial first card simple on tablet */
 @media(min-width:640px) and (max-width:1023px){
-  #news-container>div.bg-white:first-child h3{
+  #news-container>:is(div.bg-white, article.bg-white):first-child h3{
     font-size:1.08rem!important;
   }
 }
@@ -623,13 +623,13 @@ header nav button:hover{
   #news-container{
     gap:14px!important;
   }
-  #news-container>div.bg-white{
+  #news-container>:is(div.bg-white, article.bg-white){
     border-radius:14px!important;
   }
-  #news-container>div.bg-white .p-5{
+  #news-container>:is(div.bg-white, article.bg-white) .p-5{
     padding:13px 14px 11px!important;
   }
-  #news-container>div.bg-white>div:last-child{
+  #news-container>:is(div.bg-white, article.bg-white)>div:last-child{
     padding-left:14px!important;
     padding-right:14px!important;
     padding-bottom:13px!important;
@@ -939,7 +939,7 @@ main>div.bg-gradient-to-r button:hover{
 #news-container{
   contain:layout style;
 }
-#news-container>div.bg-white{
+#news-container>:is(div.bg-white, article.bg-white){
   content-visibility:auto;
   contain-intrinsic-size:430px;
 }
@@ -1021,30 +1021,30 @@ footer a{
 }
 
 /* Phase 19 — News card metadata hierarchy */
-#news-container>div.bg-white .text-red-600.font-bold{
+#news-container>:is(div.bg-white, article.bg-white) .text-red-600.font-bold{
   font-size:.68rem!important;
   letter-spacing:.035em;
 }
-#news-container>div.bg-white p.text-xs{
+#news-container>:is(div.bg-white, article.bg-white) p.text-xs{
   display:flex;
   align-items:center;
   gap:4px;
   min-height:18px;
 }
-#news-container>div.bg-white .fa-clock{
+#news-container>:is(div.bg-white, article.bg-white) .fa-clock{
   opacity:.8;
 }
-#news-container>div.bg-white>div:last-child{
+#news-container>:is(div.bg-white, article.bg-white)>div:last-child{
   border-top:1px solid rgba(226,232,240,.72);
   margin-top:auto;
   padding-top:10px!important;
 }
-.dark #news-container>div.bg-white>div:last-child{
+.dark #news-container>:is(div.bg-white, article.bg-white)>div:last-child{
   border-top-color:rgba(63,63,70,.72);
 }
 @media(max-width:767px){
-  #news-container>div.bg-white .text-red-600.font-bold{font-size:.66rem!important}
-  #news-container>div.bg-white>div:last-child{padding-top:9px!important}
+  #news-container>:is(div.bg-white, article.bg-white) .text-red-600.font-bold{font-size:.66rem!important}
+  #news-container>:is(div.bg-white, article.bg-white)>div:last-child{padding-top:9px!important}
 }
 
 /* Phase 18 — Image loading and visual stability */
@@ -1053,21 +1053,21 @@ footer a{
   height:100%;
   object-fit:cover;
 }
-#news-container>div.bg-white .aspect-video{
+#news-container>:is(div.bg-white, article.bg-white) .aspect-video{
   overflow:hidden;
   background:#e2e8f0;
 }
-.dark #news-container>div.bg-white .aspect-video{
+.dark #news-container>:is(div.bg-white, article.bg-white) .aspect-video{
   background:#27272a;
 }
-#news-container>div.bg-white .aspect-video img{
+#news-container>:is(div.bg-white, article.bg-white) .aspect-video img{
   width:100%;
   height:100%;
   object-fit:cover;
 }
 @media(max-width:767px){
   #lead-news-section #lead-image{min-height:100%;}
-  #news-container>div.bg-white .aspect-video{min-height:0;}
+  #news-container>:is(div.bg-white, article.bg-white) .aspect-video{min-height:0;}
 }
 
 /* Phase 17 — Mobile masthead clarity */
@@ -1114,24 +1114,24 @@ header nav button:focus-visible,
 /* Phase 15 — Desktop newsroom density */
 @media(min-width:1024px){
   #news-container{column-gap:20px!important;row-gap:20px!important}
-  #news-container>div.bg-white h3{line-height:1.4!important}
-  #news-container>div.bg-white .p-5{padding:16px 18px 14px!important}
-  #news-container>div.bg-white>div:last-child{padding-left:18px!important;padding-right:18px!important}
+  #news-container>:is(div.bg-white, article.bg-white) h3{line-height:1.4!important}
+  #news-container>:is(div.bg-white, article.bg-white) .p-5{padding:16px 18px 14px!important}
+  #news-container>:is(div.bg-white, article.bg-white)>div:last-child{padding-left:18px!important;padding-right:18px!important}
   aside{gap:18px!important}
   aside>div{box-shadow:0 8px 24px rgba(15,23,42,.055)!important}
 }
 @media(min-width:1280px){
   #lead-news-section{margin-bottom:30px!important}
-  #news-container>div.bg-white:first-child .aspect-video,
-  #news-container>div.bg-white:first-child .aspect-video img{min-height:260px}
+  #news-container>:is(div.bg-white, article.bg-white):first-child .aspect-video,
+  #news-container>:is(div.bg-white, article.bg-white):first-child .aspect-video img{min-height:260px}
 }
 
 /* Phase 14 — Mobile news feed readability */
 @media(max-width:767px){
-  #news-container>div.bg-white .aspect-video{
+  #news-container>:is(div.bg-white, article.bg-white) .aspect-video{
     aspect-ratio:16/9!important;
   }
-  #news-container>div.bg-white h3{
+  #news-container>:is(div.bg-white, article.bg-white) h3{
     font-size:1rem!important;
     line-height:1.42!important;
     display:-webkit-box;
@@ -1139,19 +1139,19 @@ header nav button:focus-visible,
     -webkit-line-clamp:3;
     overflow:hidden;
   }
-  #news-container>div.bg-white p.text-xs{
+  #news-container>:is(div.bg-white, article.bg-white) p.text-xs{
     line-height:1.45!important;
   }
-  #news-container>div.bg-white>div:last-child{
+  #news-container>:is(div.bg-white, article.bg-white)>div:last-child{
     gap:8px!important;
   }
-  #news-container>div.bg-white>div:last-child button{
+  #news-container>:is(div.bg-white, article.bg-white)>div:last-child button{
     min-height:36px!important;
   }
 }
 @media(max-width:380px){
-  #news-container>div.bg-white h3{font-size:.95rem!important}
-  #news-container>div.bg-white .p-5{padding:12px!important}
+  #news-container>:is(div.bg-white, article.bg-white) h3{font-size:.95rem!important}
+  #news-container>:is(div.bg-white, article.bg-white) .p-5{padding:12px!important}
 }
 
 /* Phase 13 — Editorial hierarchy: breaking → lead → latest */
