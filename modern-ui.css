@@ -333,3 +333,175 @@ header nav [class*="overflow-x-auto"]{
   scrollbar-width:thin;
   scrollbar-color:rgba(148,163,184,.35) transparent;
 }
+
+
+/* ===== Phase 3: branded header + lead story hierarchy ===== */
+header{
+  position:relative;
+}
+header>div:first-child{
+  min-height:88px;
+}
+header .max-w-7xl>div:first-child{
+  transition:transform .2s ease;
+}
+header h1{
+  letter-spacing:-.045em!important;
+  font-size:clamp(1.45rem,4vw,2.35rem)!important;
+}
+header h1+ p{
+  letter-spacing:.12em!important;
+  font-size:clamp(.52rem,1.2vw,.68rem)!important;
+}
+
+/* Logo mark */
+header .bg-red-700.w-14.h-14{
+  width:52px!important;
+  height:52px!important;
+  border-radius:14px!important;
+  box-shadow:0 8px 20px rgba(185,28,28,.22)!important;
+}
+@media(max-width:639px){
+  header>div:first-child{
+    padding-top:12px!important;
+    padding-bottom:12px!important;
+  }
+  header .bg-red-700.w-14.h-14{
+    width:46px!important;
+    height:46px!important;
+  }
+}
+
+/* Ad placeholders remain intentionally quiet */
+header .border-dashed{
+  opacity:.82;
+}
+
+/* Category rail feels like a real newsroom navigation */
+header nav{
+  box-shadow:0 4px 16px rgba(0,0,0,.14)!important;
+}
+header nav .max-w-7xl{
+  min-height:46px;
+}
+header nav button{
+  position:relative;
+}
+header nav button:hover{
+  transform:translateY(-1px);
+}
+@media(max-width:767px){
+  header nav .max-w-7xl{
+    display:block!important;
+  }
+  header nav .max-w-7xl>div:first-child{
+    width:100%;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    scrollbar-width:none;
+  }
+  header nav .max-w-7xl>div:first-child::-webkit-scrollbar{display:none}
+  header nav .max-w-7xl>div:last-child{
+    width:100%;
+    justify-content:space-between;
+    border-top:1px solid rgba(255,255,255,.07);
+  }
+  header nav .max-w-7xl>div:last-child .relative{
+    display:block!important;
+    width:100%!important;
+  }
+}
+
+/* Lead story: editorial rather than generic card */
+#lead-news-section{
+  margin-bottom:28px!important;
+}
+#lead-news-section>div{
+  box-shadow:0 18px 45px rgba(15,23,42,.12)!important;
+  border-radius:20px!important;
+}
+#lead-news-section .lg\:col-span-7{
+  position:relative;
+  isolation:isolate;
+}
+#lead-news-section .lg\:col-span-7::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 35%,rgba(0,0,0,.48));
+  pointer-events:none;
+}
+#lead-news-section #lead-image{
+  transition:transform .55s cubic-bezier(.2,.65,.2,1);
+}
+#lead-news-section .lg\:col-span-7:hover #lead-image{
+  transform:scale(1.025);
+}
+#lead-news-section .lg\:col-span-7 .absolute{
+  z-index:2;
+}
+#lead-news-section .lg\:col-span-5{
+  background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+}
+.dark #lead-news-section .lg\:col-span-5{
+  background:linear-gradient(180deg,#18181b 0%,#111113 100%);
+}
+#lead-title{
+  font-size:clamp(1.35rem,3vw,2rem)!important;
+  letter-spacing:-.025em;
+}
+#lead-excerpt{
+  font-size:clamp(.75rem,1.2vw,.86rem)!important;
+}
+#lead-news-section button{
+  min-height:38px;
+}
+@media(max-width:639px){
+  #lead-news-section>div{
+    border-radius:16px!important;
+  }
+  #lead-news-section .lg\:col-span-7{
+    height:235px!important;
+  }
+  #lead-news-section .lg\:col-span-5{
+    padding:18px!important;
+  }
+  #lead-title{
+    font-size:1.3rem!important;
+  }
+  #lead-news-section .pt-4{
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  #lead-news-section .pt-4>div{
+    width:100%;
+  }
+  #lead-news-section .pt-4>div button{
+    flex:1;
+  }
+}
+
+/* Feed cards: create hierarchy without touching generated JS */
+#news-container{
+  align-items:start;
+}
+#news-container>*{
+  border-radius:16px!important;
+  box-shadow:0 7px 22px rgba(15,23,42,.07)!important;
+  transition:transform .22s ease,box-shadow .22s ease;
+}
+#news-container>*:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 30px rgba(15,23,42,.12)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #news-container>*,
+  #lead-news-section #lead-image,
+  header nav button{transition:none!important}
+  #news-container>*:hover{transform:none}
+}
+
+/* Section divider */
+#current-category-title::first-letter{
+  color:inherit;
+}
