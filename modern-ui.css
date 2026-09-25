@@ -986,6 +986,40 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 20 — Footer and utility polish */
+footer{
+  border-top:1px solid rgba(226,232,240,.9);
+}
+footer .max-w-7xl{
+  padding-top:28px;
+  padding-bottom:28px;
+}
+footer a{
+  text-underline-offset:3px;
+}
+footer button,
+footer a{
+  min-height:34px;
+}
+.dark footer{
+  border-top-color:rgba(63,63,70,.85);
+}
+@media(max-width:767px){
+  footer .max-w-7xl{
+    padding-top:24px;
+    padding-bottom:92px;
+  }
+  footer .grid{
+    gap:20px!important;
+  }
+  footer p,
+  footer a,
+  footer button{
+    font-size:.75rem;
+    line-height:1.5;
+  }
+}
+
 /* Phase 19 — News card metadata hierarchy */
 #news-container>div.bg-white .text-red-600.font-bold{
   font-size:.68rem!important;
