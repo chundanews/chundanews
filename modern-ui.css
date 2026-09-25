@@ -986,6 +986,24 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 17 — Mobile masthead clarity */
+@media(max-width:767px){
+  body>div.bg-gray-950.text-gray-300.text-\\[11px\\]{padding-left:10px!important;padding-right:10px!important}
+  body>div.bg-gray-950.text-gray-300.text-\\[11px\\] .max-w-7xl{justify-content:center!important;gap:5px!important}
+  body>div.bg-gray-950.text-gray-300.text-\\[11px\\] .max-w-7xl>div:first-child{width:100%;justify-content:center;gap:8px!important;overflow:hidden}
+  body>div.bg-gray-950.text-gray-300.text-\\[11px\\] .max-w-7xl>div:last-child{width:100%;justify-content:center}
+  body>div.bg-gray-950.text-gray-300.text-\\[11px\\] .max-w-7xl>div:last-child button:first-child{display:none}
+  header .max-w-7xl{padding-left:12px!important;padding-right:12px!important}
+  header>div:first-child>div:first-child h1{text-align:center;font-size:1.3rem!important;line-height:1.05!important}
+  header>div:first-child>div:first-child p{text-align:center;font-size:.48rem!important;letter-spacing:.08em!important}
+  header>div:first-child>div:last-child{gap:6px!important}
+  header>div:first-child>div:last-child button{min-width:40px}
+}
+@media(max-width:380px){
+  header>div:first-child>div:first-child h1{font-size:1.15rem!important}
+  header>div:first-child>div:first-child p{font-size:.44rem!important}
+}
+
 /* Phase 16 — Accessibility and keyboard polish */
 :where(a,button,input,select):focus-visible{
   outline:3px solid rgba(220,38,38,.42)!important;
