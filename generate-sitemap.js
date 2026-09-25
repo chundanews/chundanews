@@ -1,55 +1,79 @@
-const { initializeApp, cert } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
 const fs = require('fs');
 
-// Apni Firebase Admin SDK ki service account key file yahan lagayein
-// (Ya aap web SDK config use karke bhi data fetch kar sakte hain)
-const serviceAccount = require('./serviceAccountKey.json');
+const PROJECT_ID = 'chunda-news';
+const DOMAIN = 'https://chundanewslive.in';
+const COLLECTION = 'news_posts';
+const PAGE_SIZE = 300;
 
-initializeApp({
-  credential: cert(serviceAccount)
-});
+async function listDocuments(pageToken = '') {
+  const url = new URL(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${COLLECTION}`);
+  url.searchParams.set('pageSize', PAGE_SIZE);
+  if (pageToken) url.searchParams.set('pageToken', pageToken);
 
-const db = getFirestore();
-const DOMAIN = 'https://chundanewsive.in'; // Aapka domain naam (jaisa sitemap me hai)
-
-async function generateSitemap() {
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-
-  // Sabse pehle Homepage add karein
-  xml += `  <url>\n`;
-  xml += `    <loc>${DOMAIN}/</loc>\n`;
-  xml += `    <changefreq>hourly</changefreq>\n`;
-  xml += `    <priority>1.0</priority>\n`;
-  xml += `  </url>\n`;
-
-  try {
-    // 'articles' collection se saare documents fetch karein (apne collection ka naam yahan check kar lein)
-    const snapshot = await db.collection('articles').get();
-    
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      // Maan lijiye aapke article ka slug ya id field 'slug' ya 'id' hai
-      const articleSlug = data.slug || doc.id; 
-      const lastMod = data.updatedAt ? new Date(data.updatedAt.toDate()).toISOString() : new Date().toISOString();
-
-      xml += `  <url>\n`;
-      xml += `    <loc>${DOMAIN}/article/${articleSlug}</loc>\n`;
-      xml += `    <lastmod>${lastMod}</lastmod>\n`;
-      xml += `    <changefreq>daily</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
-    });
-
-    xml += `</urlset>`;
-
-    // Sitemap file ko root folder me save karein
-    fs.writeFileSync('./sitemap.xml', xml);
-    console.log('Sitemap.xml successfully generate ho gaya hai aur saare articles add ho gaye hain!');
-  } catch (error) {
-    console.erorr('Error generating sitemap:', error);
-  }
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Firestore API ${response.status}: ${await response.text()}`);
+  return response.json();
 }
 
-generateSitemap();
+function timestampToIso(value) {
+  if (!value) return null;
+  if (value.timestampValue) return new Date(value.timestampValue).toISOString();
+  if (value.stringValue) {
+    const d = new Date(value.stringValue);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+  return null;
+}
+
+async function generateSitemap() {
+  const urls = [{
+    loc: `${DOMAIN}/`,
+    lastmod: new Date().toISOString(),
+    changefreq: 'hourly',
+    priority: '1.0'
+  }];
+
+  let pageToken = '';
+  let total = 0;
+
+  do {
+    const page = await listDocuments(pageToken);
+    for (const doc of page.documents || []) {
+      const id = doc.name.split('/').pop();
+      const fields = doc.fields || {};
+      const updatedAt = timestampToIso(fields.updatedAt) || timestampToIso(fields.createdAt);
+      urls.push({
+        loc: `${DOMAIN}/article.html?id=${encodeURIComponent(id)}`,
+        ...(updatedAt ? { lastmod: updatedAt } : {}),
+        changefreq: 'daily',
+        priority: '0.8'
+      });
+      total++;
+    }
+    pageToken = page.nextPageToken || '';
+  } while (pageToken);
+
+  const escapeXml = value => String(value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  for (const item of urls) {
+    xml += '  <url>\n';
+    xml += `    <loc>${escapeXml(item.loc)}</loc>\n`;
+    if (item.lastmod) xml += `    <lastmod>${item.lastmod}</lastmod>\n`;
+    xml += `    <changefreq>${item.changefreq}</changefreq>\n`;
+    xml += `    <priority>${item.priority}</priority>\n`;
+    xml += '  </url>\n';
+  }
+  xml += '</urlset>\n';
+
+  fs.writeFileSync('./sitemap.xml', xml);
+  console.log(`Sitemap generated: ${total} articles + homepage`);
+}
+
+generateSitemap().catch(error => {
+  console.error('Sitemap generation failed:', error);
+  process.exit(1);
+});
