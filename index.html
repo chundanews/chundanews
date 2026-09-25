@@ -275,6 +275,14 @@
         </div>
     </div>
 
+    <section class="mt-10" aria-labelledby="related-news-title">
+      <div class="flex items-center justify-between border-b-2 border-red-600 pb-2 mb-4">
+        <h2 id="related-news-title" class="text-lg font-black text-gray-900 dark:text-white">आपके लिए अन्य खबरें</h2>
+        <button type="button" onclick="filterNews('all'); window.scrollTo({top:0,behavior:'smooth'})" class="text-xs font-bold text-red-600">सभी खबरें →</button>
+      </div>
+      <div id="related-news" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </section>
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8">
             <div class="flex justify-between items-center border-b-2 border-red-600 pb-2 mb-6">
@@ -962,6 +970,24 @@
         }).join('');
     }
 
+    function renderRelatedNews(currentId) {
+        const container = document.getElementById('related-news');
+        if (!container) return;
+        const related = newsList.filter(n => n.id !== currentId).slice(0, 4);
+        if (!related.length) { container.innerHTML = ''; return; }
+        container.innerHTML = related.map(item => {
+            const img = sanitizeUrl((Array.isArray(item.images) && item.images[0]) || item.image || '');
+            const fallback = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600';
+            const id = escapeHTML(item.id);
+            return `<article class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition">
+                <img src="${img || fallback}" alt="" width="320" height="180" loading="lazy" decoding="async" class="w-full aspect-video object-cover">
+                <div class="p-3"><span class="text-[10px] font-bold text-red-600">${escapeHTML(item.category || 'सामान्य')}</span>
+                <h3 class="font-bold text-sm leading-snug mt-1 line-clamp-2 text-gray-900 dark:text-white">${escapeHTML(item.title || '')}</h3>
+                <button type="button" onclick="openReaderModal('${id}')" class="mt-2 text-[11px] font-bold text-red-600">पूरी खबर →</button></div>
+            </article>`;
+        }).join('');
+    }
+
     function setLeadStory(item) {
         if (!item) return;
         leadNewsItem = item;
@@ -1031,6 +1057,7 @@
         document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ${cat === 'all' ? 'ताज़ा समाचार फीड' : escapeHTML(cat)}`;
         if (cat === 'all') {
             renderNews(newsList);
+        renderRelatedNews('');
         } else {
             renderNews(newsList.filter(n => n.category === cat));
         }
