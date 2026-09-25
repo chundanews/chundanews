@@ -1747,8 +1747,16 @@
         });
 
         loadNewsWithTTL();
-        loadWidgetData();
-        loadScore();
+
+        const runNonCriticalWidgets = () => {
+            loadWidgetData();
+            loadScore();
+        };
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(runNonCriticalWidgets, { timeout: 1800 });
+        } else {
+            setTimeout(runNonCriticalWidgets, 900);
+        }
     });
 
     window.addEventListener('keydown', function (e) {
