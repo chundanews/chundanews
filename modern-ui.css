@@ -804,3 +804,125 @@ main>div.bg-gradient-to-r button:hover{
     transition:none!important;
   }
 }
+
+
+/* ===== Phase 7: mobile app-like navigation ===== */
+#mobile-bottom-nav{
+  display:none;
+}
+@media(max-width:767px){
+  body{
+    padding-bottom:68px;
+  }
+  #mobile-bottom-nav{
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    z-index:9998;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:4px;
+    padding:6px;
+    border:1px solid rgba(226,232,240,.9);
+    border-radius:18px;
+    background:rgba(255,255,255,.94);
+    box-shadow:0 12px 35px rgba(15,23,42,.18);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
+  .dark #mobile-bottom-nav{
+    background:rgba(24,24,27,.94);
+    border-color:rgba(63,63,70,.9);
+    box-shadow:0 12px 35px rgba(0,0,0,.4);
+  }
+  #mobile-bottom-nav button{
+    min-height:52px;
+    border-radius:13px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    color:#64748b;
+    font-size:10px;
+    font-weight:800;
+    transition:background-color .18s ease,color .18s ease,transform .18s ease;
+  }
+  #mobile-bottom-nav button i{
+    font-size:16px;
+  }
+  #mobile-bottom-nav button:first-child,
+  #mobile-bottom-nav button:hover{
+    color:#dc2626;
+    background:rgba(220,38,38,.08);
+  }
+  #mobile-bottom-nav button:active{
+    transform:scale(.96);
+  }
+  .dark #mobile-bottom-nav button{
+    color:#a1a1aa;
+  }
+  .dark #mobile-bottom-nav button:first-child,
+  .dark #mobile-bottom-nav button:hover{
+    color:#f87171;
+    background:rgba(248,113,113,.1);
+  }
+
+  /* Header becomes a compact mobile masthead */
+  header>div:first-child{
+    align-items:stretch!important;
+    gap:12px!important;
+  }
+  header>div:first-child>div:first-child{
+    width:100%;
+    justify-content:center;
+  }
+  header>div:first-child>div:nth-child(2){
+    display:none!important;
+  }
+  header>div:first-child>div:last-child{
+    width:100%;
+    justify-content:center;
+  }
+  header>div:first-child>div:last-child button{
+    min-height:38px;
+  }
+  header nav{
+    position:sticky!important;
+    top:0!important;
+  }
+
+  /* Keep the search/date row comfortable above the feed */
+  #search-input{
+    min-height:42px!important;
+    border-radius:10px!important;
+  }
+}
+@media(max-width:380px){
+  #mobile-bottom-nav{
+    left:6px;
+    right:6px;
+    bottom:6px;
+    border-radius:15px;
+  }
+  #mobile-bottom-nav button{
+    min-height:49px;
+    font-size:9px;
+  }
+  #mobile-bottom-nav button i{
+    font-size:15px;
+  }
+}
+
+/* Avoid covering modal controls with mobile nav */
+.portal-modal[style*="display: flex"] ~ #mobile-bottom-nav,
+.portal-modal[style*="display:flex"] ~ #mobile-bottom-nav{
+  display:none!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  #mobile-bottom-nav button{
+    transition:none!important;
+  }
+}
