@@ -927,7 +927,7 @@
             <article itemscope itemtype="https://schema.org/NewsArticle" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                        <img src="${displayImg}" width="400" height="225" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
+                        <img itemprop="image" src="${displayImg}" width="400" height="225" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
                         <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
                             ${escapeHTML(item.category || 'सामान्य')}
                         </span>
@@ -938,10 +938,10 @@
                             <span>•</span>
                             <span class="text-red-600 font-bold">CKN Desk</span>
                         </div>
-                        <h3 class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
+                        <h3 itemprop="headline" class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
                             ${escapeHTML(item.title)}
                         </h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
+                        <p itemprop="description" class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
                     </div>
                 </div>
                 <div class="px-5 pb-5 pt-0">
