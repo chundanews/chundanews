@@ -985,3 +985,30 @@ html,body{
   max-width:100%;
   overflow-x:hidden;
 }
+
+/* Phase 11 — Homepage newsroom polish */
+:root{--news-radius:18px}
+#lead-news-section>div{box-shadow:0 20px 55px rgba(15,23,42,.10)}
+#lead-image{transition:transform .35s ease;object-position:center}
+#lead-news-section:hover #lead-image{transform:scale(1.018)}
+#news-container{align-items:stretch}
+#news-container>*{min-width:0}
+#news-container article,.news-card{height:100%;overflow:hidden;border-radius:var(--news-radius)}
+#news-container img{aspect-ratio:16/9;object-fit:cover;background:#e2e8f0}
+#news-container h3,#news-container h2{letter-spacing:-.01em}
+#news-container a,#news-container button{transition:background-color .18s ease,color .18s ease,transform .18s ease}
+#news-container a:hover,#news-container button:hover{transform:translateY(-1px)}
+aside>div{box-shadow:0 10px 30px rgba(15,23,42,.05)}
+@media(max-width:767px){
+  main{padding-bottom:88px!important}
+  #lead-news-section{margin-bottom:1.25rem!important}
+  #lead-news-section>div{border-radius:16px}
+  #lead-news-section .lg\:col-span-7{height:240px}
+  #lead-news-section .lg\:col-span-5{padding:18px}
+  #lead-title{font-size:1.45rem;line-height:1.18}
+  #news-container{gap:12px!important}
+  #news-container img{aspect-ratio:16/10}
+  aside{margin-top:1rem}
+}
+@media(min-width:768px) and (max-width:1023px){#news-container{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(prefers-reduced-motion:reduce){#lead-news-section:hover #lead-image{transform:none}}
