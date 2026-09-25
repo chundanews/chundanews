@@ -232,10 +232,10 @@
 </div>
 
 <main id="main-content" class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
-    <section id="lead-news-section" class="mb-8 hidden">
+    <section id="lead-news-section" class="mb-8 hidden" aria-labelledby="lead-title">
         <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
             <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
-                <img id="lead-image" alt="मुख्य खबर की तस्वीर" width="800" height="450" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover cursor-pointer" onclick="openLeadModal()">
+                <img id="lead-image" alt="मुख्य खबर की तस्वीर" width="800" height="450" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover cursor-pointer" role="button" tabindex="0" onclick="openLeadModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLeadModal();}">
                 <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
                     ⭐ प्रमुख समाचार (LEAD STORY)
                 </div>
@@ -253,14 +253,14 @@
                     <p id="lead-excerpt" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3"></p>
                 </div>
                 <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                    <button id="lead-read-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
+                    <button id="lead-read-btn" type="button" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
                          पूरी खबर पढ़ें →
                     </button>
                     <div class="flex gap-2">
-                        <button id="lead-copy-btn" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                        <button id="lead-copy-btn" type="button" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
                             <i class="fa-solid fa-copy"></i> लिंक कॉपी
                         </button>
-                        <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                        <button id="lead-share-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
                             <i class="fa-solid fa-share-nodes"></i> शेयर
                         </button>
                     </div>
