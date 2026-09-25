@@ -711,3 +711,96 @@ aside>.sticky{
     font-size:.68rem!important;
   }
 }
+
+
+/* ===== Phase 6: live newsroom tickers ===== */
+#breaking-ticker{
+  min-height:38px;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+  isolation:isolate;
+}
+#breaking-ticker::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(127,29,29,.18),transparent 18%,transparent 82%,rgba(127,29,29,.18));
+  z-index:2;
+}
+#breaking-ticker>*{
+  position:relative;
+  z-index:3;
+}
+#breaking-ticker .animate-pulse{
+  flex:0 0 auto;
+}
+#live-mandi-ticker{
+  min-height:34px;
+  overflow:hidden;
+}
+#live-mandi-ticker>*{
+  min-width:max-content;
+}
+@media(max-width:639px){
+  #breaking-ticker{
+    min-height:36px;
+  }
+  #breaking-ticker .text-xs{
+    font-size:.68rem!important;
+  }
+  #live-mandi-ticker{
+    min-height:32px;
+  }
+}
+
+/* Trending topics: visual newsroom rail */
+main>div.bg-gradient-to-r{
+  position:relative;
+  overflow:hidden;
+}
+main>div.bg-gradient-to-r::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:rgba(255,255,255,.65);
+}
+main>div.bg-gradient-to-r>div:first-child{
+  flex:0 0 auto;
+}
+main>div.bg-gradient-to-r button{
+  transition:background-color .18s ease,transform .18s ease;
+}
+main>div.bg-gradient-to-r button:hover{
+  transform:translateY(-1px);
+}
+@media(max-width:639px){
+  main>div.bg-gradient-to-r{
+    border-radius:14px!important;
+    padding:10px 12px!important;
+    gap:10px!important;
+  }
+  main>div.bg-gradient-to-r>div:first-child{
+    margin-right:0!important;
+  }
+  main>div.bg-gradient-to-r button{
+    min-height:32px;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+}
+
+/* Accessibility: do not force ticker animation when motion is reduced */
+@media(prefers-reduced-motion:reduce){
+  #breaking-ticker *,
+  #live-mandi-ticker *,
+  main>div.bg-gradient-to-r button{
+    animation:none!important;
+    transition:none!important;
+  }
+}
