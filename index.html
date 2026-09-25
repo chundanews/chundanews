@@ -665,6 +665,15 @@
         return safe || '';
     }
 
+    const NEWS_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+
+    function handleNewsImageError(img) {
+        if (!img || img.dataset.fallbackApplied === 'true') return;
+        img.dataset.fallbackApplied = 'true';
+        img.onerror = null;
+        img.src = NEWS_IMAGE_FALLBACK;
+    }
+
     function sanitizeNewsHtml(html) {
         if (!html) return '';
         if (window.DOMPurify) {
@@ -985,7 +994,7 @@
             <article itemscope itemtype="https://schema.org/NewsArticle" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                        <img itemprop="image" src="${displayImg}" alt="${escapeHTML(item.title || 'खबर की तस्वीर')}" width="400" height="225" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal(decodeURIComponent('${safeId}'))" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
+                        <img itemprop="image" src="${displayImg}" alt="${escapeHTML(item.title || 'खबर की तस्वीर')}" width="400" height="225" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal(decodeURIComponent('${safeId}'))" onerror="handleNewsImageError(this)">
                         <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
                             ${escapeHTML(item.category || 'सामान्य')}
                         </span>
@@ -1064,7 +1073,8 @@
 
         const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
         const leadImage = document.getElementById('lead-image');
-        leadImage.src = sanitizeUrl(rawLeadImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+        leadImage.src = sanitizeUrl(rawLeadImg) || NEWS_IMAGE_FALLBACK;
+        leadImage.onerror = () => handleNewsImageError(leadImage);
         leadImage.alt = item.title ? `${item.title} — CHUNDA KSHETRA NEWS` : 'मुख्य खबर की तस्वीर';
         leadImage.setAttribute('decoding', 'async');
         leadImage.setAttribute('fetchpriority', 'high');
