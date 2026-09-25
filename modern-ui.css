@@ -1,0 +1,210 @@
+/* CHUNDA KSHETRA NEWS — Modern Mobile-First UI
+   Additive layer: keeps existing HTML/JS/Firebase functionality intact. */
+
+:root{
+  --ckn-red:#c81e1e;
+  --ckn-red-dark:#991b1b;
+  --ckn-ink:#111827;
+  --ckn-muted:#64748b;
+  --ckn-surface:#ffffff;
+  --ckn-bg:#f5f7fa;
+  --ckn-border:#e5e7eb;
+  --ckn-radius:16px;
+  --ckn-shadow:0 8px 30px rgba(15,23,42,.07);
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--ckn-bg);
+  color:var(--ckn-ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,input,select{font:inherit}
+img{max-width:100%;height:auto}
+::selection{background:#fecaca;color:#7f1d1d}
+
+/* Keep ticker compact and reduce motion on mobile */
+.animate-ticker{animation-duration:70s}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .animate-ticker{animation:none;padding-left:0}
+  .animate-ping,.animate-pulse{animation:none!important}
+}
+
+/* Slim information bars */
+body>div.bg-gray-950.text-gray-300.text-\[11px\]{
+  min-height:32px;
+}
+body>div.bg-red-700,
+body>div.bg-amber-600{
+  min-height:34px;
+}
+
+/* Header */
+header.bg-white{
+  box-shadow:0 2px 18px rgba(15,23,42,.05);
+}
+header .max-w-7xl{
+  padding-top:14px;
+  padding-bottom:14px;
+}
+header h1{
+  font-size:clamp(1.45rem,4vw,2.35rem)!important;
+  letter-spacing:-.035em;
+}
+header nav{
+  backdrop-filter:saturate(130%) blur(10px);
+}
+header nav .max-w-7xl{
+  min-height:44px;
+}
+
+/* Better mobile navigation */
+@media(max-width:767px){
+  header .max-w-7xl{
+    align-items:stretch;
+  }
+  header .max-w-7xl>div:first-child{
+    justify-content:center;
+  }
+  header nav .max-w-7xl{
+    flex-wrap:nowrap;
+    overflow:hidden;
+  }
+  header nav .max-w-7xl>div:first-child{
+    min-width:0;
+    width:100%;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  header nav .max-w-7xl>div:first-child::-webkit-scrollbar{display:none}
+  header nav .max-w-7xl>div:last-child{
+    display:none;
+  }
+}
+
+/* Main content */
+main.max-w-7xl{
+  max-width:1320px;
+}
+#lead-news-section>div{
+  border-radius:20px;
+  box-shadow:var(--ckn-shadow);
+}
+#lead-image{
+  object-position:center;
+}
+@media(max-width:639px){
+  #lead-news-section>div{
+    border-radius:16px;
+  }
+  #lead-news-section .p-6{padding:18px}
+  #lead-title{font-size:1.45rem!important}
+}
+
+/* News cards */
+#news-container{
+  gap:18px!important;
+}
+#news-container>article,
+#news-container>div{
+  border-radius:16px;
+}
+#news-container img{
+  transition:transform .25s ease;
+}
+#news-container a:hover img,
+#news-container article:hover img{
+  transform:scale(1.025);
+}
+@media(prefers-reduced-motion:reduce){
+  #news-container img{transition:none}
+}
+
+/* Section headings */
+#current-category-title{
+  letter-spacing:-.02em;
+}
+
+/* Side widgets */
+aside>div{
+  border-radius:16px!important;
+  box-shadow:0 5px 22px rgba(15,23,42,.05);
+}
+aside .sticky{
+  border-radius:16px!important;
+}
+
+/* Ad placeholders — visually quieter */
+.bg-gray-50.dark\:bg-gray-800.border-dashed{
+  background:rgba(248,250,252,.72);
+}
+
+/* Admin bar */
+#admin-action-bar{
+  position:sticky;
+  top:44px;
+  z-index:35;
+}
+@media(max-width:767px){
+  #admin-action-bar{top:0}
+  #admin-action-bar button{
+    min-height:36px;
+  }
+}
+
+/* Modals */
+.portal-modal>div{
+  max-height:calc(100dvh - 2rem);
+  overflow:auto;
+  border-radius:18px;
+}
+
+/* Footer */
+footer{
+  margin-top:32px!important;
+}
+footer .max-w-7xl{
+  max-width:1320px;
+}
+
+/* Mobile spacing */
+@media(max-width:639px){
+  main.max-w-7xl{
+    padding-left:12px!important;
+    padding-right:12px!important;
+    padding-top:18px!important;
+  }
+  main .grid{
+    gap:22px!important;
+  }
+  aside{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:16px!important;
+  }
+  .text-2xl{line-height:1.2}
+}
+
+/* Dark mode */
+.dark body,
+body.dark{
+  background:#09090b;
+}
+.dark #news-container>div,
+.dark #news-container>article{
+  border-color:#27272a;
+}
+
+/* Accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible{
+  outline:3px solid rgba(220,38,38,.35);
+  outline-offset:2px;
+}
+
+/* Prevent horizontal overflow from long headlines/tickers */
+body{overflow-x:hidden}
