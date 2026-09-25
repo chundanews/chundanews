@@ -927,7 +927,7 @@
             <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                        <img src="${displayImg}" width="400" height="225" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
+                        <img src="${displayImg}" width="400" height="225" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
                         <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
                             ${escapeHTML(item.category || 'सामान्य')}
                         </span>
@@ -1004,7 +1004,10 @@
         document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
 
         const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
-        document.getElementById('lead-image').src = sanitizeUrl(rawLeadImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+        const leadImage = document.getElementById('lead-image');
+        leadImage.src = sanitizeUrl(rawLeadImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+        leadImage.setAttribute('decoding', 'async');
+        leadImage.setAttribute('fetchpriority', 'high');
         document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
         document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
         document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
