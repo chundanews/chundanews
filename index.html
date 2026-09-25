@@ -882,15 +882,29 @@
         document.documentElement.classList.add('dark');
     }
 
+    let lastModalTrigger = null;
+
     function openPortalModal(id) {
         const m = document.getElementById(id);
-        if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; m.setAttribute('aria-hidden', 'false'); }
+        if (!m) return;
+        lastModalTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        m.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        m.setAttribute('aria-hidden', 'false');
+        const firstFocusable = m.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        (firstFocusable || m).focus?.();
     }
 
     function closePortalModal(id) {
         const m = document.getElementById(id);
         if (m) { m.style.display = 'none'; m.setAttribute('aria-hidden', 'true'); }
-        if (!document.querySelector('.portal-modal[style*="display: flex"]')) document.body.style.overflow = '';
+        if (!document.querySelector('.portal-modal[style*="display: flex"]')) {
+            document.body.style.overflow = '';
+            if (lastModalTrigger && document.contains(lastModalTrigger)) {
+                lastModalTrigger.focus();
+            }
+            lastModalTrigger = null;
+        }
     }
 
     document.addEventListener('keydown', (e) => {
