@@ -1480,7 +1480,7 @@
             alert('स्कोर सफलतापूर्वक अपडेट हो गया!'); 
             e.target.reset(); 
             closePortalModal('score-modal');
-            loadScore();
+            loadScore(true);
         } catch (err) { 
             alert('स्कोर अपडेट नहीं हो सका।'); 
         }
@@ -1715,14 +1715,29 @@
         `).join('');
     }
 
-    function loadScore() {
+    function renderLiveScore(data) {
+        document.getElementById('match-title').innerText = data?.title || '';
+        document.getElementById('match-score').innerText = data?.score || '';
+        document.getElementById('match-status').innerText = data?.status || '';
+    }
+
+    function loadScore(forceRefresh = false) {
+        const cacheKey = 'ckn_live_score_cache_v1';
+        const ttl = 30 * 1000;
+        const now = Date.now();
+        const cached = readLocalJson(cacheKey);
+        if (!forceRefresh && cached && cached.data && (now - Number(cached.time || 0)) < ttl) {
+            renderLiveScore(cached.data);
+            return;
+        }
+
         db.collection('live_score').doc('current').get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('match-title').innerText = data.title || '';
-                document.getElementById('match-score').innerText = data.score || '';
-                document.getElementById('match-status').innerText = data.status || '';
-            }
+            if (!doc.exists) return;
+            const data = doc.data() || {};
+            renderLiveScore(data);
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), data }));
+            } catch (_) {}
         }).catch(() => {});
     }
 
