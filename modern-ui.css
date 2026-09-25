@@ -986,6 +986,33 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 19 — News card metadata hierarchy */
+#news-container>div.bg-white .text-red-600.font-bold{
+  font-size:.68rem!important;
+  letter-spacing:.035em;
+}
+#news-container>div.bg-white p.text-xs{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  min-height:18px;
+}
+#news-container>div.bg-white .fa-clock{
+  opacity:.8;
+}
+#news-container>div.bg-white>div:last-child{
+  border-top:1px solid rgba(226,232,240,.72);
+  margin-top:auto;
+  padding-top:10px!important;
+}
+.dark #news-container>div.bg-white>div:last-child{
+  border-top-color:rgba(63,63,70,.72);
+}
+@media(max-width:767px){
+  #news-container>div.bg-white .text-red-600.font-bold{font-size:.66rem!important}
+  #news-container>div.bg-white>div:last-child{padding-top:9px!important}
+}
+
 /* Phase 18 — Image loading and visual stability */
 #lead-news-section #lead-image{
   width:100%;
