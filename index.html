@@ -907,6 +907,8 @@
 
     function renderNews(list) {
         const container = document.getElementById('news-container');
+        container.setAttribute('aria-live', 'polite');
+        container.setAttribute('aria-busy', 'false');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
 
         if (!list.length) {
@@ -914,6 +916,7 @@
             return;
         }
 
+        container.setAttribute('aria-busy', 'true');
         container.innerHTML = list.map(item => {
             const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
             const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
