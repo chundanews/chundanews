@@ -908,9 +908,30 @@
     }
 
     document.addEventListener('keydown', (e) => {
+        const openModal = Array.from(document.querySelectorAll('.portal-modal')).find(m => getComputedStyle(m).display === 'flex');
+        if (!openModal) return;
+
         if (e.key === 'Escape') {
-            const openModal = Array.from(document.querySelectorAll('.portal-modal')).find(m => getComputedStyle(m).display === 'flex');
-            if (openModal) closePortalModal(openModal.id);
+            closePortalModal(openModal.id);
+            return;
+        }
+
+        if (e.key !== 'Tab') return;
+        const focusable = Array.from(openModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+            .filter(el => !el.disabled && el.getAttribute('aria-hidden') !== 'true' && el.offsetParent !== null);
+        if (!focusable.length) {
+            e.preventDefault();
+            openModal.focus?.();
+            return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
         }
     });
 
