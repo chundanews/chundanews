@@ -986,6 +986,29 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 18 — Image loading and visual stability */
+#lead-news-section #lead-image{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+#news-container>div.bg-white .aspect-video{
+  overflow:hidden;
+  background:#e2e8f0;
+}
+.dark #news-container>div.bg-white .aspect-video{
+  background:#27272a;
+}
+#news-container>div.bg-white .aspect-video img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+@media(max-width:767px){
+  #lead-news-section #lead-image{min-height:100%;}
+  #news-container>div.bg-white .aspect-video{min-height:0;}
+}
+
 /* Phase 17 — Mobile masthead clarity */
 @media(max-width:767px){
   body>div.bg-gray-950.text-gray-300.text-\\[11px\\]{padding-left:10px!important;padding-right:10px!important}
