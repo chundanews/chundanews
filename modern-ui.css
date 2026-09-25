@@ -926,3 +926,62 @@ main>div.bg-gradient-to-r button:hover{
     transition:none!important;
   }
 }
+
+
+/* ===== Phase 8: performance / Core Web Vitals pass ===== */
+/* Reduce layout/paint work below the fold while preserving JS-generated content. */
+@media(min-width:768px){
+  main>div.grid>aside{
+    content-visibility:auto;
+    contain-intrinsic-size:700px;
+  }
+}
+#news-container{
+  contain:layout style;
+}
+#news-container>div.bg-white{
+  content-visibility:auto;
+  contain-intrinsic-size:430px;
+}
+img{
+  max-width:100%;
+}
+#lead-image{
+  display:block;
+  background:#e5e7eb;
+}
+.dark #lead-image{
+  background:#27272a;
+}
+
+/* Keep ticker animation cheap on low-power/mobile devices. */
+@media(max-width:767px){
+  .animate-ticker{
+    animation-duration:70s;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .animate-ticker{
+    animation:none!important;
+    padding-left:0!important;
+    transform:none!important;
+  }
+}
+
+/* Avoid expensive backdrop filters on very small/low-density displays. */
+@media(max-width:380px){
+  #mobile-bottom-nav{
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    background:rgba(255,255,255,.98);
+  }
+  .dark #mobile-bottom-nav{
+    background:rgba(24,24,27,.98);
+  }
+}
+
+/* Prevent invisible overflow from creating a wider layout/scroll area. */
+html,body{
+  max-width:100%;
+  overflow-x:hidden;
+}
