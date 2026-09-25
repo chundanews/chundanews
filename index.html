@@ -192,7 +192,7 @@
                     <button onclick="resetCalendarFilter()" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
                 </div>
                 <div class="hidden lg:block relative w-44">
-                    <input type="text" id="search-input" oninput="handleLiveSearch()" placeholder="खबर खोजें..." class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
+                    <input type="text" id="search-input" oninput="scheduleLiveSearch()" placeholder="खबर खोजें..." class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
                     <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2 text-gray-400 text-xs"></i>
                 </div>
             </div>
@@ -1144,6 +1144,12 @@
         const calendar = document.getElementById('news-calendar-picker');
         if (calendar) calendar.value = '';
         filterNews(currentCategory);
+    }
+
+    let liveSearchTimer = null;
+    function scheduleLiveSearch() {
+        clearTimeout(liveSearchTimer);
+        liveSearchTimer = setTimeout(handleLiveSearch, 120);
     }
 
     function handleLiveSearch() {
