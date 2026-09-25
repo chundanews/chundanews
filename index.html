@@ -852,12 +852,22 @@
         }
     });
 
-    window.onscroll = function() {
-        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        let scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
-        document.getElementById("scroll-progress").style.width = scrolled + "%";
-    };
+    let scrollProgressTicking = false;
+    function updateScrollProgress() {
+        const progress = document.getElementById("scroll-progress");
+        if (!progress) return;
+        const winScroll = window.scrollY || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+        progress.style.width = scrolled + "%";
+        scrollProgressTicking = false;
+    }
+    window.addEventListener('scroll', () => {
+        if (!scrollProgressTicking) {
+            scrollProgressTicking = true;
+            requestAnimationFrame(updateScrollProgress);
+        }
+    }, { passive: true });
 
     function updateLivePanchang() {
         const d = new Date();
