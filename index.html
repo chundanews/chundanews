@@ -1658,7 +1658,9 @@
         if (Array.isArray(cachedJobs)) renderJobsHTML(cachedJobs);
         if (Array.isArray(cachedElec)) renderElecHTML(cachedElec);
 
-        if (forceRefresh || !cachedJobs || (now - lastWidgetTime) > TTL) {
+        const hasValidWidgetTime = Number.isFinite(lastWidgetTime);
+        const hasAnyWidgetCache = Array.isArray(cachedJobs) || Array.isArray(cachedElec);
+        if (forceRefresh || !hasAnyWidgetCache || !hasValidWidgetTime || (now - lastWidgetTime) > TTL) {
             db.collection('job_alerts').limit(5).get().then(snapshot => {
                 let jobs = snapshot.docs.map(doc => normalizeDoc(doc));
                 jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
