@@ -91,9 +91,12 @@
         .portal-modal { display:none; position:fixed; inset:0; width:100vw; height:100vh; background-color:rgba(0,0,0,.85)!important; z-index:999999!important; align-items:center; justify-content:center; padding:1rem; overflow-y:auto; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .skip-to-content { position: fixed; left: 1rem; top: .75rem; z-index: 1000000; transform: translateY(-160%); padding: .65rem .9rem; border-radius: .6rem; background: #111827; color: #fff; font-weight: 800; box-shadow: 0 8px 24px rgba(0,0,0,.2); transition: transform .2s ease; }
+        .skip-to-content:focus { transform: translateY(0); outline: 3px solid #facc15; outline-offset: 2px; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
+<a href="#main-content" class="skip-to-content">मुख्य सामग्री पर जाएँ</a>
 
 <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 origin-left transition-transform duration-75" style="transform:scaleX(0)"></div>
 
@@ -226,7 +229,7 @@
     </div>
 </div>
 
-<main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+<main id="main-content" class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
     <section id="lead-news-section" class="mb-8 hidden">
         <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
             <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
