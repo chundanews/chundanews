@@ -943,6 +943,10 @@ main>div.bg-gradient-to-r button:hover{
   content-visibility:auto;
   contain-intrinsic-size:430px;
 }
+#related-news>article{
+  content-visibility:auto;
+  contain-intrinsic-size:220px;
+}
 img{
   max-width:100%;
 }
