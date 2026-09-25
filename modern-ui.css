@@ -986,6 +986,16 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 12 — Mobile header/search UX */
+@media(max-width:767px){
+  header nav .max-w-7xl{display:block!important;overflow:visible!important}
+  header nav .max-w-7xl>div:first-child{width:100%!important}
+  header nav .max-w-7xl>div:last-child{display:flex!important;width:100%!important;margin-top:2px;padding-top:7px;padding-bottom:7px;flex-wrap:wrap!important;gap:7px!important}
+  header nav .max-w-7xl>div:last-child>div:first-child{flex:1 1 100%!important;min-width:0!important}
+  header nav .max-w-7xl>div:last-child .relative{display:block!important;width:100%!important}
+  #search-input{display:block!important;width:100%!important;min-height:40px!important;padding-top:8px!important;padding-bottom:8px!important}
+}
+
 /* Phase 11 — Homepage newsroom polish */
 :root{--news-radius:18px}
 #lead-news-section>div{box-shadow:0 20px 55px rgba(15,23,42,.10)}
