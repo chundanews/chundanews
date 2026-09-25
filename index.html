@@ -1601,23 +1601,22 @@
     }
 
     function loadNewsWithTTL(forceRefresh = false) {
-        const cached = localStorage.getItem('cached_news_list');
+        const cachedList = readLocalJson('cached_news_list');
         const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
         const now = Date.now();
+        const hasValidCache = Array.isArray(cachedList);
 
-        if (cached) {
-            try {
-                newsList = JSON.parse(cached);
-                const lead = newsList.find(n => n.isLead) || newsList[0];
-                setLeadStory(lead);
-                updateBreakingTicker(newsList);
-                renderNews(newsList);
-            } catch (e) {
-                localStorage.removeItem('cached_news_list');
-            }
+        if (hasValidCache) {
+            newsList = cachedList;
+            const lead = newsList.find(n => n.isLead) || newsList[0];
+            setLeadStory(lead);
+            updateBreakingTicker(newsList);
+            renderNews(newsList);
+        } else if (localStorage.getItem('cached_news_list')) {
+            try { localStorage.removeItem('cached_news_list'); } catch (_) {}
         }
 
-        if (forceRefresh || !cached || (now - lastFetch) > TTL) {
+        if (forceRefresh || !hasValidCache || !Number.isFinite(lastFetch) || (now - lastFetch) > TTL) {
             db.collection('news_posts')
                 .orderBy('createdAt', 'desc')
                 .limit(25)
