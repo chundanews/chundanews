@@ -635,3 +635,79 @@ header nav button:hover{
     padding-bottom:13px!important;
   }
 }
+
+
+/* ===== Phase 5: newsroom sidebar widgets ===== */
+aside>div{
+  border-radius:16px!important;
+  overflow:hidden;
+  box-shadow:0 8px 24px rgba(15,23,42,.06)!important;
+}
+aside>div>div[class*="bg-gradient"],
+aside>div>div.bg-indigo-800{
+  letter-spacing:-.01em;
+}
+aside>div>div[class*="bg-gradient"] span:first-child,
+aside>div>div.bg-indigo-800 span:first-child{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#election-widget-list,
+#job-alerts-list,
+#live-score-box{
+  font-size:.78rem!important;
+}
+#election-widget-list button{
+  min-height:36px;
+  border-radius:9px!important;
+}
+#election-widget-list .p-2\.5{
+  padding:12px!important;
+}
+#live-score-box{
+  padding:12px!important;
+  min-height:92px;
+}
+#live-score-box #match-title{
+  font-size:.72rem!important;
+}
+#live-score-box #match-score{
+  font-size:1.05rem!important;
+}
+#job-alerts-list>div,
+#job-alerts-list>a,
+#job-alerts-list>p{
+  border-radius:10px!important;
+}
+
+/* Sidebar ad: deliberately quiet so editorial widgets dominate */
+aside>.sticky{
+  box-shadow:none!important;
+  background:linear-gradient(180deg,#f8fafc,#f1f5f9)!important;
+}
+.dark aside>.sticky{
+  background:linear-gradient(180deg,#18181b,#111113)!important;
+}
+
+/* Tablet sidebar becomes a two-column newsroom rail */
+@media(min-width:768px) and (max-width:1023px){
+  aside>div:not(.sticky){
+    min-height:160px;
+  }
+}
+
+/* Phone: preserve comfortable reading width */
+@media(max-width:639px){
+  aside>div{
+    border-radius:14px!important;
+  }
+  aside>div>div[class*="bg-gradient"],
+  aside>div>div.bg-indigo-800{
+    padding:10px 12px!important;
+  }
+  aside>div>div[class*="bg-gradient"] span:first-child,
+  aside>div>div.bg-indigo-800 span:first-child{
+    font-size:.68rem!important;
+  }
+}
