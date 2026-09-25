@@ -76,7 +76,6 @@
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
 
     <style>
@@ -774,8 +773,32 @@
     }
 
     let messaging = null;
-    if (firebase.messaging.isSupported()) {
-        messaging = firebase.messaging();
+    let messagingLoadPromise = null;
+
+    function loadFirebaseMessaging() {
+        if (messaging) return Promise.resolve(messaging);
+        if (messagingLoadPromise) return messagingLoadPromise;
+
+        messagingLoadPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging-compat.js';
+            script.onload = () => {
+                try {
+                    if (firebase.messaging.isSupported()) {
+                        messaging = firebase.messaging();
+                        resolve(messaging);
+                    } else {
+                        resolve(null);
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            script.onerror = () => reject(new Error('Firebase Messaging failed to load'));
+            document.head.appendChild(script);
+        });
+
+        return messagingLoadPromise;
     }
 
     let isAdminLoggedIn = false;
@@ -1661,11 +1684,16 @@
     }
 
     async function enablePushNotifications() {
-        if (!('Notification' in window) || !messaging) {
+        if (!('Notification' in window)) {
             alert("यह डिवाइस वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
             return;
         }
         try {
+            const loadedMessaging = await loadFirebaseMessaging();
+            if (!loadedMessaging) {
+                alert("यह डिवाइस वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
+                return;
+            }
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
                 const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
