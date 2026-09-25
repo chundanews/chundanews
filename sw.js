@@ -30,7 +30,7 @@ self.addEventListener('fetch', event => {
   // Cache navigations and known static assets only; avoid unbounded caching
   // of arbitrary same-origin URLs.
   if (url.origin === self.location.origin) {
-    const isStaticAsset = /\\.(?:css|js|png|jpe?g|webp|svg|ico|woff2?|ttf|json)$/i.test(url.pathname);
+    const isStaticAsset = /\.(?:css|js|png|jpe?g|webp|svg|ico|woff2?|ttf|json)$/i.test(url.pathname);
     const shouldCache = request.mode === 'navigate' || isStaticAsset;
 
     event.respondWith(
