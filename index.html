@@ -705,6 +705,10 @@
         return String(id || '').trim();
     }
 
+    function safeNewsIdAttr(id) {
+        return encodeURIComponent(safeNewsId(id));
+    }
+
     function loadAnalytics() {
         if (window.__cknAnalyticsLoaded) return;
         window.__cknAnalyticsLoaded = true;
@@ -971,7 +975,7 @@
         container.innerHTML = list.map(item => {
             const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
             const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-            const safeId = escapeHTML(item.id);
+            const safeId = safeNewsIdAttr(item.id);
             
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
@@ -981,7 +985,7 @@
             <article itemscope itemtype="https://schema.org/NewsArticle" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                        <img itemprop="image" src="${displayImg}" width="400" height="225" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
+                        <img itemprop="image" src="${displayImg}" width="400" height="225" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal(decodeURIComponent('${safeId}'))" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
                         <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
                             ${escapeHTML(item.category || 'सामान्य')}
                         </span>
@@ -1004,18 +1008,18 @@
                             विस्तार से पढ़ें <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
                         <div class="flex gap-2.5">
-                            <button onclick="copyNewsLink('${safeId}')" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
+                            <button onclick="copyNewsLink(decodeURIComponent('${safeId}'))" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
                                 <i class="fa-solid fa-copy"></i>
                             </button>
-                            <button onclick="shareWhatsAppWithImage('${safeId}')" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
+                            <button onclick="shareWhatsAppWithImage(decodeURIComponent('${safeId}'))" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
                                 <i class="fa-solid fa-share-nodes"></i>
                             </button>
                         </div>
                     </div>
                     ${isAdminLoggedIn ? `
                         <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
-                            <button onclick="editNewsPost('${safeId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
-                            <button onclick="deleteNewsPost('${safeId}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
+                            <button onclick="editNewsPost(decodeURIComponent('${safeId}'))" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
+                            <button onclick="deleteNewsPost(decodeURIComponent('${safeId}'))" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
                         </div>
                     ` : ''}
                 </div>
@@ -1035,12 +1039,12 @@
         container.innerHTML = related.map(item => {
             const img = sanitizeUrl((Array.isArray(item.images) && item.images[0]) || item.image || '');
             const fallback = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600';
-            const id = escapeHTML(item.id);
+            const id = safeNewsIdAttr(item.id);
             return `<article class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition">
                 <img src="${img || fallback}" alt="" width="320" height="180" loading="lazy" decoding="async" class="w-full aspect-video object-cover">
                 <div class="p-3"><span class="text-[10px] font-bold text-red-600">${escapeHTML(item.category || 'सामान्य')}</span>
                 <h3 class="font-bold text-sm leading-snug mt-1 line-clamp-2 text-gray-900 dark:text-white">${escapeHTML(item.title || '')}</h3>
-                <button type="button" onclick="openReaderModal('${id}')" class="mt-2 text-[11px] font-bold text-red-600">पूरी खबर →</button></div>
+                <button type="button" onclick="openReaderModal(decodeURIComponent('${id}'))" class="mt-2 text-[11px] font-bold text-red-600">पूरी खबर →</button></div>
             </article>`;
         }).join('');
     }
