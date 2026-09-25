@@ -1108,7 +1108,8 @@
                 let shareData = { title: item.title, text: shareText, url: newsUrl };
                 if (imageUrl) {
                     try {
-                        const response = await fetch(imageUrl);
+                        const response = await fetch(imageUrl, { mode: 'cors' });
+                        if (!response.ok) throw new Error('Image fetch failed');
                         const blob = await response.blob();
                         const file = new File([blob], 'news-image.jpg', { type: blob.type });
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
