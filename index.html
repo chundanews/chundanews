@@ -996,7 +996,7 @@
                             <span>•</span>
                             <span class="text-red-600 font-bold">CKN Desk</span>
                         </div>
-                        <h3 itemprop="headline" class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
+                        <h3 itemprop="headline" class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal(decodeURIComponent('${safeId}'))">
                             ${escapeHTML(item.title)}
                         </h3>
                         <p itemprop="description" class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
@@ -1239,7 +1239,7 @@
                 });
                 reportsList.innerHTML = reportDocs.map(doc => {
                     const report = doc.data();
-                    const reportId = escapeHTML(doc.id);
+                    const reportId = safeNewsIdAttr(doc.id);
                     return `
                         <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700 flex flex-col gap-2">
                             <div class="flex justify-between items-center font-bold">
@@ -1249,7 +1249,7 @@
                             <p class="text-red-600 font-mono">${escapeHTML(report.phone || '')}</p>
                             <p class="text-gray-700 dark:text-gray-300">${escapeHTML(report.details || report.msg || '')}</p>
                             <div class="flex justify-end pt-1">
-                                <button onclick="deleteCitizenReport('${reportId}')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1 rounded">
+                                <button onclick="deleteCitizenReport(decodeURIComponent('${reportId}'))" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1 rounded">
                                     🗑️ यह रिपोर्ट डिलीट करें
                                 </button>
                             </div>
@@ -1687,7 +1687,7 @@
                 <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(doc.subtitle || '')}</p>
                 <div class="flex gap-2 mt-2">
                     <a href="${sanitizeUrl(doc.link)}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold text-[11px]">दस्तावेज़ देखें</a>
-                    ${isAdminLoggedIn ? `<button onclick="deleteElectionDoc('${doc.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिलीट</button>` : ''}
+                    ${isAdminLoggedIn ? `<button onclick="deleteElectionDoc(decodeURIComponent('${safeNewsIdAttr(doc.id)}'))" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिलीट</button>` : ''}
                 </div>
             </div>
         `).join('');
