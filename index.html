@@ -353,16 +353,16 @@
 
 <!-- Mobile bottom navigation: fixed, lightweight, no framework dependency -->
 <nav id="mobile-bottom-nav" aria-label="मोबाइल मुख्य नेविगेशन">
-  <button type="button" onclick="filterNews('all')" aria-label="सभी खबरें">
+  <button id="mobile-nav-home" type="button" onclick="setMobileNavActive('home'); filterNews('all')" aria-label="सभी खबरें" aria-current="page">
     <i class="fa-solid fa-house"></i><span>होम</span>
   </button>
-  <button type="button" onclick="document.getElementById('search-input')?.focus(); window.scrollTo({top:document.getElementById('search-input')?.getBoundingClientRect().top + window.scrollY - 90,behavior:'smooth'})" aria-label="खबर खोजें">
+  <button id="mobile-nav-search" type="button" onclick="setMobileNavActive('search'); document.getElementById('search-input')?.focus(); window.scrollTo({top:document.getElementById('search-input')?.getBoundingClientRect().top + window.scrollY - 90,behavior:'smooth'})" aria-label="खबर खोजें">
     <i class="fa-solid fa-magnifying-glass"></i><span>खोजें</span>
   </button>
-  <button type="button" onclick="filterNews('चुनाव अपडेट')" aria-label="चुनाव अपडेट">
+  <button id="mobile-nav-election" type="button" onclick="setMobileNavActive('election'); filterNews('चुनाव अपडेट')" aria-label="चुनाव अपडेट">
     <i class="fa-solid fa-check-to-slot"></i><span>चुनाव</span>
   </button>
-  <button type="button" onclick="openPortalModal('citizen-modal')" aria-label="खबर भेजें">
+  <button id="mobile-nav-submit" type="button" onclick="setMobileNavActive('submit'); openPortalModal('citizen-modal')" aria-label="खबर भेजें">
     <i class="fa-solid fa-pen-to-square"></i><span>खबर भेजें</span>
   </button>
 </nav>
@@ -708,6 +708,21 @@
             createdAt: timestampToMillis(data.createdAt) || timestampToMillis(data.timestamp),
             timestamp: timestampToMillis(data.timestamp) || timestampToMillis(data.createdAt)
         };
+    }
+
+    function setMobileNavActive(active) {
+        const items = {
+            home: 'mobile-nav-home',
+            search: 'mobile-nav-search',
+            election: 'mobile-nav-election',
+            submit: 'mobile-nav-submit'
+        };
+        Object.entries(items).forEach(([key, id]) => {
+            const button = document.getElementById(id);
+            if (!button) return;
+            if (key === active) button.setAttribute('aria-current', 'page');
+            else button.removeAttribute('aria-current');
+        });
     }
 
     function safeNewsId(id) {
