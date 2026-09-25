@@ -986,6 +986,34 @@ html,body{
   overflow-x:hidden;
 }
 
+/* Phase 14 — Mobile news feed readability */
+@media(max-width:767px){
+  #news-container>div.bg-white .aspect-video{
+    aspect-ratio:16/9!important;
+  }
+  #news-container>div.bg-white h3{
+    font-size:1rem!important;
+    line-height:1.42!important;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+    overflow:hidden;
+  }
+  #news-container>div.bg-white p.text-xs{
+    line-height:1.45!important;
+  }
+  #news-container>div.bg-white>div:last-child{
+    gap:8px!important;
+  }
+  #news-container>div.bg-white>div:last-child button{
+    min-height:36px!important;
+  }
+}
+@media(max-width:380px){
+  #news-container>div.bg-white h3{font-size:.95rem!important}
+  #news-container>div.bg-white .p-5{padding:12px!important}
+}
+
 /* Phase 13 — Editorial hierarchy: breaking → lead → latest */
 #breaking-ticker{
   box-shadow:0 3px 14px rgba(127,29,29,.12);
