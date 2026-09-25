@@ -1640,14 +1640,24 @@
         }
     }
 
+    function readLocalJson(key, fallback = null) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (_) {
+            try { localStorage.removeItem(key); } catch (_) {}
+            return fallback;
+        }
+    }
+
     function loadWidgetData(forceRefresh = false) {
-        const cachedJobs = localStorage.getItem('ckn_cached_jobs');
-        const cachedElec = localStorage.getItem('ckn_cached_elec');
+        const cachedJobs = readLocalJson('ckn_cached_jobs');
+        const cachedElec = readLocalJson('ckn_cached_elec');
         const lastWidgetTime = parseInt(localStorage.getItem('ckn_widget_time') || '0', 10);
         const now = Date.now();
 
-        if (cachedJobs) renderJobsHTML(JSON.parse(cachedJobs));
-        if (cachedElec) renderElecHTML(JSON.parse(cachedElec));
+        if (Array.isArray(cachedJobs)) renderJobsHTML(cachedJobs);
+        if (Array.isArray(cachedElec)) renderElecHTML(cachedElec);
 
         if (forceRefresh || !cachedJobs || (now - lastWidgetTime) > TTL) {
             db.collection('job_alerts').limit(5).get().then(snapshot => {
