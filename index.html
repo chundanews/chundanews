@@ -959,15 +959,15 @@
     function renderNews(list) {
         const container = document.getElementById('news-container');
         container.setAttribute('aria-live', 'polite');
-        container.setAttribute('aria-busy', 'false');
+        container.setAttribute('aria-busy', 'true');
         document.getElementById('news-count').textContent = `${list.length} खबरें`;
 
         if (!list.length) {
             container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800">इस श्रेणी या दिनांक में कोई खबर उपलब्ध नहीं है।</div>`;
+            container.setAttribute('aria-busy', 'false');
             return;
         }
 
-        container.setAttribute('aria-busy', 'true');
         container.innerHTML = list.map(item => {
             const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
             const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
@@ -1022,6 +1022,7 @@
             </div>
         `;
         }).join('');
+        container.setAttribute('aria-busy', 'false');
     }
 
     function renderRelatedNews(currentId, currentCategory) {
