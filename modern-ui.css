@@ -505,3 +505,133 @@ header nav button:hover{
 #current-category-title::first-letter{
   color:inherit;
 }
+
+
+/* ===== Phase 4: high-density professional news cards ===== */
+#news-container>div.bg-white{
+  border-color:rgba(226,232,240,.9)!important;
+  background:rgba(255,255,255,.98)!important;
+}
+.dark #news-container>div.bg-white{
+  background:rgba(24,24,27,.98)!important;
+  border-color:rgba(63,63,70,.9)!important;
+}
+#news-container>div.bg-white>div:first-child{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+#news-container>div.bg-white .aspect-video{
+  aspect-ratio:16/9;
+}
+#news-container>div.bg-white .aspect-video img{
+  transition:transform .45s cubic-bezier(.2,.65,.2,1),filter .25s ease;
+}
+#news-container>div.bg-white:hover .aspect-video img{
+  filter:saturate(1.05);
+}
+#news-container>div.bg-white .p-5{
+  padding:15px 16px 13px!important;
+}
+#news-container>div.bg-white h3{
+  font-size:clamp(.94rem,1.7vw,1.05rem)!important;
+  line-height:1.45!important;
+  letter-spacing:-.01em;
+}
+#news-container>div.bg-white p.text-xs{
+  font-size:.75rem!important;
+  color:#64748b!important;
+}
+.dark #news-container>div.bg-white p.text-xs{
+  color:#a1a1aa!important;
+}
+#news-container>div.bg-white>div:last-child{
+  padding-left:16px!important;
+  padding-right:16px!important;
+  padding-bottom:14px!important;
+}
+#news-container>div.bg-white>div:last-child button{
+  min-height:34px;
+}
+#news-container>div.bg-white .absolute.top-3.left-3{
+  border-radius:999px!important;
+  background:rgba(185,28,28,.94)!important;
+  backdrop-filter:blur(6px);
+}
+
+/* Desktop: turn the first feed item into a wider editorial card */
+@media(min-width:1024px){
+  #news-container>div.bg-white:first-child{
+    grid-column:1/-1;
+    display:grid!important;
+    grid-template-columns:minmax(280px,.95fr) minmax(0,1.05fr);
+  }
+  #news-container>div.bg-white:first-child>div:first-child{
+    display:grid!important;
+    grid-template-columns:minmax(280px,.95fr) minmax(0,1.05fr);
+    grid-column:1/-1;
+  }
+  #news-container>div.bg-white:first-child .aspect-video{
+    height:100%;
+    min-height:245px;
+  }
+  #news-container>div.bg-white:first-child .aspect-video img{
+    min-height:245px;
+  }
+  #news-container>div.bg-white:first-child .p-5{
+    padding:20px!important;
+  }
+  #news-container>div.bg-white:first-child>div:last-child{
+    grid-column:2;
+    grid-row:1;
+    align-self:end;
+    padding-bottom:18px!important;
+  }
+}
+
+/* Keep the editorial first card simple on tablet */
+@media(min-width:640px) and (max-width:1023px){
+  #news-container>div.bg-white:first-child h3{
+    font-size:1.08rem!important;
+  }
+}
+
+/* Tiny metadata row reads like a publication stamp */
+#news-container .fa-clock{
+  font-size:.68rem;
+}
+#news-container .text-red-600.font-bold{
+  letter-spacing:.02em;
+}
+
+/* Empty state */
+#news-container>.col-span-full{
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Prevent accidental horizontal overflow from long Hindi headlines */
+#news-container h3,
+#news-container p{
+  overflow-wrap:anywhere;
+}
+
+/* Mobile: tighter card rhythm */
+@media(max-width:639px){
+  #news-container{
+    gap:14px!important;
+  }
+  #news-container>div.bg-white{
+    border-radius:14px!important;
+  }
+  #news-container>div.bg-white .p-5{
+    padding:13px 14px 11px!important;
+  }
+  #news-container>div.bg-white>div:last-child{
+    padding-left:14px!important;
+    padding-right:14px!important;
+    padding-bottom:13px!important;
+  }
+}
