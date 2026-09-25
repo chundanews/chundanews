@@ -332,6 +332,22 @@
     </div>
 </main>
 
+<!-- Mobile bottom navigation: fixed, lightweight, no framework dependency -->
+<nav id="mobile-bottom-nav" aria-label="मोबाइल मुख्य नेविगेशन">
+  <button type="button" onclick="filterNews('all')" aria-label="सभी खबरें">
+    <i class="fa-solid fa-house"></i><span>होम</span>
+  </button>
+  <button type="button" onclick="document.getElementById('search-input')?.focus(); window.scrollTo({top:document.getElementById('search-input')?.getBoundingClientRect().top + window.scrollY - 90,behavior:'smooth'})" aria-label="खबर खोजें">
+    <i class="fa-solid fa-magnifying-glass"></i><span>खोजें</span>
+  </button>
+  <button type="button" onclick="filterNews('चुनाव अपडेट')" aria-label="चुनाव अपडेट">
+    <i class="fa-solid fa-check-to-slot"></i><span>चुनाव</span>
+  </button>
+  <button type="button" onclick="openPortalModal('citizen-modal')" aria-label="खबर भेजें">
+    <i class="fa-solid fa-pen-to-square"></i><span>खबर भेजें</span>
+  </button>
+</nav>
+
 <div id="cookie-consent-banner" class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/95 dark:bg-gray-950/95 text-white border-t border-gray-800 p-4 shadow-2xl backdrop-blur-md" style="display:none;">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="text-xs text-gray-300 leading-relaxed text-center sm:text-left">
