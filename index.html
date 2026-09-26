@@ -429,7 +429,7 @@
 <div id="post-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-800">
         <h3 id="post-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नई खबर पोस्ट करें</h3>
-        <form onsubmit="handleNewsSubmit(event)" class="space-y-3 text-xs">
+        <form id="news-post-form" class="space-y-3 text-xs">
             <input type="hidden" id="edit-doc-id">
             <input type="text" id="news-title" required placeholder="मुख्य हेडलाइन" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="grid grid-cols-2 gap-2">
@@ -487,7 +487,7 @@
 <div id="job-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="job-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
-        <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
+        <form id="job-alert-form" class="space-y-3 text-xs">
             <input type="text" id="job-title" required placeholder="भर्ती का नाम (उदा. RPSC / REET)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-posts" placeholder="पद संख्या / योग्यता" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-last-date" required placeholder="अंतिम तिथि" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -503,7 +503,7 @@
 <div id="election-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="election-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">🗳️ चुनाव दस्तावेज़ / PDF लिंक जोड़ें</h3>
-        <form onsubmit="handleElectionSubmit(event)" class="space-y-3 text-xs">
+        <form id="election-doc-form" class="space-y-3 text-xs">
             <input type="text" id="elec-title" required placeholder="डॉक्यूमेंट का नाम (उदा. वार्डवार मतदाता सूची)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="elec-subtitle" placeholder="विवरण / अंतिम तिथि (उदा. अंतिम प्रकाशन)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="url" id="elec-link" required placeholder="Google Drive / PDF का डायरेक्ट लिंक (https://...)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -518,7 +518,7 @@
 <div id="score-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="score-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
-        <form onsubmit="handleScoreSubmit(event)" class="space-y-3 text-xs">
+        <form id="live-score-form" class="space-y-3 text-xs">
             <input type="text" id="score-title" placeholder="मैच टाइटल (उदा. प्रीमियर लीग)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
             <input type="text" id="score-detail" placeholder="स्कोर (उदा. टीम A: 120/4 (14.2 ov))" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
             <input type="text" id="score-status" placeholder="स्थिति (उदा. टीम B को जीत के लिए 24 रन चाहिए)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
@@ -534,7 +534,7 @@
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="citizen-modal-title" class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
         <p class="text-[11px] text-gray-500 mb-3">आपके क्षेत्र की समस्या या सूचना हमें भेजें, सत्यापन उपरांत प्रकाशित की जाएगी।</p>
-        <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
+        <form id="citizen-report-form" class="space-y-3 text-xs">
             <input type="text" id="citizen-hp" style="display:none!important;" tabindex="-1" autocomplete="off">
             <input type="text" id="citizen-name" required placeholder="आपका शुभ नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="tel" id="citizen-phone" required placeholder="मोबाइल नंबर" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -551,7 +551,7 @@
 <div id="admin-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="admin-modal-heading" class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
-        <form onsubmit="handleAdminLogin(event)" class="space-y-3 text-xs">
+        <form id="admin-login-form" class="space-y-3 text-xs">
             <input type="email" id="admin-email" required placeholder="ईमेल आईडी" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="password" id="admin-pass" required placeholder="पासवर्ड" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
@@ -2178,6 +2178,21 @@
         setTimeout(fetchLiveWeather, 700);
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
         checkCookieConsent();
+
+        const formHandlers = [
+            ['news-post-form', handleNewsSubmit],
+            ['job-alert-form', handleJobSubmit],
+            ['election-doc-form', handleElectionSubmit],
+            ['live-score-form', handleScoreSubmit],
+            ['citizen-report-form', handleCitizenSubmit],
+            ['admin-login-form', handleAdminLogin]
+        ];
+        formHandlers.forEach(([id, handler]) => {
+            const form = document.getElementById(id);
+            if (form && typeof handler === 'function') {
+                form.addEventListener('submit', handler);
+            }
+        });
 
         auth.onAuthStateChanged(async user => {
             if (user && user.uid === ADMIN_UID) {
