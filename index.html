@@ -1014,6 +1014,7 @@
 
     function copyNewsLink(id) {
         const safeId = safeNewsId(id);
+        if (!safeId) return;
         const shareLink = `${window.location.origin}/article.html?id=${encodeURIComponent(safeId)}`;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1026,6 +1027,7 @@
     }
 
     function fallbackCopyText(text) {
+        if (typeof text !== 'string' || !text) return;
         const textArea = document.createElement("textarea");
         textArea.value = text;
         textArea.style.position = "fixed";
