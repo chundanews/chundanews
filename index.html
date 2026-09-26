@@ -1913,16 +1913,22 @@
             jobContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">कोई सक्रिय फॉर्म नहीं है।</p>';
             return;
         }
-        jobContainer.innerHTML = safeJobs.slice(0, 5).filter(job => job && typeof job === 'object').map(job => `
+        jobContainer.innerHTML = safeJobs.slice(0, 5).filter(job => job && typeof job === 'object').map(job => {
+            const title = typeof job.title === 'string' ? job.title : '';
+            const posts = typeof job.posts === 'string' ? job.posts : '';
+            const lastDate = typeof job.lastDate === 'string' ? job.lastDate : '';
+            const link = typeof job.link === 'string' ? job.link : '#';
+            return `
             <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
-                <b class="text-gray-900 dark:text-white text-xs">${escapeHTML(job.title)}</b>
+                <b class="text-gray-900 dark:text-white text-xs">${escapeHTML(title)}</b>
                 <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
-                    <span>${escapeHTML(job.posts || '')}</span>
-                    <span class="text-red-500 font-semibold">अंतिम तिथि: ${escapeHTML(job.lastDate)}</span>
+                    <span>${escapeHTML(posts)}</span>
+                    <span class="text-red-500 font-semibold">अंतिम तिथि: ${escapeHTML(lastDate)}</span>
                 </div>
-                <a href="${sanitizeUrl(job.link || '#')}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                <a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function renderElecHTML(docs) {
@@ -1933,16 +1939,22 @@
             elecContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">दस्तावेज़ उपलब्ध नहीं हैं।</p>';
             return;
         }
-        elecContainer.innerHTML = safeDocs.filter(doc => doc && typeof doc === 'object').map(doc => `
+        elecContainer.innerHTML = safeDocs.filter(doc => doc && typeof doc === 'object').map(doc => {
+            const title = typeof doc.title === 'string' ? doc.title : '';
+            const subtitle = typeof doc.subtitle === 'string' ? doc.subtitle : '';
+            const link = typeof doc.link === 'string' ? doc.link : '#';
+            const docId = typeof doc.id === 'string' ? doc.id : '';
+            return `
             <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900 mb-2">
-                <p class="font-bold text-amber-900 dark:text-amber-200">📄 ${escapeHTML(doc.title)}</p>
-                <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(doc.subtitle || '')}</p>
+                <p class="font-bold text-amber-900 dark:text-amber-200">📄 ${escapeHTML(title)}</p>
+                <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(subtitle)}</p>
                 <div class="flex gap-2 mt-2">
-                    <a href="${sanitizeUrl(doc.link)}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold text-[11px]">दस्तावेज़ देखें</a>
-                    ${isAdminLoggedIn ? `<button onclick="deleteElectionDoc(decodeURIComponent('${safeNewsIdAttr(doc.id)}'))" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिलीट</button>` : ''}
+                    <a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold text-[11px]">दस्तावेज़ देखें</a>
+                    ${isAdminLoggedIn && docId ? `<button onclick="deleteElectionDoc(decodeURIComponent('${safeNewsIdAttr(docId)}'))" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिलीट</button>` : ''}
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function renderLiveScore(data) {
