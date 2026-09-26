@@ -48,10 +48,29 @@ async function generateSitemap() {
       xml += '  </url>\n';
     });
 
+    const panchayatSnapshot = await db.collection('panchayat_results').where('status', '==', 'published').get();
+    panchayatSnapshot.forEach((doc) => {
+      const data = doc.data();
+      const params = new URLSearchParams({
+        district: data.district || '',
+        ps: data.panchayatSamiti || '',
+        gp: data.gramPanchayat || '',
+        village: data.village || '',
+        ward: data.ward || ''
+      });
+      const lastMod = getIsoDate(data.updatedAt || data.verifiedAt || data.createdAt);
+      xml += '  <url>\n';
+      xml += '    <loc>' + DOMAIN + '/?' + params.toString() + '</loc>\n';
+      xml += '    <lastmod>' + lastMod + '</lastmod>\n';
+      xml += '    <changefreq>daily</changefreq>\n';
+      xml += '    <priority>0.7</priority>\n';
+      xml += '  </url>\n';
+    });
+
     xml += '</urlset>\n';
 
     fs.writeFileSync('./sitemap.xml', xml, 'utf8');
-    console.log('Sitemap generated successfully for news_posts.');
+    console.log('Sitemap generated successfully for news_posts and published panchayat_results.');
   } catch (error) {
     console.error('Error generating sitemap:', error);
     process.exitCode = 1;
