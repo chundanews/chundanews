@@ -1878,6 +1878,8 @@
         if (statusEl) statusEl.innerText = typeof data.status === 'string' ? data.status : '';
     }
 
+    let liveScoreRefreshInFlight = false;
+
     function loadScore(forceRefresh = false) {
         const cacheKey = 'ckn_live_score_cache_v1';
         const ttl = 30 * 1000;
@@ -1896,6 +1898,9 @@
             return;
         }
 
+        if (liveScoreRefreshInFlight) return;
+        liveScoreRefreshInFlight = true;
+
         db.collection('live_score').doc('current').get().then(doc => {
             if (!doc.exists) return;
             const data = doc.data() || {};
@@ -1903,7 +1908,9 @@
             try {
                 localStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), data }));
             } catch (_) {}
-        }).catch(() => {});
+        }).catch(() => {}).finally(() => {
+            liveScoreRefreshInFlight = false;
+        });
     }
 
     let deferredPrompt = null;
