@@ -1050,11 +1050,16 @@
     }
 
     function renderNews(list) {
-        const safeList = Array.isArray(list) ? list : [];
+        const safeList = Array.isArray(list)
+            ? list.filter(item => item && typeof item === 'object' && typeof item.id === 'string' && item.id.trim())
+            : [];
         const container = document.getElementById('news-container');
+        const countEl = document.getElementById('news-count');
+        if (!container) return;
+
         container.setAttribute('aria-live', 'polite');
         container.setAttribute('aria-busy', 'true');
-        document.getElementById('news-count').textContent = `${safeList.length} खबरें`;
+        if (countEl) countEl.textContent = `${safeList.length} खबरें`;
 
         if (!safeList.length) {
             container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800">इस श्रेणी या दिनांक में कोई खबर उपलब्ध नहीं है।</div>`;
