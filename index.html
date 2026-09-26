@@ -1346,16 +1346,18 @@
 
     function loadCitizenReportsList() {
         const reportsList = document.getElementById('reports-list');
+        if (!reportsList) return;
+
         reportsList.innerHTML = '<p class="text-center text-gray-400 py-6">रिपोर्टें लोड हो रही हैं...</p>';
 
         db.collection('citizen_reports').get().then(snapshot => {
-            if (!snapshot.empty) {
+            if (snapshot && !snapshot.empty) {
                 const reportDocs = snapshot.docs.slice().sort((a,b) => {
                     const da = a.data(), dbb = b.data();
                     return (timestampToMillis(dbb.createdAt) || timestampToMillis(dbb.timestamp)) - (timestampToMillis(da.createdAt) || timestampToMillis(da.timestamp));
                 });
                 reportsList.innerHTML = reportDocs.map(doc => {
-                    const report = doc.data();
+                    const report = doc.data() || {};
                     const reportId = safeNewsIdAttr(doc.id);
                     return `
                         <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700 flex flex-col gap-2">
