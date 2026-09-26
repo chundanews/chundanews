@@ -1821,11 +1821,13 @@
 
     function renderJobsHTML(jobs) {
         const jobContainer = document.getElementById('job-alerts-list');
-        if (!jobs || !jobs.length) {
+        if (!jobContainer) return;
+        const safeJobs = Array.isArray(jobs) ? jobs : [];
+        if (!safeJobs.length) {
             jobContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">कोई सक्रिय फॉर्म नहीं है।</p>';
             return;
         }
-        jobContainer.innerHTML = jobs.slice(0, 5).map(job => `
+        jobContainer.innerHTML = safeJobs.slice(0, 5).filter(job => job && typeof job === 'object').map(job => `
             <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
                 <b class="text-gray-900 dark:text-white text-xs">${escapeHTML(job.title)}</b>
                 <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
@@ -1839,11 +1841,13 @@
 
     function renderElecHTML(docs) {
         const elecContainer = document.getElementById('election-widget-list');
-        if (!docs || !docs.length) {
+        if (!elecContainer) return;
+        const safeDocs = Array.isArray(docs) ? docs : [];
+        if (!safeDocs.length) {
             elecContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">दस्तावेज़ उपलब्ध नहीं हैं।</p>';
             return;
         }
-        elecContainer.innerHTML = docs.map(doc => `
+        elecContainer.innerHTML = safeDocs.filter(doc => doc && typeof doc === 'object').map(doc => `
             <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900 mb-2">
                 <p class="font-bold text-amber-900 dark:text-amber-200">📄 ${escapeHTML(doc.title)}</p>
                 <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(doc.subtitle || '')}</p>
