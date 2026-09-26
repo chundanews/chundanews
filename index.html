@@ -1521,8 +1521,11 @@
     }
 
     function editNewsPost(id) {
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         resetPostModalState();
-        const n = newsList.find(x => x.id === id);
+        const sourceList = Array.isArray(newsList) ? newsList : [];
+        const n = sourceList.find(x => x && x.id === safeId);
         if (!n) return;
         
         document.getElementById('post-modal-title').innerText = "खबर एडिट करें";
@@ -1548,9 +1551,11 @@
     }
 
     async function deleteNewsPost(id) {
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         if (!confirm('क्या आप सचमुच इस खबर को हटाना चाहते हैं?')) return;
         try {
-            await db.collection('news_posts').doc(id).delete();
+            await db.collection('news_posts').doc(safeId).delete();
             alert("खबर हटा दी गई!");
             loadNewsWithTTL(true);
         } catch (err) {
