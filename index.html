@@ -2017,13 +2017,18 @@
     });
 
     function triggerPwaInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((res) => {
-                if (res.outcome === 'accepted') document.getElementById('pwa-install-btn').style.display = 'none';
-                deferredPrompt = null;
-            });
-        }
+        if (!deferredPrompt) return;
+
+        const promptEvent = deferredPrompt;
+        deferredPrompt = null;
+        promptEvent.prompt();
+
+        promptEvent.userChoice.then((res) => {
+            if (res.outcome === 'accepted') {
+                const pwaBtn = document.getElementById('pwa-install-btn');
+                if (pwaBtn) pwaBtn.style.display = 'none';
+            }
+        }).catch(() => {});
     }
 
     async function enablePushNotifications() {
