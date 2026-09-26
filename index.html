@@ -1116,7 +1116,7 @@
     }
 
     function setLeadStory(item) {
-        if (!item) return;
+        if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !item.id.trim()) return;
         leadNewsItem = item;
         document.getElementById('lead-news-section').classList.remove('hidden');
         document.getElementById('lead-title').innerText = item.title || '';
