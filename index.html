@@ -1205,7 +1205,9 @@
     }
 
     function filterNews(cat) {
-        currentCategory = cat;
+        const safeNewsList = Array.isArray(newsList) ? newsList : [];
+        const safeCategory = typeof cat === 'string' ? cat : 'all';
+        currentCategory = safeCategory;
         const calendar = document.getElementById('news-calendar-picker');
         const search = document.getElementById('search-input');
         if (calendar) calendar.value = '';
@@ -1214,13 +1216,13 @@
             search.setAttribute('aria-label', 'खबर खोजें');
         }
         const titleEl = document.getElementById('current-category-title');
-        if (titleEl) titleEl.textContent = cat === 'all' ? 'ताज़ा समाचार फीड' : cat;
-        if (cat === 'all') {
-            renderNews(newsList);
-            const lead = newsList[0];
+        if (titleEl) titleEl.textContent = safeCategory === 'all' ? 'ताज़ा समाचार फीड' : safeCategory;
+        if (safeCategory === 'all') {
+            renderNews(safeNewsList);
+            const lead = safeNewsList[0];
             renderRelatedNews(lead?.id || '', lead?.category || '');
         } else {
-            renderNews(newsList.filter(n => n.category === cat));
+            renderNews(safeNewsList.filter(n => n && n.category === safeCategory));
         }
     }
 
