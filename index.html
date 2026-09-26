@@ -1306,19 +1306,28 @@
         });
         const editor = document.getElementById('news-content-editor');
         if (editor) editor.innerHTML = '';
-        document.getElementById('news-reporter').value = 'विशेष संवाददाता';
-        document.getElementById('news-category').value = 'चुनाव अपडेट';
-        document.getElementById('news-breaking').checked = false;
-        document.getElementById('news-lead').checked = false;
+
+        const reporter = document.getElementById('news-reporter');
+        const category = document.getElementById('news-category');
+        const breaking = document.getElementById('news-breaking');
+        const lead = document.getElementById('news-lead');
         const submitBtn = document.getElementById('submit-btn');
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'पोस्ट करें';
+
+        if (reporter) reporter.value = 'विशेष संवाददाता';
+        if (category) category.value = 'चुनाव अपडेट';
+        if (breaking) breaking.checked = false;
+        if (lead) lead.checked = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'पोस्ट करें';
+        }
     }
 
-    function triggerOpenNewPostModal() { 
+    function triggerOpenNewPostModal() {
         resetPostModalState();
-        document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
-        openPortalModal('post-modal'); 
+        const titleEl = document.getElementById('post-modal-title');
+        if (titleEl) titleEl.innerText = "नई खबर पोस्ट करें";
+        openPortalModal('post-modal');
     }
     
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
