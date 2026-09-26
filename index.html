@@ -1738,8 +1738,10 @@
 
     function onAdminSuccess(email) {
         isAdminLoggedIn = true;
-        document.getElementById('admin-user-email').innerText = email;
-        document.getElementById('admin-action-bar').style.display = 'flex';
+        const emailEl = document.getElementById('admin-user-email');
+        const actionBar = document.getElementById('admin-action-bar');
+        if (emailEl) emailEl.innerText = typeof email === 'string' ? email : '';
+        if (actionBar) actionBar.style.display = 'flex';
         closePortalModal('admin-modal');
         renderNews(newsList);
     }
@@ -1747,7 +1749,8 @@
     async function logoutAdmin() {
         await auth.signOut();
         isAdminLoggedIn = false;
-        document.getElementById('admin-action-bar').style.display = 'none';
+        const actionBar = document.getElementById('admin-action-bar');
+        if (actionBar) actionBar.style.display = 'none';
         renderNews(newsList);
     }
 
