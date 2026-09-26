@@ -1291,10 +1291,12 @@
             selectedDate.getDate() !== selDay
         ) return;
 
-        const safeNewsList = Array.isArray(newsList) ? newsList : [];
+        const safeNewsList = Array.isArray(newsList)
+            ? newsList.filter(item => item && typeof item === 'object')
+            : [];
         const filtered = safeNewsList.filter(item => {
-            const timestamp = Number(item.createdAt) || 0;
-            if (!timestamp) return false;
+            const timestamp = Number(item.createdAt);
+            if (!Number.isFinite(timestamp) || timestamp <= 0 || timestamp > Date.now()) return false;
             const itemDate = new Date(timestamp);
             return itemDate.getFullYear() === selYear &&
                    (itemDate.getMonth() + 1) === selMonth &&
