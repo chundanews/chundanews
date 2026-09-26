@@ -2,7 +2,7 @@ name: Generate sitemap
 
 on:
   push:
-    branches: [modern-ui-2026]
+    branches: [main, modern-ui-2026]
     paths:
       - 'generate-sitemap.js'
       - 'package.json'
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: modern-ui-2026
+          ref: ${{ github.ref_name }}
 
       - name: Generate sitemap
         run: node generate-sitemap.js
@@ -38,4 +38,4 @@ jobs:
           fi
           git add sitemap.xml news-sitemap.xml
           git commit -m "chore: refresh sitemap"
-          git push origin HEAD:modern-ui-2026
+          git push origin HEAD:${GITHUB_REF_NAME}
