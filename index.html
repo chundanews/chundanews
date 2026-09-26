@@ -854,8 +854,17 @@
         };
         try {
             const cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
-            if (cached && cached.timestamp && (Date.now() - cached.timestamp) < 10 * 60 * 1000) {
-                renderWeather(cached.temp, cached.description);
+            const cachedTime = cached && Number(cached.timestamp);
+            const hasFreshCache =
+                cached &&
+                Number.isFinite(cachedTime) &&
+                cachedTime > 0 &&
+                (Date.now() - cachedTime) < 10 * 60 * 1000 &&
+                Number.isFinite(Number(cached.temp)) &&
+                typeof cached.description === 'string';
+
+            if (hasFreshCache) {
+                renderWeather(Number(cached.temp), cached.description);
                 return;
             }
         } catch (_) {}
