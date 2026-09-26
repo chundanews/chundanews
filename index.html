@@ -1187,8 +1187,9 @@
         tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
         excerptEl.innerText = tempDiv.textContent || tempDiv.innerText || '';
 
-        const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
-        const leadImage = document.getElementById('lead-image');
+        const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0)
+            ? item.images[0]
+            : (typeof item.image === 'string' ? item.image : '');
         leadImage.src = sanitizeUrl(rawLeadImg) || NEWS_IMAGE_FALLBACK;
         leadImage.onerror = () => handleNewsImageError(leadImage);
         leadImage.alt = item.title ? `${item.title} — CHUNDA KSHETRA NEWS` : 'मुख्य खबर की तस्वीर';
