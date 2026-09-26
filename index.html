@@ -108,10 +108,10 @@
             <span id="live-weather-display"><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: 31°C (साफ मौसम)</span>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="startAiVoiceBulletin()" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
+            <button id="ai-voice-btn" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
                 <i class="fa-solid fa-robot"></i> 🎙️ AI बुलेटिन सुनें
             </button>
-            <button onclick="openPortalModal('citizen-modal')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-0.5 rounded font-semibold text-[10px]">
+            <button id="header-citizen-btn" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-0.5 rounded font-semibold text-[10px]">
                 ✍️ खबर भेजें
             </button>
         </div>
@@ -140,7 +140,7 @@
 
 <header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="filterNews('all')">
+        <div id="brand-home-link" class="flex items-center gap-3 cursor-pointer">
             <div class="bg-red-700 text-white w-14 h-14 rounded-xl flex items-center justify-center shadow-lg border-2 border-red-500">
                 <i class="fa-solid fa-newspaper text-3xl"></i>
             </div>
@@ -194,7 +194,7 @@
                     <i class="fa-regular fa-calendar text-red-500 text-xs"></i>
                     <label for="news-calendar-picker" class="sr-only">खबर की तारीख चुनें</label>
                     <input type="date" id="news-calendar-picker" aria-label="खबर की तारीख चुनें" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
-                    <button onclick="resetCalendarFilter()" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
+                    <button id="calendar-reset-btn" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
                 </div>
                 <div class="hidden lg:block relative w-44">
                     <label for="search-input" class="sr-only">खबर खोजें</label>
@@ -219,15 +219,15 @@
         <b>एडमिन कंसोल: <span id="admin-user-email" class="font-normal text-emerald-200"></span></b>
     </div>
     <div class="flex flex-wrap gap-2 text-xs">
-        <button onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
-        <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
-        <button onclick="triggerOpenElectionModal()" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
-        <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
-        <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
+        <button id="new-post-btn" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
+        <button id="new-job-btn" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
+        <button id="new-election-btn" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
+        <button id="new-score-btn" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
+        <button id="reports-btn" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
             📥 प्राप्त रिपोर्ट 
             <span id="citizen-reports-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0.2 rounded-full hidden">0</span>
         </button>
-        <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
+        <button id="logout-admin-btn" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
     </div>
 </div>
 
@@ -235,7 +235,7 @@
     <section id="lead-news-section" class="mb-8 hidden" aria-labelledby="lead-title">
         <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
             <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
-                <img id="lead-image" alt="मुख्य खबर की तस्वीर" width="800" height="450" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover cursor-pointer" role="button" tabindex="0" onclick="openLeadModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLeadModal();}">
+                <img id="lead-image" alt="मुख्य खबर की तस्वीर" width="800" height="450" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover cursor-pointer" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLeadModal();}">
                 <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
                     ⭐ प्रमुख समाचार (LEAD STORY)
                 </div>
@@ -243,7 +243,7 @@
             <div class="lg:col-span-5 p-6 flex flex-col justify-between">
                 <div>
                     <span id="lead-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2.5 py-0.5 rounded"></span>
-                    <h2 id="lead-title" class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600" onclick="openLeadModal()"></h2>
+                    <h2 id="lead-title" class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600"></h2>
                     <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 my-3">
                         <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-bold text-gray-700 dark:text-gray-300">
                             🎤 <span class="text-red-600">CKN</span> <span id="lead-reporter"></span>
@@ -379,7 +379,7 @@
             <span id="cookie-consent-description"><span id="cookie-consent-title" class="font-bold text-white">🍪 कुकीज़ और गोपनीयता नीति:</span> हम आपकी ब्राउज़िंग अनुभव को बेहतर बनाने, वैयक्तिकृत सामग्री और विज्ञापनों को दिखाने तथा विज़िट का विश्लेषण करने के लिए कुकीज़ का उपयोग करते हैं। 'स्वीकार करें' पर क्लिक करके आप हमारी <button onclick="openPortalModal('privacy-modal')" class="underline text-red-400 hover:text-red-300">गोपनीयता नीति</button> से सहमत होते हैं।</span>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-            <button onclick="acceptCookies()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition shadow">
+            <button id="accept-cookies-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition shadow">
                 स्वीकार करें (Accept)
             </button>
         </div>
@@ -2178,6 +2178,26 @@
         setTimeout(fetchLiveWeather, 700);
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
         checkCookieConsent();
+
+        const staticHandlers = [
+            ['ai-voice-btn', 'click', startAiVoiceBulletin],
+            ['header-citizen-btn', 'click', () => openPortalModal('citizen-modal')],
+            ['brand-home-link', 'click', () => filterNews('all')],
+            ['calendar-reset-btn', 'click', resetCalendarFilter],
+            ['new-post-btn', 'click', triggerOpenNewPostModal],
+            ['new-job-btn', 'click', triggerOpenJobModal],
+            ['new-election-btn', 'click', triggerOpenElectionModal],
+            ['new-score-btn', 'click', triggerOpenScoreModal],
+            ['reports-btn', 'click', triggerOpenReportsModal],
+            ['logout-admin-btn', 'click', logoutAdmin],
+            ['lead-image', 'click', openLeadModal],
+            ['lead-title', 'click', openLeadModal],
+            ['accept-cookies-btn', 'click', acceptCookies]
+        ];
+        staticHandlers.forEach(([id, eventName, handler]) => {
+            const el = document.getElementById(id);
+            if (el && typeof handler === 'function') el.addEventListener(eventName, handler);
+        });
 
         const directHandlers = [
             ['pwa-install-btn', 'click', triggerPwaInstall],
