@@ -1964,9 +1964,13 @@
         const scoreEl = document.getElementById('match-score');
         const statusEl = document.getElementById('match-status');
 
-        if (titleEl) titleEl.innerText = typeof data.title === 'string' ? data.title : '';
-        if (scoreEl) scoreEl.innerText = typeof data.score === 'string' ? data.score : '';
-        if (statusEl) statusEl.innerText = typeof data.status === 'string' ? data.status : '';
+        const title = typeof data.title === 'string' ? data.title.trim() : '';
+        const score = typeof data.score === 'string' ? data.score.trim() : '';
+        const status = typeof data.status === 'string' ? data.status.trim() : '';
+
+        if (titleEl) titleEl.innerText = title;
+        if (scoreEl) scoreEl.innerText = score;
+        if (statusEl) statusEl.innerText = status;
     }
 
     let liveScoreRefreshInFlight = false;
