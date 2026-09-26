@@ -1585,14 +1585,25 @@
         const n = sourceList.find(x => x && x.id === safeId);
         if (!n) return;
         
-        document.getElementById('post-modal-title').innerText = "खबर एडिट करें";
-        document.getElementById('edit-doc-id').value = n.id;
-        document.getElementById('news-title').value = n.title || '';
-        document.getElementById('news-category').value = n.category || 'चुनाव अपडेट';
-        document.getElementById('news-reporter').value = n.reporter || 'विशेष संवाददाता';
-        document.getElementById('news-content-editor').innerHTML = sanitizeNewsHtml(n.content || '');
-        document.getElementById('news-breaking').checked = !!n.isBreaking;
-        document.getElementById('news-lead').checked = !!n.isLead;
+        const modalTitle = document.getElementById('post-modal-title');
+        const editDocIdEl = document.getElementById('edit-doc-id');
+        const titleEl = document.getElementById('news-title');
+        const categoryEl = document.getElementById('news-category');
+        const reporterEl = document.getElementById('news-reporter');
+        const editorEl = document.getElementById('news-content-editor');
+        const breakingEl = document.getElementById('news-breaking');
+        const leadEl = document.getElementById('news-lead');
+        const imageEl = document.getElementById('news-image');
+        const submitBtn = document.getElementById('submit-btn');
+        if (!modalTitle || !editDocIdEl || !titleEl || !categoryEl || !reporterEl || !editorEl || !breakingEl || !leadEl || !imageEl || !submitBtn) return;
+        modalTitle.innerText = "खबर एडिट करें";
+        editDocIdEl.value = n.id;
+        titleEl.value = n.title || '';
+        categoryEl.value = n.category || 'चुनाव अपडेट';
+        reporterEl.value = n.reporter || 'विशेष संवाददाता';
+        editorEl.innerHTML = sanitizeNewsHtml(n.content || '');
+        breakingEl.checked = !!n.isBreaking;
+        leadEl.checked = !!n.isLead;
         
         // Populate multiple images as comma separated if available
         let imgVal = '';
@@ -1601,9 +1612,9 @@
         } else if (n.image) {
             imgVal = n.image;
         }
-        document.getElementById('news-image').value = imgVal;
+        imageEl.value = imgVal;
         
-        document.getElementById('submit-btn').innerText = 'अपडेट करें';
+        submitBtn.innerText = 'अपडेट करें';
         openPortalModal('post-modal');
     }
 
