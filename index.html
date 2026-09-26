@@ -1441,15 +1441,24 @@
         }
         const submitBtn = document.getElementById('submit-btn');
         const editDocId = safeNewsId(document.getElementById('edit-doc-id').value);
+        if (!submitBtn) return;
         submitBtn.disabled = true;
         try {
             submitBtn.innerText = 'तैयारी हो रही है...';
-            const title = document.getElementById('news-title').value.trim();
-            const category = document.getElementById('news-category').value;
-            const reporter = document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता';
-            const content = sanitizeNewsHtml(document.getElementById('news-content-editor').innerHTML.trim());
-            const manualUrlInput = document.getElementById('news-image').value.trim();
+            const titleEl = document.getElementById('news-title');
+            const categoryEl = document.getElementById('news-category');
+            const reporterEl = document.getElementById('news-reporter');
+            const editorEl = document.getElementById('news-content-editor');
+            const manualUrlEl = document.getElementById('news-image');
             const imageFileInput = document.getElementById('news-image-files');
+            if (!titleEl || !categoryEl || !reporterEl || !editorEl || !manualUrlEl) {
+                throw new Error('समाचार फॉर्म के आवश्यक फ़ील्ड उपलब्ध नहीं हैं।');
+            }
+            const title = titleEl.value.trim();
+            const category = categoryEl.value;
+            const reporter = reporterEl.value.trim() || 'विशेष संवाददाता';
+            const content = sanitizeNewsHtml(editorEl.innerHTML.trim());
+            const manualUrlInput = manualUrlEl.value.trim();
 
             let imageUrls = [];
 
