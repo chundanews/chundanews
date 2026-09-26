@@ -1073,7 +1073,7 @@
             const safeId = safeNewsIdAttr(item.id);
             
             const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
+            tempDiv.innerHTML = sanitizeNewsHtml(typeof item.content === 'string' ? item.content : '');
             const plainText = tempDiv.textContent || tempDiv.innerText || '';
 
             return `
@@ -1169,10 +1169,7 @@
         categoryEl.innerText = typeof item.category === 'string' && item.category ? item.category : 'प्रमुख';
         reporterEl.innerText = typeof item.reporter === 'string' && item.reporter ? item.reporter : 'विशेष संवाददाता';
         dateEl.innerText = typeof item.date === 'string' && item.date ? item.date : 'आज';
-        document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
-        document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
-        document.getElementById('lead-date').innerText = item.date || "आज";
-        
+
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
         excerptEl.innerText = tempDiv.textContent || tempDiv.innerText || '';
