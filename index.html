@@ -1647,9 +1647,13 @@
     async function handleScoreSubmit(e) {
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है। समय समाप्त।'); return; }
-        const title = document.getElementById('score-title').value.trim();
-        const score = document.getElementById('score-detail').value.trim();
-        const status = document.getElementById('score-status').value.trim();
+        const titleEl = document.getElementById('score-title');
+        const scoreEl = document.getElementById('score-detail');
+        const statusEl = document.getElementById('score-status');
+        if (!titleEl || !scoreEl || !statusEl) return;
+        const title = titleEl.value.trim();
+        const score = scoreEl.value.trim();
+        const status = statusEl.value.trim();
         if ([title, score, status].some(v => v.length < 2 || v.length > 300)) { alert('स्कोर जानकारी अमान्य है।'); return; }
         try {
             await db.collection('live_score').doc('current').set({ title, score, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
