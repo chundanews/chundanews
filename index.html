@@ -1331,9 +1331,11 @@
         const input = document.getElementById('search-input');
         if (!input) return;
 
-        const q = String(input.value || '').toLowerCase().trim();
+        const q = String(input.value || '').toLowerCase().trim().slice(0, 120);
         const countEl = document.getElementById('news-count');
-        const safeNewsList = Array.isArray(newsList) ? newsList : [];
+        const safeNewsList = Array.isArray(newsList)
+            ? newsList.filter(n => n && typeof n === 'object' && typeof n.id === 'string' && n.id.trim())
+            : [];
         if (!q) {
             filterNews(currentCategory);
             return;
