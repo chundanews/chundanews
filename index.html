@@ -1656,6 +1656,8 @@
         }
     }
 
+    let newsRefreshInFlight = false;
+
     function loadNewsWithTTL(forceRefresh = false) {
         const cachedList = readLocalJson('cached_news_list');
         const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
@@ -1673,6 +1675,8 @@
         }
 
         if (forceRefresh || !hasValidCache || !Number.isFinite(lastFetch) || (now - lastFetch) > TTL) {
+            if (newsRefreshInFlight) return;
+            newsRefreshInFlight = true;
             db.collection('news_posts')
                 .orderBy('createdAt', 'desc')
                 .limit(25)
@@ -1691,7 +1695,8 @@
                         updateBreakingTicker(fetchedList);
                         renderNews(newsList);
                     }
-                }).catch(err => console.warn("Cache served. Remote offline:", err));
+                }).catch(err => console.warn("Cache served. Remote offline:", err))
+                .finally(() => { newsRefreshInFlight = false; });
         }
     }
 
