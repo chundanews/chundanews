@@ -1847,9 +1847,15 @@
     }
 
     function renderLiveScore(data) {
-        document.getElementById('match-title').innerText = data?.title || '';
-        document.getElementById('match-score').innerText = data?.score || '';
-        document.getElementById('match-status').innerText = data?.status || '';
+        if (!data || typeof data !== 'object') return;
+
+        const titleEl = document.getElementById('match-title');
+        const scoreEl = document.getElementById('match-score');
+        const statusEl = document.getElementById('match-status');
+
+        if (titleEl) titleEl.innerText = typeof data.title === 'string' ? data.title : '';
+        if (scoreEl) scoreEl.innerText = typeof data.score === 'string' ? data.score : '';
+        if (statusEl) statusEl.innerText = typeof data.status === 'string' ? data.status : '';
     }
 
     function loadScore(forceRefresh = false) {
