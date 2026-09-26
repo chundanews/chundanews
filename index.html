@@ -208,6 +208,7 @@
         <button onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
         <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
         <button onclick="triggerOpenElectionModal()" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
+        <button onclick="triggerOpenVillageElectionModal()" class="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-500">+ गांव चुनाव जानकारी</button>
         <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
         <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
             📥 प्राप्त रिपोर्ट 
@@ -452,6 +453,29 @@
             </div>
         </form>
     </div>
+</div>
+
+<div id="village-election-admin-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[90vh] overflow-y-auto">
+    <h3 class="text-lg font-bold mb-3 text-gray-900 dark:text-white">🗳️ गांव/पंचायत चुनाव जानकारी</h3>
+    <form onsubmit="handleVillageElectionSubmit(event)" class="space-y-3 text-xs">
+      <input id="ve-district" required placeholder="जिला" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      <input id="ve-ps" required placeholder="पंचायत समिति" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      <input id="ve-gp" required placeholder="ग्राम पंचायत" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      <input id="ve-village" required placeholder="गांव" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      <div class="grid grid-cols-2 gap-2">
+        <input id="ve-sarpanch" placeholder="सरपंच आरक्षण (जैसे ST महिला)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+        <input id="ve-ward" placeholder="वार्ड पंच जानकारी" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      </div>
+      <input id="ve-status" placeholder="स्थिति (जैसे आरक्षण घोषित / परिणाम)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      <input id="ve-source" type="url" placeholder="आधिकारिक स्रोत लिंक (https://...)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+      <textarea id="ve-notes" rows="3" placeholder="अतिरिक्त जानकारी / नोट" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2"></textarea>
+      <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
+        <button type="button" onclick="closePortalModal('village-election-admin-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
+        <button type="submit" id="ve-submit-btn" class="bg-red-600 text-white px-5 py-1.5 rounded font-bold">सेव करें</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <div id="election-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
@@ -1009,12 +1033,18 @@
         if (q.length < 2) { out.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">कम से कम 2 अक्षर लिखें।</p>'; return; }
         const newsMatches = newsList.filter(n => [n.title,n.content,n.category,n.reporter].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,8);
         const elecMatches = (window.cknElectionDocs || []).filter(d => [d.title,d.subtitle].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,5);
-        if (!newsMatches.length && !elecMatches.length) { out.innerHTML = '<div class="rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center text-xs text-gray-500">इस नाम से अभी कोई प्रकाशित चुनाव जानकारी नहीं मिली।</div>'; return; }
+                const villageMatches = (window.cknVillageElections || []).filter(v => [v.district,v.panchayatSamiti,v.gramPanchayat,v.village,v.sarpanchReservation,v.wardInfo,v.status,v.notes].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,10);
+        if (!newsMatches.length && !elecMatches.length && !villageMatches.length) { out.innerHTML = '<div class="rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-center text-xs text-gray-500">इस नाम से अभी कोई प्रकाशित चुनाव जानकारी नहीं मिली।</div>'; return; }
         let html = '';
         if (newsMatches.length) {
             html += '<h4 class="text-xs font-black text-gray-900 dark:text-white mb-2">📰 संबंधित खबरें</h4>';
             html += newsMatches.map(n => '<div class="p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/60 mb-2"><b class="block text-xs text-gray-900 dark:text-white">' + escapeHTML(n.title || '') + '</b><span class="text-[10px] text-gray-500 mt-1 block">' + escapeHTML(n.category || 'समाचार') + '</span></div>').join('');
         }
+        if (villageMatches.length) {
+            html += '<h4 class="text-xs font-black text-gray-900 dark:text-white mt-4 mb-2">🏡 गांव/पंचायत जानकारी</h4>';
+            html += villageMatches.map(v => '<div class="p-3 rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 mb-2"><b class="block text-xs text-red-900 dark:text-red-200">' + escapeHTML(v.village || '') + ' — ' + escapeHTML(v.gramPanchayat || '') + '</b><span class="text-[10px] text-gray-700 dark:text-gray-300 mt-1 block">पंचायत समिति: ' + escapeHTML(v.panchayatSamiti || '') + ' | जिला: ' + escapeHTML(v.district || '') + '</span><span class="text-[10px] text-gray-700 dark:text-gray-300 mt-1 block">सरपंच आरक्षण: ' + escapeHTML(v.sarpanchReservation || 'उपलब्ध नहीं') + ' | वार्ड: ' + escapeHTML(v.wardInfo || 'उपलब्ध नहीं') + '</span><span class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 block">' + escapeHTML(v.status || '') + '</span>' + (v.sourceUrl ? '<a class="inline-block text-[10px] font-bold text-blue-600 mt-2" href="' + sanitizeUrl(v.sourceUrl) + '" target="_blank" rel="noopener noreferrer">आधिकारिक स्रोत देखें →</a>' : '') + '</div>').join('');
+        }
+
         if (elecMatches.length) {
             html += '<h4 class="text-xs font-black text-gray-900 dark:text-white mt-4 mb-2">📄 चुनाव दस्तावेज़</h4>';
             html += elecMatches.map(d => '<a href="' + sanitizeUrl(d.link || '#') + '" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 mb-2"><b class="block text-xs text-amber-900 dark:text-amber-200">' + escapeHTML(d.title || '') + '</b><span class="text-[10px] text-gray-600 dark:text-gray-300 mt-1 block">' + escapeHTML(d.subtitle || '') + '</span></a>').join('');
@@ -1501,6 +1531,19 @@
         }
     }
 
+    function loadVillageElectionData(forceRefresh = false) {
+        const cached = localStorage.getItem('ckn_cached_village_elections');
+        if (cached) { try { window.cknVillageElections = JSON.parse(cached); } catch(e) { window.cknVillageElections = []; } }
+        if (forceRefresh || !cached) {
+            db.collection('village_elections').limit(500).get().then(snapshot => {
+                const list = snapshot.docs.map(doc => ({id: doc.id, ...normalizeDoc(doc)}));
+                list.sort((a,b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
+                window.cknVillageElections = list;
+                try { localStorage.setItem('ckn_cached_village_elections', JSON.stringify(list)); } catch(e) {}
+            }).catch(() => {});
+        }
+    }
+
     function loadWidgetData(forceRefresh = false) {
         const cachedJobs = localStorage.getItem('ckn_cached_jobs');
         const cachedElec = localStorage.getItem('ckn_cached_elec');
@@ -1642,6 +1685,7 @@
 
         loadNewsWithTTL();
         loadWidgetData();
+        loadVillageElectionData();
         loadScore();
     });
 
