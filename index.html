@@ -678,7 +678,7 @@
     const NEWS_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
 
     function handleNewsImageError(img) {
-        if (!img || img.dataset.fallbackApplied === 'true') return;
+        if (!img || !(img instanceof HTMLImageElement) || img.dataset.fallbackApplied === 'true') return;
         img.dataset.fallbackApplied = 'true';
         img.onerror = null;
         img.src = NEWS_IMAGE_FALLBACK;
