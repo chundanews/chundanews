@@ -1144,16 +1144,33 @@
 
     function setLeadStory(item) {
         if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !item.id.trim()) return;
+
+        const section = document.getElementById('lead-news-section');
+        const titleEl = document.getElementById('lead-title');
+        const categoryEl = document.getElementById('lead-category');
+        const reporterEl = document.getElementById('lead-reporter');
+        const dateEl = document.getElementById('lead-date');
+        const excerptEl = document.getElementById('lead-excerpt');
+        const leadImage = document.getElementById('lead-image');
+        const readBtn = document.getElementById('lead-read-btn');
+        const copyBtn = document.getElementById('lead-copy-btn');
+        const shareBtn = document.getElementById('lead-share-btn');
+
+        if (!section || !titleEl || !categoryEl || !reporterEl || !dateEl || !excerptEl || !leadImage) return;
+
         leadNewsItem = item;
-        document.getElementById('lead-news-section').classList.remove('hidden');
-        document.getElementById('lead-title').innerText = item.title || '';
+        section.classList.remove('hidden');
+        titleEl.innerText = typeof item.title === 'string' ? item.title : '';
+        categoryEl.innerText = typeof item.category === 'string' && item.category ? item.category : 'प्रमुख';
+        reporterEl.innerText = typeof item.reporter === 'string' && item.reporter ? item.reporter : 'विशेष संवाददाता';
+        dateEl.innerText = typeof item.date === 'string' && item.date ? item.date : 'आज';
         document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
         document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
         document.getElementById('lead-date').innerText = item.date || "आज";
         
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
-        document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
+        excerptEl.innerText = tempDiv.textContent || tempDiv.innerText || '';
 
         const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
         const leadImage = document.getElementById('lead-image');
@@ -1162,9 +1179,9 @@
         leadImage.alt = item.title ? `${item.title} — CHUNDA KSHETRA NEWS` : 'मुख्य खबर की तस्वीर';
         leadImage.setAttribute('decoding', 'async');
         leadImage.setAttribute('fetchpriority', 'high');
-        document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
-        document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
-        document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
+        if (readBtn) readBtn.onclick = () => openReaderModal(item.id);
+        if (copyBtn) copyBtn.onclick = () => copyNewsLink(item.id);
+        if (shareBtn) shareBtn.onclick = () => shareWhatsAppWithImage(item.id);
     }
 
     function openLeadModal() {
