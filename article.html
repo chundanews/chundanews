@@ -4,9 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>विस्तार से खबर - CHUNDA KSHETRA NEWS</title>
+    <meta id="meta-description" name="description" content="CHUNDA KSHETRA NEWS की विस्तृत क्षेत्रीय खबर।">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="theme-color" content="#dc2626">
+    <link id="canonical-link" rel="canonical" href="https://chundanewslive.in/article.html">
+    <meta id="og-title" property="og:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-description" property="og:description" content="CHUNDA KSHETRA NEWS की विस्तृत क्षेत्रीय खबर।">
+    <meta id="og-url" property="og:url" content="https://chundanewslive.in/article.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-image" property="og:image" content="https://chundanewslive.in/favicon.ico">
+    <meta property="og:locale" content="hi_IN">
+    <meta id="twitter-title" name="twitter:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="twitter-description" name="twitter:description" content="CHUNDA KSHETRA NEWS की विस्तृत क्षेत्रीय खबर।">
+    <meta id="twitter-image" name="twitter:image" content="https://chundanewslive.in/favicon.ico">
+    <meta name="twitter:card" content="summary_large_image">
+    <script id="news-article-schema" type="application/ld+json">{}</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Mukta', sans-serif; }</style>
+    <style>body{font-family:'Mukta',sans-serif}.article-shell{max-width:820px}.article-card{background:rgba(255,255,255,.98);border:1px solid #e5e7eb;border-radius:24px;box-shadow:0 18px 50px rgba(15,23,42,.08);overflow:hidden}.article-header{padding:28px 30px 18px}.article-title{font-size:clamp(2rem,4vw,3.25rem);line-height:1.08;letter-spacing:-.02em}.article-meta{display:flex;flex-wrap:wrap;gap:8px 14px;color:#64748b;font-size:.86rem}.article-body{padding:0 30px 32px;font-size:1.08rem;line-height:1.9}.article-body p{margin:0 0 1.1rem}.article-body h2{font-size:1.45rem;font-weight:800;margin:1.7rem 0 .7rem}.article-body h3{font-size:1.2rem;font-weight:800;margin:1.4rem 0 .6rem}.article-body a{color:#b91c1c;text-decoration:underline}.article-body blockquote{border-left:4px solid #dc2626;padding-left:1rem;margin:1.2rem 0;font-weight:600;color:#475569}.article-hero{width:100%;max-height:520px;object-fit:cover;background:#e2e8f0}.article-actions{display:flex;flex-wrap:wrap;gap:8px;padding:0 30px 24px}.article-action{border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:9px 14px;font-weight:700;font-size:.82rem;cursor:pointer}.article-action:hover{background:#f8fafc}@media(max-width:640px){.article-header{padding:22px 18px 14px}.article-body{padding:0 18px 26px;font-size:1.03rem;line-height:1.82}.article-actions{padding:0 18px 20px}.article-card{border-radius:18px}.article-title{font-size:2rem}}.dark .article-card{background:#111827;border-color:#1f2937}.dark .article-action{background:#111827;color:#e5e7eb;border-color:#374151}</style>
     
     <!-- Firebase SDKs & App Check -->
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2"></script>
@@ -21,8 +37,8 @@
         <a href="/" class="text-2xl font-black tracking-tight">CHUNDA KSHETRA NEWS</a>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 py-8 flex-grow w-full">
-        <div id="article-container" class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-md border dark:border-gray-800">
+    <main class="article-shell mx-auto px-3 sm:px-4 py-5 sm:py-8 flex-grow w-full">
+        <div id="article-container" class="article-card">
             <p id="loading-text" class="text-center text-gray-500 py-12">खबर लोड हो रही है...</p>
         </div>
         <div class="mt-6 text-center">
@@ -59,16 +75,25 @@
             return '';
         }
 
+        function escapeHTML(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function sanitizeNewsHtml(html) {
             if (!html) return '';
-            if (window.DOMPurify) {
-                return DOMPurify.sanitize(String(html), {
-                    ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a'],
-                    ALLOWED_ATTR: ['href','target','rel'],
-                    FORBID_ATTR: ['style','class','id','onclick','onerror','onload']
-                });
+            if (!window.DOMPurify || typeof window.DOMPurify.sanitize !== 'function') {
+                return escapeHTML(String(html));
             }
-            return String(html);
+            return DOMPurify.sanitize(String(html), {
+                ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a'],
+                ALLOWED_ATTR: ['href','target','rel'],
+                FORBID_ATTR: ['style','class','id','onclick','onerror','onload']
+            });
         }
 
         async function fetchArticle() {
@@ -84,38 +109,83 @@
             try {
                 const doc = await db.collection('news_posts').doc(id).get();
                 if (!doc.exists) {
-                    container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है。<br><small class="text-gray-400">ID: ${id}</small></p>`;
+                    container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है。<br><small class="text-gray-400">ID: ${escapeHTML(id)}</small></p>`;
                     return;
                 }
 
                 const data = doc.data();
-                document.title = (data.title || 'विस्तृत खबर') + " - CHUNDA KSHETRA NEWS";
+                const articleTitle = String(data.title || 'विस्तृत खबर').trim();
+                const articleCategory = String(data.category || 'सामान्य').trim();
+                const articleDescription = (() => {
+                    const holder = document.createElement('div');
+                    holder.innerHTML = sanitizeNewsHtml(data.content || '');
+                    return (holder.textContent || holder.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+                })();
+                const firstImage = Array.isArray(data.images) && data.images.length ? sanitizeUrl(data.images[0]) : sanitizeUrl(data.image);
+                const canonical = 'https://chundanewslive.in/article.html?id=' + encodeURIComponent(id);
+                document.title = articleTitle + " - CHUNDA KSHETRA NEWS";
+                document.getElementById('meta-description').setAttribute('content', articleDescription || articleTitle);
+                document.getElementById('canonical-link').setAttribute('href', canonical);
+                document.getElementById('og-title').setAttribute('content', articleTitle);
+                document.getElementById('og-description').setAttribute('content', articleDescription || articleTitle);
+                document.getElementById('og-url').setAttribute('content', canonical);
+                document.getElementById('og-image').setAttribute('content', firstImage || 'https://chundanewslive.in/favicon.ico');
+                document.getElementById('twitter-title').setAttribute('content', articleTitle);
+                document.getElementById('twitter-description').setAttribute('content', articleDescription || articleTitle);
+                document.getElementById('twitter-image').setAttribute('content', firstImage || 'https://chundanewslive.in/favicon.ico');
+                const articleAuthor = String(data.reporter || 'विशेष संवाददाता').trim() || 'विशेष संवाददाता';
+                const schema = {
+                    '@context':'https://schema.org',
+                    '@type':'NewsArticle',
+                    'headline':articleTitle,
+                    'description':articleDescription || articleTitle,
+                    'inLanguage':'hi-IN',
+                    'author':{'@type':'Person','name':articleAuthor},
+                    'publisher':{
+                        '@type':'Organization',
+                        'name':'CHUNDA KSHETRA NEWS',
+                        'url':'https://chundanewslive.in/',
+                        'logo':{'@type':'ImageObject','url':'https://chundanewslive.in/favicon.ico'}
+                    },
+                    'mainEntityOfPage':{'@type':'WebPage','@id':canonical},
+                    'articleSection':articleCategory
+                };
+                if(firstImage) schema.image=[firstImage];
+                if(data.createdAt && typeof data.createdAt.toDate === 'function') {
+                    schema.datePublished=data.createdAt.toDate().toISOString();
+                }
+                if(data.updatedAt && typeof data.updatedAt.toDate === 'function') {
+                    schema.dateModified=data.updatedAt.toDate().toISOString();
+                } else if(schema.datePublished) {
+                    schema.dateModified=schema.datePublished;
+                }
+                document.getElementById('news-article-schema').textContent = JSON.stringify(schema);
 
                 // Multiple Images handling for article page
                 let imagesHtml = '';
                 if (Array.isArray(data.images) && data.images.length > 0) {
                     imagesHtml = data.images.map(imgUrl => {
                         const safeImg = sanitizeUrl(imgUrl);
-                        return safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-4 object-cover max-h-[450px]" alt="News Image" onerror="this.style.display='none'">` : '';
+                        return safeImg ? `<img src="${safeImg}" class="article-hero mb-4" loading="lazy" decoding="async" alt="News Image" onerror="this.style.display='none'">` : '';
                     }).join('');
                 } else if (data.image) {
                     const safeImg = sanitizeUrl(data.image);
-                    imagesHtml = safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[450px]" alt="News Image">` : '';
+                    imagesHtml = safeImg ? `<img src="${safeImg}" class="article-hero mb-6" decoding="async" alt="News Image">` : '';
                 }
 
                 container.innerHTML = `
-                    <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-0.5 rounded">${data.category || 'सामान्य'}</span>
-                    <h1 class="text-2xl md:text-3xl font-black mt-3 mb-2 leading-snug">${data.title || ''}</h1>
-                    <p class="text-xs text-gray-500 mb-4">रिपोर्टर: ${data.reporter || 'विशेष संवाददाता'} | दिनांक: ${data.date || 'आज'}</p>
+                    <div class="article-header"><span class="inline-flex bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-xs font-bold px-3 py-1 rounded-full">${escapeHTML(data.category || 'सामान्य')}</span>
+                    <h1 class="article-title font-black mt-4 mb-4">${escapeHTML(data.title || '')}</h1>
+                    <div class="article-meta"><span>✍️ ${escapeHTML(data.reporter || 'विशेष संवाददाता')}</span><span>•</span><span>🗓️ ${escapeHTML(data.date || 'आज')}</span></div></div><div class="article-actions"><button class="article-action" type="button" onclick="navigator.share?navigator.share({title:document.title,url:location.href}):navigator.clipboard.writeText(location.href).then(()=>alert('खबर का लिंक कॉपी हो गया।'))">↗️ शेयर</button><button class="article-action" type="button" onclick="navigator.clipboard.writeText(location.href).then(()=>alert('खबर का लिंक कॉपी हो गया।'))">🔗 लिंक कॉपी</button><a class="article-action" href="/">← होम</a></div>
                     
                     ${imagesHtml}
 
-                    <div class="text-sm leading-relaxed space-y-4 text-gray-700 dark:text-gray-300">
+                    <div class="article-body text-gray-700 dark:text-gray-300">
                         ${sanitizeNewsHtml(data.content || '')}
                     </div>
                 `;
             } catch (err) {
-                container.innerHTML = `<p class="text-center text-red-500 py-8">खबर लोड करने में नेटवर्क त्रुटि हुई।<br><small class="text-gray-400 font-mono">Error: ${err.message}</small></p>`;
+                container.innerHTML = `<p class="text-center text-red-500 py-8">खबर लोड करने में नेटवर्क त्रुटि हुई।<br><small class="text-gray-400 font-mono">Error: ${escapeHTML(err && err.message ? err.message : 'अज्ञात त्रुटि')}</small></p>`;
             }
         }
 

@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://chundanewslive.in/sitemap.xml
+Sitemap: https://chundanewslive.in/news-sitemap.xml

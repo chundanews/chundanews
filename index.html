@@ -6,7 +6,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://api.imgbb.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://www.google.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preconnect" href="https://images.unsplash.com">
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Content Security Policy (CSP) Optimized with ImgBB & Worker Support -->
@@ -31,6 +35,14 @@
     <meta id="meta-description" name="description" content="चूंडा क्षेत्र न्यूज़ — राजस्थान और क्षेत्रीय स्तर की ताज़ा, सटीक और निष्पक्ष खबरें।">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <meta name="theme-color" content="#dc2626">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CHUNDA KSHETRA NEWS">
+    <meta property="og:locale" content="hi_IN">
+    <meta property="og:image:alt" content="CHUNDA KSHETRA NEWS">
     <link id="canonical-link" rel="canonical" href="https://chundanewslive.in/">
     <meta id="og-title" property="og:title" content="CHUNDA KSHETRA NEWS - निष्पक्ष और सटीक क्षेत्रीय समाचार">
     <meta id="og-description" property="og:description" content="चूंडा क्षेत्र न्यूज़ — ताज़ा, सटीक और क्षेत्रीय समाचार।">
@@ -38,6 +50,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="CHUNDA KSHETRA NEWS">
     <meta id="og-image" property="og:image" content="https://chundanewslive.in/favicon.ico">
+    <meta property="og:image:type" content="image/x-icon">
     <meta name="twitter:card" content="summary_large_image">
     <meta id="twitter-title" name="twitter:title" content="CHUNDA KSHETRA NEWS">
     <meta id="twitter-description" name="twitter:description" content="ताज़ा, सटीक और क्षेत्रीय समाचार।">
@@ -61,13 +74,13 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/modern-ui.css">
 
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
 
     <style>
@@ -78,11 +91,14 @@
         .portal-modal { display:none; position:fixed; inset:0; width:100vw; height:100vh; background-color:rgba(0,0,0,.85)!important; z-index:999999!important; align-items:center; justify-content:center; padding:1rem; overflow-y:auto; }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .skip-to-content { position: fixed; left: 1rem; top: .75rem; z-index: 1000000; transform: translateY(-160%); padding: .65rem .9rem; border-radius: .6rem; background: #111827; color: #fff; font-weight: 800; box-shadow: 0 8px 24px rgba(0,0,0,.2); transition: transform .2s ease; }
+        .skip-to-content:focus { transform: translateY(0); outline: 3px solid #facc15; outline-offset: 2px; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
+<a href="#main-content" class="skip-to-content">मुख्य सामग्री पर जाएँ</a>
 
-<div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width:0%"></div>
+<div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 origin-left transition-transform duration-75" style="transform:scaleX(0)"></div>
 
 <div class="bg-gray-950 text-gray-300 text-[11px] py-1 px-4 border-b border-gray-800">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
@@ -92,10 +108,10 @@
             <span id="live-weather-display"><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: 31°C (साफ मौसम)</span>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="startAiVoiceBulletin()" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
+            <button id="ai-voice-btn" class="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1">
                 <i class="fa-solid fa-robot"></i> 🎙️ AI बुलेटिन सुनें
             </button>
-            <button onclick="openPortalModal('citizen-modal')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-0.5 rounded font-semibold text-[10px]">
+            <button id="header-citizen-btn" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-0.5 rounded font-semibold text-[10px]">
                 ✍️ खबर भेजें
             </button>
         </div>
@@ -116,7 +132,7 @@
 <div class="bg-amber-600 text-white py-1 px-4 text-[11px] flex items-center overflow-hidden">
     <span class="bg-amber-950 text-[10px] font-bold px-2 py-0.5 rounded mr-2 shrink-0">📈 ई-मंडी भाव</span>
     <div class="overflow-hidden whitespace-nowrap w-full">
-        <div id="live-mandi-ticker" class="animate-ticker">
+        <div id="live-mandi-ticker" class="animate-ticker" aria-label="ई-मंडी के भाव">
             गेहूं: ₹2,480-2,820/क्विं. | मक्का: ₹2,150-2,380/क्विं. | सरसों: ₹5,150-5,480/क्विं. | चना: ₹5,800-6,100/क्विं. | सोयाबीन: ₹4,300-4,600/क्विं.
         </div>
     </div>
@@ -124,7 +140,7 @@
 
 <header class="bg-white dark:bg-gray-900 border-b dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="filterNews('all')">
+        <div id="brand-home-link" class="flex items-center gap-3 cursor-pointer">
             <div class="bg-red-700 text-white w-14 h-14 rounded-xl flex items-center justify-center shadow-lg border-2 border-red-500">
                 <i class="fa-solid fa-newspaper text-3xl"></i>
             </div>
@@ -144,21 +160,21 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <button id="pwa-install-btn" aria-label="वेबसाइट ऐप इंस्टॉल करें" style="display:none;" onclick="triggerPwaInstall()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black px-2.5 py-1.5 rounded-lg font-bold shadow flex items-center gap-1 transition">
+            <button id="pwa-install-btn" aria-label="वेबसाइट ऐप इंस्टॉल करें" style="display:none;" class="text-xs bg-amber-500 hover:bg-amber-400 text-black px-2.5 py-1.5 rounded-lg font-bold shadow flex items-center gap-1 transition">
                 📲 ऐप इंस्टॉल
             </button>
-            <button onclick="enablePushNotifications()" aria-label="समाचार नोटिफिकेशन चालू करें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400 border text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700" title="नोटिफिकेशन चालू करें">
+            <button id="push-notify-btn" type="button" aria-label="समाचार नोटिफिकेशन चालू करें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400 border text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700" title="नोटिफिकेशन चालू करें">
                 🔔
             </button>
-            <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
+            <button id="dark-mode-btn" type="button" aria-label="डार्क मोड बदलें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
             
-            <button id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
+            <button id="admin-login-btn" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
                 🔒 एडमिन लॉगिन
             </button>
         </div>
     </div>
 
-    <nav class="bg-gray-950 text-gray-200 border-t border-gray-800 sticky top-0 z-40 shadow-md">
+    <nav aria-label="समाचार श्रेणियाँ और खोज" class="bg-gray-950 text-gray-200 border-t border-gray-800 sticky top-0 z-40 shadow-md">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2 py-1">
             <div class="flex overflow-x-auto gap-4 md:gap-6 py-2 text-xs font-bold whitespace-nowrap">
                 <button onclick="filterNews('all')" class="hover:text-red-500 transition">सभी खबरें</button>
@@ -176,11 +192,13 @@
             <div class="flex items-center gap-3 py-1">
                 <div class="flex items-center gap-1.5 bg-gray-900 border border-gray-700 rounded px-2 py-1">
                     <i class="fa-regular fa-calendar text-red-500 text-xs"></i>
-                    <input type="date" id="news-calendar-picker" onchange="filterNewsByDate(this.value)" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
-                    <button onclick="resetCalendarFilter()" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
+                    <label for="news-calendar-picker" class="sr-only">खबर की तारीख चुनें</label>
+                    <input type="date" id="news-calendar-picker" aria-label="खबर की तारीख चुनें" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
+                    <button id="calendar-reset-btn" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
                 </div>
                 <div class="hidden lg:block relative w-44">
-                    <input type="text" id="search-input" oninput="handleLiveSearch()" placeholder="खबर खोजें..." class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
+                    <label for="search-input" class="sr-only">खबर खोजें</label>
+                    <input type="text" id="search-input" placeholder="खबर खोजें..." aria-label="खबर खोजें" class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
                     <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2 text-gray-400 text-xs"></i>
                 </div>
             </div>
@@ -201,23 +219,23 @@
         <b>एडमिन कंसोल: <span id="admin-user-email" class="font-normal text-emerald-200"></span></b>
     </div>
     <div class="flex flex-wrap gap-2 text-xs">
-        <button onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
-        <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
-        <button onclick="triggerOpenElectionModal()" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
-        <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
-        <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
+        <button id="new-post-btn" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
+        <button id="new-job-btn" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
+        <button id="new-election-btn" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
+        <button id="new-score-btn" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
+        <button id="reports-btn" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
             📥 प्राप्त रिपोर्ट 
             <span id="citizen-reports-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0.2 rounded-full hidden">0</span>
         </button>
-        <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
+        <button id="logout-admin-btn" class="bg-red-600 px-3 py-1 rounded font-bold hover:bg-red-700">लॉगआउट</button>
     </div>
 </div>
 
-<main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
-    <section id="lead-news-section" class="mb-8 hidden">
+<main id="main-content" class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+    <section id="lead-news-section" class="mb-8 hidden" aria-labelledby="lead-title">
         <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
             <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
-                <img id="lead-image" width="800" height="450" loading="lazy" class="w-full h-full object-cover cursor-pointer" onclick="openLeadModal()">
+                <img id="lead-image" alt="मुख्य खबर की तस्वीर" width="800" height="450" loading="eager" decoding="async" fetchpriority="high" class="w-full h-full object-cover cursor-pointer" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLeadModal();}">
                 <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
                     ⭐ प्रमुख समाचार (LEAD STORY)
                 </div>
@@ -225,7 +243,7 @@
             <div class="lg:col-span-5 p-6 flex flex-col justify-between">
                 <div>
                     <span id="lead-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2.5 py-0.5 rounded"></span>
-                    <h2 id="lead-title" class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600" onclick="openLeadModal()"></h2>
+                    <h2 id="lead-title" class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600"></h2>
                     <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 my-3">
                         <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-bold text-gray-700 dark:text-gray-300">
                             🎤 <span class="text-red-600">CKN</span> <span id="lead-reporter"></span>
@@ -235,14 +253,14 @@
                     <p id="lead-excerpt" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3"></p>
                 </div>
                 <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                    <button id="lead-read-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
+                    <button id="lead-read-btn" type="button" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
                          पूरी खबर पढ़ें →
                     </button>
                     <div class="flex gap-2">
-                        <button id="lead-copy-btn" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                        <button id="lead-copy-btn" type="button" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
                             <i class="fa-solid fa-copy"></i> लिंक कॉपी
                         </button>
-                        <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+                        <button id="lead-share-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
                             <i class="fa-solid fa-share-nodes"></i> शेयर
                         </button>
                     </div>
@@ -266,6 +284,14 @@
         </div>
     </div>
 
+    <section class="mt-10" aria-labelledby="related-news-title" role="region">
+      <div class="flex items-center justify-between border-b-2 border-red-600 pb-2 mb-4">
+        <h2 id="related-news-title" class="text-lg font-black text-gray-900 dark:text-white">आपके लिए अन्य खबरें</h2>
+        <button type="button" onclick="filterNews('all'); window.scrollTo({top:0,behavior:'smooth'})" class="text-xs font-bold text-red-600">सभी खबरें →</button>
+      </div>
+      <div id="related-news" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </section>
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-8">
             <div class="flex justify-between items-center border-b-2 border-red-600 pb-2 mb-6">
@@ -276,7 +302,7 @@
             </div>
 
             <!-- Modern 2-Column Responsive Grid -->
-            <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6 min-h-[300px]">
+            <div id="news-container" role="feed" aria-label="ताज़ा समाचार सूची" class="grid grid-cols-1 sm:grid-cols-2 gap-6 min-h-[300px]">
                 <div class="col-span-2 text-center py-12 text-gray-400 font-medium">समाचार लोड हो रहे हैं…</div>
             </div>
 
@@ -286,7 +312,7 @@
             </div>
         </div>
 
-        <aside class="lg:col-span-4 space-y-6">
+        <aside aria-label="समाचार साइडबार" class="lg:col-span-4 space-y-6">
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-amber-500 dark:border-amber-600 p-4 shadow-sm">
                 <div class="bg-gradient-to-r from-amber-600 to-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-black flex items-center justify-between mb-3">
                     <span>🗳️ निकाय व पंचायत चुनाव विशेष</span>
@@ -331,13 +357,29 @@
     </div>
 </main>
 
-<div id="cookie-consent-banner" class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/95 dark:bg-gray-950/95 text-white border-t border-gray-800 p-4 shadow-2xl backdrop-blur-md" style="display:none;">
+<!-- Mobile bottom navigation: fixed, lightweight, no framework dependency -->
+<nav id="mobile-bottom-nav" aria-label="मोबाइल मुख्य नेविगेशन">
+  <button id="mobile-nav-home" type="button" onclick="setMobileNavActive('home'); filterNews('all')" aria-label="सभी खबरें" aria-current="page">
+    <i class="fa-solid fa-house"></i><span>होम</span>
+  </button>
+  <button id="mobile-nav-search" type="button" onclick="setMobileNavActive('search'); document.getElementById('search-input')?.focus(); window.scrollTo({top:document.getElementById('search-input')?.getBoundingClientRect().top + window.scrollY - 90,behavior:'smooth'})" aria-label="खबर खोजें">
+    <i class="fa-solid fa-magnifying-glass"></i><span>खोजें</span>
+  </button>
+  <button id="mobile-nav-election" type="button" onclick="setMobileNavActive('election'); filterNews('चुनाव अपडेट')" aria-label="चुनाव अपडेट">
+    <i class="fa-solid fa-check-to-slot"></i><span>चुनाव</span>
+  </button>
+  <button id="mobile-nav-submit" type="button" onclick="setMobileNavActive('submit'); openPortalModal('citizen-modal')" aria-label="खबर भेजें">
+    <i class="fa-solid fa-pen-to-square"></i><span>खबर भेजें</span>
+  </button>
+</nav>
+
+<div id="cookie-consent-banner" role="dialog" aria-modal="false" aria-labelledby="cookie-consent-title" aria-describedby="cookie-consent-description" class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/95 dark:bg-gray-950/95 text-white border-t border-gray-800 p-4 shadow-2xl backdrop-blur-md" style="display:none;">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="text-xs text-gray-300 leading-relaxed text-center sm:text-left">
-            <span class="font-bold text-white">🍪 कुकीज़ और गोपनीयता नीति:</span> हम आपकी ब्राउज़िंग अनुभव को बेहतर बनाने, वैयक्तिकृत सामग्री और विज्ञापनों को दिखाने तथा विज़िट का विश्लेषण करने के लिए कुकीज़ का उपयोग करते हैं। 'स्वीकार करें' पर क्लिक करके आप हमारी <button onclick="openPortalModal('privacy-modal')" class="underline text-red-400 hover:text-red-300">गोपनीयता नीति</button> से सहमत होते हैं।
+            <span id="cookie-consent-description"><span id="cookie-consent-title" class="font-bold text-white">🍪 कुकीज़ और गोपनीयता नीति:</span> हम आपकी ब्राउज़िंग अनुभव को बेहतर बनाने, वैयक्तिकृत सामग्री और विज्ञापनों को दिखाने तथा विज़िट का विश्लेषण करने के लिए कुकीज़ का उपयोग करते हैं। 'स्वीकार करें' पर क्लिक करके आप हमारी <button onclick="openPortalModal('privacy-modal')" class="underline text-red-400 hover:text-red-300">गोपनीयता नीति</button> से सहमत होते हैं।</span>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-            <button onclick="acceptCookies()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition shadow">
+            <button id="accept-cookies-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2 rounded-lg transition shadow">
                 स्वीकार करें (Accept)
             </button>
         </div>
@@ -387,7 +429,7 @@
 <div id="post-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 dark:border-gray-800">
         <h3 id="post-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नई खबर पोस्ट करें</h3>
-        <form onsubmit="handleNewsSubmit(event)" class="space-y-3 text-xs">
+        <form id="news-post-form" class="space-y-3 text-xs">
             <input type="hidden" id="edit-doc-id">
             <input type="text" id="news-title" required placeholder="मुख्य हेडलाइन" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="grid grid-cols-2 gap-2">
@@ -411,7 +453,7 @@
             <div class="bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded border dark:border-gray-700 space-y-2">
                 <div>
                     <label class="block font-semibold text-gray-700 dark:text-gray-300 mb-1">📁 डिवाइस से एक या अधिक तस्वीरें चुनें (Multiple Upload):</label>
-                    <input type="file" id="news-image-files" accept="image/*" multiple class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    <input type="file" id="news-image-files" accept="image/*" multiple aria-label="समाचार की तस्वीरें चुनें" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                 </div>
                 <div class="text-center text-gray-400 font-bold text-[10px]">--- या फिर Direct Link (कॉमा लगाकर कई लिंक दे सकते हैं वार्षिक) ---</div>
                 <div>
@@ -426,7 +468,7 @@
                     <button type="button" onclick="document.execCommand('italic', false, null)" class="px-2.5 py-1 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded italic hover:bg-gray-200" title="Italic"><i>I</i></button>
                     <button type="button" onclick="document.execCommand('underline', false, null)" class="px-2.5 py-1 bg-white dark:bg-gray-800 border dark:border-gray-600 rounded underline hover:bg-gray-200" title="Underline"><u>U</u></button>
                 </div>
-                <div id="news-content-editor" contenteditable="true" class="w-full p-2.5 min-h-[120px] max-h-[250px] overflow-y-auto focus:outline-none text-xs"></div>
+                <div id="news-content-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="समाचार का पूरा विवरण" class="w-full p-2.5 min-h-[120px] max-h-[250px] overflow-y-auto focus:outline-none text-xs"></div>
             </div>
             
             <div class="flex items-center gap-4 mt-2">
@@ -445,7 +487,7 @@
 <div id="job-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="job-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
-        <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
+        <form id="job-alert-form" class="space-y-3 text-xs">
             <input type="text" id="job-title" required placeholder="भर्ती का नाम (उदा. RPSC / REET)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-posts" placeholder="पद संख्या / योग्यता" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-last-date" required placeholder="अंतिम तिथि" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -461,7 +503,7 @@
 <div id="election-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="election-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">🗳️ चुनाव दस्तावेज़ / PDF लिंक जोड़ें</h3>
-        <form onsubmit="handleElectionSubmit(event)" class="space-y-3 text-xs">
+        <form id="election-doc-form" class="space-y-3 text-xs">
             <input type="text" id="elec-title" required placeholder="डॉक्यूमेंट का नाम (उदा. वार्डवार मतदाता सूची)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="elec-subtitle" placeholder="विवरण / अंतिम तिथि (उदा. अंतिम प्रकाशन)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="url" id="elec-link" required placeholder="Google Drive / PDF का डायरेक्ट लिंक (https://...)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -476,7 +518,7 @@
 <div id="score-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="score-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
-        <form onsubmit="handleScoreSubmit(event)" class="space-y-3 text-xs">
+        <form id="live-score-form" class="space-y-3 text-xs">
             <input type="text" id="score-title" placeholder="मैच टाइटल (उदा. प्रीमियर लीग)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
             <input type="text" id="score-detail" placeholder="स्कोर (उदा. टीम A: 120/4 (14.2 ov))" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
             <input type="text" id="score-status" placeholder="स्थिति (उदा. टीम B को जीत के लिए 24 रन चाहिए)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
@@ -492,7 +534,7 @@
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="citizen-modal-title" class="text-lg font-bold mb-1 text-gray-900 dark:text-white">✍️ नागरिक पत्रकार - खबर भेजें</h3>
         <p class="text-[11px] text-gray-500 mb-3">आपके क्षेत्र की समस्या या सूचना हमें भेजें, सत्यापन उपरांत प्रकाशित की जाएगी।</p>
-        <form onsubmit="handleCitizenSubmit(event)" class="space-y-3 text-xs">
+        <form id="citizen-report-form" class="space-y-3 text-xs">
             <input type="text" id="citizen-hp" style="display:none!important;" tabindex="-1" autocomplete="off">
             <input type="text" id="citizen-name" required placeholder="आपका शुभ नाम" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="tel" id="citizen-phone" required placeholder="मोबाइल नंबर" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
@@ -509,7 +551,7 @@
 <div id="admin-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="admin-modal-heading" class="text-lg font-bold mb-3 text-center text-gray-900 dark:text-white">🔒 एडमिन लॉगिन</h3>
-        <form onsubmit="handleAdminLogin(event)" class="space-y-3 text-xs">
+        <form id="admin-login-form" class="space-y-3 text-xs">
             <input type="email" id="admin-email" required placeholder="ईमेल आईडी" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="password" id="admin-pass" required placeholder="पासवर्ड" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
@@ -618,15 +660,28 @@
     function sanitizeUrlRaw(url) {
         if (!url) return '';
         const trimmed = String(url).trim();
-        if (trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/')) {
-            return trimmed;
-        }
+        if (trimmed.startsWith('data:image/')) return trimmed;
+        try {
+            const parsed = new URL(trimmed, window.location.origin);
+            if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+                return parsed.href;
+            }
+        } catch (_) {}
         return '';
     }
 
     function sanitizeUrl(url) {
         const safe = sanitizeUrlRaw(url);
         return safe || '';
+    }
+
+    const NEWS_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+
+    function handleNewsImageError(img) {
+        if (!img || !(img instanceof HTMLImageElement) || img.dataset.fallbackApplied === 'true') return;
+        img.dataset.fallbackApplied = 'true';
+        img.onerror = null;
+        img.src = NEWS_IMAGE_FALLBACK;
     }
 
     function sanitizeNewsHtml(html) {
@@ -665,8 +720,27 @@
         };
     }
 
+    function setMobileNavActive(active) {
+        const items = {
+            home: 'mobile-nav-home',
+            search: 'mobile-nav-search',
+            election: 'mobile-nav-election',
+            submit: 'mobile-nav-submit'
+        };
+        Object.entries(items).forEach(([key, id]) => {
+            const button = document.getElementById(id);
+            if (!button) return;
+            if (key === active) button.setAttribute('aria-current', 'page');
+            else button.removeAttribute('aria-current');
+        });
+    }
+
     function safeNewsId(id) {
         return String(id || '').trim();
+    }
+
+    function safeNewsIdAttr(id) {
+        return encodeURIComponent(safeNewsId(id));
     }
 
     function loadAnalytics() {
@@ -737,12 +811,36 @@
             } else {
                 initFirebaseAppCheck();
             }
-        });
+        }, { once: true });
     }
 
     let messaging = null;
-    if (firebase.messaging.isSupported()) {
-        messaging = firebase.messaging();
+    let messagingLoadPromise = null;
+
+    function loadFirebaseMessaging() {
+        if (messaging) return Promise.resolve(messaging);
+        if (messagingLoadPromise) return messagingLoadPromise;
+
+        messagingLoadPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging-compat.js';
+            script.onload = () => {
+                try {
+                    if (firebase.messaging.isSupported()) {
+                        messaging = firebase.messaging();
+                        resolve(messaging);
+                    } else {
+                        resolve(null);
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            script.onerror = () => reject(new Error('Firebase Messaging failed to load'));
+            document.head.appendChild(script);
+        });
+
+        return messagingLoadPromise;
     }
 
     let isAdminLoggedIn = false;
@@ -750,19 +848,55 @@
     let currentCategory = 'all';
     let leadNewsItem = null;
 
+    let liveWeatherRefreshInFlight = false;
+
     async function fetchLiveWeather() {
         const weatherElement = document.getElementById('live-weather-display');
+        if (liveWeatherRefreshInFlight) return;
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=24.5858&longitude=73.7125&current=temperature_2m,weather_code&timezone=Asia%2FKolkata';
-        const labels = {0:'साफ मौसम',1:'मुख्यतः साफ',2:'आंशिक बादल',3:'बादल',45:'कोहरा',48:'कोहरा',51:'हल्की बूंदाबांदी',53:'बूंदाबांदी',55:'बूंदाबांदी',61:'हल्की बारिश',63:'बारिश',65:'तेज़ बारिश',80:'बारिश की बौछार',81:'बारिश की बौछार',82:'तेज़ बौछार',95:'गरज के साथ बारिश',96:'ओलावृष्टि संभव',99:'ओलावृष्टि संभव'};
+        const labels = {0:'साफ मौसम',1:'मुख्यतः साफ',2:'आंशिक बादल',3:'बादल',45:'कोहरा',48:'कोहरा',51:'हल्की बूंदाबांदी',53:'बूंदाबांदली',55:'बूंदाबांदली',61:'हल्की बारिश',63:'बारिश',65:'तेज़ बारिश',80:'बारिश की बौछार',81:'बारिश की बौछार',82:'तेज़ बौछार',95:'गरज के साथ बारिश',96:'ओलावृष्टि संभव',99:'ओलावृष्टि संभव'};
+        const cacheKey = 'ckn_weather_cache_v1';
+        const renderWeather = (temp, description) => {
+            if (weatherElement) weatherElement.innerHTML = `<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: ${temp}°C (${escapeHTML(description)})`;
+        };
         try {
-            const response = await fetch(url, { cache: 'no-store' });
+            const cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+            const cachedTime = cached && Number(cached.timestamp);
+            const hasFreshCache =
+                cached &&
+                Number.isFinite(cachedTime) &&
+                cachedTime > 0 &&
+                (Date.now() - cachedTime) < 10 * 60 * 1000 &&
+                Number.isFinite(Number(cached.temp)) &&
+                typeof cached.description === 'string';
+
+            if (hasFreshCache) {
+                renderWeather(Number(cached.temp), cached.description);
+                return;
+            }
+        } catch (_) {}
+        if (liveWeatherRefreshInFlight) return;
+        liveWeatherRefreshInFlight = true;
+
+        try {
+            const response = await fetch(url);
             if (!response.ok) throw new Error('Weather request failed');
             const data = await response.json();
-            const temp = Math.round(data.current.temperature_2m);
-            const description = labels[data.current.weather_code] || 'मौसम उपलब्ध';
-            if (weatherElement) weatherElement.innerHTML = `<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: ${temp}°C (${escapeHTML(description)})`;
+            const current = data && typeof data.current === 'object' ? data.current : null;
+            const rawTemp = current && current.temperature_2m;
+            const weatherCode = current && current.weather_code;
+            const tempNumber = Number(rawTemp);
+            if (!Number.isFinite(tempNumber)) throw new Error('Invalid weather temperature');
+            const temp = Math.round(tempNumber);
+            const description = labels[weatherCode] || 'मौसम उपलब्ध';
+            renderWeather(temp, description);
+            try {
+                sessionStorage.setItem(cacheKey, JSON.stringify({timestamp: Date.now(), temp, description}));
+            } catch (_) {}
         } catch (error) {
             if (weatherElement) weatherElement.innerHTML = '<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: मौसम उपलब्ध नहीं';
+        } finally {
+            liveWeatherRefreshInFlight = false;
         }
     }
 
@@ -774,30 +908,76 @@
         document.documentElement.classList.add('dark');
     }
 
+    let lastModalTrigger = null;
+
     function openPortalModal(id) {
         const m = document.getElementById(id);
-        if (m) { m.style.display = 'flex'; document.body.style.overflow = 'hidden'; m.setAttribute('aria-hidden', 'false'); }
+        if (!m) return;
+        lastModalTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        m.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        m.setAttribute('aria-hidden', 'false');
+        const firstFocusable = m.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        (firstFocusable || m).focus?.();
     }
 
     function closePortalModal(id) {
+        if (typeof id !== 'string' || !id.trim()) return;
         const m = document.getElementById(id);
         if (m) { m.style.display = 'none'; m.setAttribute('aria-hidden', 'true'); }
-        if (!document.querySelector('.portal-modal[style*="display: flex"]')) document.body.style.overflow = '';
+        if (!document.querySelector('.portal-modal[style*="display: flex"]')) {
+            document.body.style.overflow = '';
+            if (lastModalTrigger && document.contains(lastModalTrigger)) {
+                lastModalTrigger.focus();
+            }
+            lastModalTrigger = null;
+        }
     }
 
     document.addEventListener('keydown', (e) => {
+        const openModal = Array.from(document.querySelectorAll('.portal-modal')).find(m => getComputedStyle(m).display === 'flex');
+        if (!openModal) return;
+
         if (e.key === 'Escape') {
-            const openModal = Array.from(document.querySelectorAll('.portal-modal')).find(m => getComputedStyle(m).display === 'flex');
-            if (openModal) closePortalModal(openModal.id);
+            closePortalModal(openModal.id);
+            return;
+        }
+
+        if (e.key !== 'Tab') return;
+        const focusable = Array.from(openModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+            .filter(el => !el.disabled && el.getAttribute('aria-hidden') !== 'true' && el.offsetParent !== null);
+        if (!focusable.length) {
+            e.preventDefault();
+            openModal.focus?.();
+            return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
         }
     });
 
-    window.onscroll = function() {
-        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        let scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
-        document.getElementById("scroll-progress").style.width = scrolled + "%";
-    };
+    let scrollProgressTicking = false;
+    function updateScrollProgress() {
+        const progress = document.getElementById("scroll-progress");
+        if (!progress) return;
+        const winScroll = window.scrollY || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+        progress.style.transform = `scaleX(${scrolled / 100})`;
+        scrollProgressTicking = false;
+    }
+    window.addEventListener('scroll', () => {
+        if (!scrollProgressTicking) {
+            scrollProgressTicking = true;
+            requestAnimationFrame(updateScrollProgress);
+        }
+    }, { passive: true });
 
     function updateLivePanchang() {
         const d = new Date();
@@ -839,6 +1019,7 @@
 
     function copyNewsLink(id) {
         const safeId = safeNewsId(id);
+        if (!safeId) return;
         const shareLink = `${window.location.origin}/article.html?id=${encodeURIComponent(safeId)}`;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -851,6 +1032,7 @@
     }
 
     function fallbackCopyText(text) {
+        if (typeof text !== 'string' || !text) return;
         const textArea = document.createElement("textarea");
         textArea.value = text;
         textArea.style.position = "fixed";
@@ -873,28 +1055,37 @@
     }
 
     function renderNews(list) {
+        const safeList = Array.isArray(list)
+            ? list.filter(item => item && typeof item === 'object' && typeof item.id === 'string' && item.id.trim())
+            : [];
         const container = document.getElementById('news-container');
-        document.getElementById('news-count').textContent = `${list.length} खबरें`;
+        const countEl = document.getElementById('news-count');
+        if (!container) return;
 
-        if (!list.length) {
+        container.setAttribute('aria-live', 'polite');
+        container.setAttribute('aria-busy', 'true');
+        if (countEl) countEl.textContent = `${safeList.length} खबरें`;
+
+        if (!safeList.length) {
             container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800">इस श्रेणी या दिनांक में कोई खबर उपलब्ध नहीं है।</div>`;
+            container.setAttribute('aria-busy', 'false');
             return;
         }
 
-        container.innerHTML = list.map(item => {
+        container.innerHTML = safeList.map(item => {
             const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
             const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-            const safeId = escapeHTML(item.id);
+            const safeId = safeNewsIdAttr(item.id);
             
             const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
+            tempDiv.innerHTML = sanitizeNewsHtml(typeof item.content === 'string' ? item.content : '');
             const plainText = tempDiv.textContent || tempDiv.innerText || '';
 
             return `
-            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
+            <article itemscope itemtype="https://schema.org/NewsArticle" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
                 <div>
                     <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                        <img src="${displayImg}" width="400" height="225" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
+                        <img itemprop="image" src="${displayImg}" alt="${escapeHTML(item.title || 'खबर की तस्वीर')}" width="400" height="225" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal(decodeURIComponent('${safeId}'))" onerror="handleNewsImageError(this)">
                         <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
                             ${escapeHTML(item.category || 'सामान्य')}
                         </span>
@@ -905,10 +1096,10 @@
                             <span>•</span>
                             <span class="text-red-600 font-bold">CKN Desk</span>
                         </div>
-                        <h3 class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
+                        <h3 itemprop="headline" class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal(decodeURIComponent('${safeId}'))">
                             ${escapeHTML(item.title)}
                         </h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
+                        <p itemprop="description" class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
                     </div>
                 </div>
                 <div class="px-5 pb-5 pt-0">
@@ -917,44 +1108,96 @@
                             विस्तार से पढ़ें <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
                         <div class="flex gap-2.5">
-                            <button onclick="copyNewsLink('${safeId}')" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
+                            <button onclick="copyNewsLink(decodeURIComponent('${safeId}'))" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
                                 <i class="fa-solid fa-copy"></i>
                             </button>
-                            <button onclick="shareWhatsAppWithImage('${safeId}')" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
+                            <button onclick="shareWhatsAppWithImage(decodeURIComponent('${safeId}'))" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
                                 <i class="fa-solid fa-share-nodes"></i>
                             </button>
                         </div>
                     </div>
                     ${isAdminLoggedIn ? `
                         <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
-                            <button onclick="editNewsPost('${safeId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
-                            <button onclick="deleteNewsPost('${safeId}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
+                            <button onclick="editNewsPost(decodeURIComponent('${safeId}'))" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
+                            <button onclick="deleteNewsPost(decodeURIComponent('${safeId}'))" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
                         </div>
                     ` : ''}
                 </div>
             </div>
         `;
         }).join('');
+        container.setAttribute('aria-busy', 'false');
+    }
+
+    function renderRelatedNews(currentId, currentCategory) {
+        const container = document.getElementById('related-news');
+        if (!container) return;
+        const sourceList = Array.isArray(newsList)
+            ? newsList.filter(n => n && typeof n === 'object' && typeof n.id === 'string' && n.id.trim())
+            : [];
+        const safeCurrentId = safeNewsId(currentId);
+        const safeCategory = typeof currentCategory === 'string' ? currentCategory.trim() : '';
+        const sameCategory = safeCategory
+            ? sourceList.filter(n => safeNewsId(n.id) !== safeCurrentId && typeof n.category === 'string' && n.category.trim() === safeCategory)
+            : [];
+        const fallback = sourceList.filter(n => safeNewsId(n.id) !== safeCurrentId);
+        const related = [...sameCategory, ...fallback.filter(n => !sameCategory.some(r => r.id === n.id))].slice(0, 4);
+        if (!related.length) { container.innerHTML = ''; return; }
+        container.innerHTML = related.map(item => {
+            const rawImage = (Array.isArray(item.images) && item.images.length > 0)
+                ? item.images[0]
+                : (typeof item.image === 'string' ? item.image : '');
+            const img = sanitizeUrl(rawImage);
+            const fallback = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600';
+            const id = safeNewsIdAttr(item.id);
+            if (!id) return '';
+            return `<article class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition">
+                <img src="${img || fallback}" alt="${escapeHTML(item.title || 'संबंधित खबर की तस्वीर')}" width="320" height="180" loading="lazy" decoding="async" class="w-full aspect-video object-cover">
+                <div class="p-3"><span class="text-[10px] font-bold text-red-600">${escapeHTML(item.category || 'सामान्य')}</span>
+                <h3 class="font-bold text-sm leading-snug mt-1 line-clamp-2 text-gray-900 dark:text-white">${escapeHTML(item.title || '')}</h3>
+                <button type="button" onclick="openReaderModal(decodeURIComponent('${id}'))" class="mt-2 text-[11px] font-bold text-red-600">पूरी खबर →</button></div>
+            </article>`;
+        }).join('');
     }
 
     function setLeadStory(item) {
-        if (!item) return;
+        if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !item.id.trim()) return;
+
+        const section = document.getElementById('lead-news-section');
+        const titleEl = document.getElementById('lead-title');
+        const categoryEl = document.getElementById('lead-category');
+        const reporterEl = document.getElementById('lead-reporter');
+        const dateEl = document.getElementById('lead-date');
+        const excerptEl = document.getElementById('lead-excerpt');
+        const leadImage = document.getElementById('lead-image');
+        const readBtn = document.getElementById('lead-read-btn');
+        const copyBtn = document.getElementById('lead-copy-btn');
+        const shareBtn = document.getElementById('lead-share-btn');
+
+        if (!section || !titleEl || !categoryEl || !reporterEl || !dateEl || !excerptEl || !leadImage) return;
+
         leadNewsItem = item;
-        document.getElementById('lead-news-section').classList.remove('hidden');
-        document.getElementById('lead-title').innerText = item.title || '';
-        document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
-        document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
-        document.getElementById('lead-date').innerText = item.date || "आज";
-        
+        section.classList.remove('hidden');
+        titleEl.innerText = typeof item.title === 'string' ? item.title : '';
+        categoryEl.innerText = typeof item.category === 'string' && item.category ? item.category : 'प्रमुख';
+        reporterEl.innerText = typeof item.reporter === 'string' && item.reporter ? item.reporter : 'विशेष संवाददाता';
+        dateEl.innerText = typeof item.date === 'string' && item.date ? item.date : 'आज';
+
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
-        document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
+        excerptEl.innerText = tempDiv.textContent || tempDiv.innerText || '';
 
-        const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
-        document.getElementById('lead-image').src = sanitizeUrl(rawLeadImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-        document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
-        document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
-        document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
+        const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0)
+            ? item.images[0]
+            : (typeof item.image === 'string' ? item.image : '');
+        leadImage.src = sanitizeUrl(rawLeadImg) || NEWS_IMAGE_FALLBACK;
+        leadImage.onerror = () => handleNewsImageError(leadImage);
+        leadImage.alt = item.title ? `${item.title} — CHUNDA KSHETRA NEWS` : 'मुख्य खबर की तस्वीर';
+        leadImage.setAttribute('decoding', 'async');
+        leadImage.setAttribute('fetchpriority', 'high');
+        if (readBtn) readBtn.onclick = () => openReaderModal(item.id);
+        if (copyBtn) copyBtn.onclick = () => copyNewsLink(item.id);
+        if (shareBtn) shareBtn.onclick = () => shareWhatsAppWithImage(item.id);
     }
 
     function openLeadModal() {
@@ -962,8 +1205,16 @@
     }
 
     async function shareWhatsAppWithImage(id) {
-        const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
-        if (!item) return;
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
+
+        const sourceList = Array.isArray(newsList)
+            ? newsList.filter(n => n && typeof n === 'object' && typeof n.id === 'string' && n.id.trim())
+            : [];
+        const item = (leadNewsItem && safeNewsId(leadNewsItem.id) === safeId)
+            ? leadNewsItem
+            : sourceList.find(n => safeNewsId(n.id) === safeId);
+        if (!item || typeof item !== 'object' || typeof item.title !== 'string') return;
 
         const shareTitle = `📰 *${item.title}*`;
         const tempDiv = document.createElement('div');
@@ -971,18 +1222,21 @@
         const cleanContent = tempDiv.textContent || tempDiv.innerText || '';
         const shareExcerpt = cleanContent ? (cleanContent.length > 100 ? cleanContent.substring(0, 100) + '...' : cleanContent) : '';
         
-        const newsUrl = `${window.location.origin}/article.html?id=${encodeURIComponent(id)}`;
-        const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
+        const newsUrl = `${window.location.origin}/article.html?id=${encodeURIComponent(safeId)}`;
+        const rawImg = (Array.isArray(item.images) && item.images.length > 0)
+            ? item.images[0]
+            : (typeof item.image === 'string' ? item.image : '');
         const imageUrl = sanitizeUrl(rawImg);
 
-        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${item.reporter || 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
+        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${typeof item.reporter === 'string' && item.reporter.trim() ? item.reporter : 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
 
         if (navigator.share) {
             try {
                 let shareData = { title: item.title, text: shareText, url: newsUrl };
                 if (imageUrl) {
                     try {
-                        const response = await fetch(imageUrl);
+                        const response = await fetch(imageUrl, { mode: 'cors' });
+                        if (!response.ok) throw new Error('Image fetch failed');
                         const blob = await response.blob();
                         const file = new File([blob], 'news-image.jpg', { type: blob.type });
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1001,23 +1255,49 @@
     }
 
     function filterNews(cat) {
-        currentCategory = cat;
-        document.getElementById('news-calendar-picker').value = '';
-        document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ${cat === 'all' ? 'ताज़ा समाचार फीड' : escapeHTML(cat)}`;
-        if (cat === 'all') {
-            renderNews(newsList);
+        const safeNewsList = Array.isArray(newsList) ? newsList : [];
+        const safeCategory = typeof cat === 'string' ? cat : 'all';
+        currentCategory = safeCategory;
+        const calendar = document.getElementById('news-calendar-picker');
+        const search = document.getElementById('search-input');
+        if (calendar) calendar.value = '';
+        if (search) {
+            search.value = '';
+            search.setAttribute('aria-label', 'खबर खोजें');
+        }
+        const titleEl = document.getElementById('current-category-title');
+        if (titleEl) titleEl.textContent = safeCategory === 'all' ? 'ताज़ा समाचार फीड' : safeCategory;
+        if (safeCategory === 'all') {
+            renderNews(safeNewsList);
+            const lead = safeNewsList[0];
+            renderRelatedNews(lead?.id || '', lead?.category || '');
         } else {
-            renderNews(newsList.filter(n => n.category === cat));
+            renderNews(safeNewsList.filter(n => n && n.category === safeCategory));
         }
     }
 
     function filterNewsByDate(selectedDateStr) {
-        if (!selectedDateStr) return;
+        if (typeof selectedDateStr !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(selectedDateStr)) return;
         const [selYear, selMonth, selDay] = selectedDateStr.split('-').map(Number);
+        const selectedDate = new Date(selYear, selMonth - 1, selDay);
+        if (
+            !Number.isInteger(selYear) ||
+            !Number.isInteger(selMonth) ||
+            !Number.isInteger(selDay) ||
+            selMonth < 1 || selMonth > 12 ||
+            selDay < 1 || selDay > 31 ||
+            selectedDate.getFullYear() !== selYear ||
+            selectedDate.getMonth() !== selMonth - 1 ||
+            selectedDate.getDate() !== selDay
+        ) return;
 
-        const filtered = newsList.filter(item => {
-            if (!item.createdAt) return false;
-            const itemDate = new Date(item.createdAt);
+        const safeNewsList = Array.isArray(newsList)
+            ? newsList.filter(item => item && typeof item === 'object')
+            : [];
+        const filtered = safeNewsList.filter(item => {
+            const timestamp = Number(item.createdAt);
+            if (!Number.isFinite(timestamp) || timestamp <= 0 || timestamp > Date.now()) return false;
+            const itemDate = new Date(timestamp);
             return itemDate.getFullYear() === selYear &&
                    (itemDate.getMonth() + 1) === selMonth &&
                    itemDate.getDate() === selDay;
@@ -1025,21 +1305,52 @@
 
         const targetDateObj = new Date(selYear, selMonth - 1, selDay);
         const formattedTargetDate = targetDateObj.toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-
-        document.getElementById('current-category-title').innerHTML = `<span class="w-3 h-3 bg-red-600 rounded-sm"></span> दिनांक: ${escapeHTML(formattedTargetDate)}`;
+        const search = document.getElementById('search-input');
+        if (search) {
+            search.value = '';
+            search.setAttribute('aria-label', 'खबर खोजें');
+        }
+        const titleEl = document.getElementById('current-category-title');
+        if (titleEl) titleEl.textContent = `दिनांक: ${formattedTargetDate}`;
         renderNews(filtered);
     }
 
     function resetCalendarFilter() {
-        document.getElementById('news-calendar-picker').value = '';
+        const calendar = document.getElementById('news-calendar-picker');
+        if (calendar) calendar.value = '';
         filterNews(currentCategory);
     }
 
+    let liveSearchTimer = null;
+    function scheduleLiveSearch() {
+        clearTimeout(liveSearchTimer);
+        liveSearchTimer = setTimeout(handleLiveSearch, 120);
+    }
+
     function handleLiveSearch() {
-        const q = document.getElementById('search-input').value.toLowerCase().trim();
-        if (!q) { filterNews(currentCategory); return; }
-        const filtered = newsList.filter(n => (n.title && n.title.toLowerCase().includes(q)) || (n.content && n.content.toLowerCase().includes(q)));
+        const input = document.getElementById('search-input');
+        if (!input) return;
+
+        const q = String(input.value || '').toLowerCase().trim().slice(0, 120);
+        const countEl = document.getElementById('news-count');
+        const safeNewsList = Array.isArray(newsList)
+            ? newsList.filter(n => n && typeof n === 'object' && typeof n.id === 'string' && n.id.trim())
+            : [];
+        if (!q) {
+            filterNews(currentCategory);
+            return;
+        }
+        const filtered = safeNewsList.filter(n => {
+            if (!n || typeof n !== 'object') return false;
+            const title = String(n.title || '').toLowerCase();
+            const content = String(n.content || '').toLowerCase();
+            const category = String(n.category || '').toLowerCase();
+            const reporter = String(n.reporter || '').toLowerCase();
+            return title.includes(q) || content.includes(q) || category.includes(q) || reporter.includes(q);
+        });
         renderNews(filtered);
+        if (countEl) countEl.textContent = filtered.length ? `${filtered.length} खबरें मिलीं` : 'कोई खबर नहीं मिली';
+        input.setAttribute('aria-label', `खबर खोजें — ${filtered.length} परिणाम`);
     }
 
     function resetPostModalState() {
@@ -1049,19 +1360,28 @@
         });
         const editor = document.getElementById('news-content-editor');
         if (editor) editor.innerHTML = '';
-        document.getElementById('news-reporter').value = 'विशेष संवाददाता';
-        document.getElementById('news-category').value = 'चुनाव अपडेट';
-        document.getElementById('news-breaking').checked = false;
-        document.getElementById('news-lead').checked = false;
+
+        const reporter = document.getElementById('news-reporter');
+        const category = document.getElementById('news-category');
+        const breaking = document.getElementById('news-breaking');
+        const lead = document.getElementById('news-lead');
         const submitBtn = document.getElementById('submit-btn');
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'पोस्ट करें';
+
+        if (reporter) reporter.value = 'विशेष संवाददाता';
+        if (category) category.value = 'चुनाव अपडेट';
+        if (breaking) breaking.checked = false;
+        if (lead) lead.checked = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'पोस्ट करें';
+        }
     }
 
-    function triggerOpenNewPostModal() { 
+    function triggerOpenNewPostModal() {
         resetPostModalState();
-        document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
-        openPortalModal('post-modal'); 
+        const titleEl = document.getElementById('post-modal-title');
+        if (titleEl) titleEl.innerText = "नई खबर पोस्ट करें";
+        openPortalModal('post-modal');
     }
     
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
@@ -1070,8 +1390,10 @@
     
     function triggerOpenReportsModal() { 
         openPortalModal('reports-modal'); 
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
         db.collection('citizen_reports').get().then(snapshot => {
-            localStorage.setItem('admin_seen_reports_count', snapshot.size.toString());
+            if (!snapshot || typeof snapshot.size !== 'number') return;
+            localStorage.setItem('admin_seen_reports_count', String(snapshot.size));
             const badge = document.getElementById('citizen-reports-badge');
             if (badge) badge.classList.add('hidden');
         });
@@ -1080,17 +1402,23 @@
 
     function loadCitizenReportsList() {
         const reportsList = document.getElementById('reports-list');
+        if (!reportsList) return;
+
         reportsList.innerHTML = '<p class="text-center text-gray-400 py-6">रिपोर्टें लोड हो रही हैं...</p>';
 
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+            reportsList.innerHTML = '<p class="text-center text-red-500 py-6">एडमिन लॉगिन आवश्यक है।</p>';
+            return;
+        }
         db.collection('citizen_reports').get().then(snapshot => {
-            if (!snapshot.empty) {
-                const reportDocs = snapshot.docs.slice().sort((a,b) => {
+            if (snapshot && !snapshot.empty && Array.isArray(snapshot.docs)) {
+                const reportDocs = snapshot.docs.slice().filter(doc => doc && typeof doc.data === 'function' && doc.id).sort((a,b) => {
                     const da = a.data(), dbb = b.data();
                     return (timestampToMillis(dbb.createdAt) || timestampToMillis(dbb.timestamp)) - (timestampToMillis(da.createdAt) || timestampToMillis(da.timestamp));
                 });
                 reportsList.innerHTML = reportDocs.map(doc => {
-                    const report = doc.data();
-                    const reportId = escapeHTML(doc.id);
+                    const report = doc.data() || {};
+                    const reportId = safeNewsIdAttr(doc.id);
                     return `
                         <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700 flex flex-col gap-2">
                             <div class="flex justify-between items-center font-bold">
@@ -1100,7 +1428,7 @@
                             <p class="text-red-600 font-mono">${escapeHTML(report.phone || '')}</p>
                             <p class="text-gray-700 dark:text-gray-300">${escapeHTML(report.details || report.msg || '')}</p>
                             <div class="flex justify-end pt-1">
-                                <button onclick="deleteCitizenReport('${reportId}')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1 rounded">
+                                <button onclick="deleteCitizenReport(decodeURIComponent('${reportId}'))" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1 rounded">
                                     🗑️ यह रिपोर्ट डिलीट करें
                                 </button>
                             </div>
@@ -1116,9 +1444,12 @@
     }
 
     async function deleteCitizenReport(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         if (!confirm('क्या आप इस नागरिक रिपोर्ट को हमेशा के लिए हटाना चाहते हैं?')) return;
         try {
-            await db.collection('citizen_reports').doc(id).delete();
+            await db.collection('citizen_reports').doc(safeId).delete();
             alert("नागरिक रिपोर्ट सफलतापूर्वक हटा दी गई!");
             loadCitizenReportsList();
         } catch (err) {
@@ -1133,16 +1464,26 @@
             return; 
         }
         const submitBtn = document.getElementById('submit-btn');
-        const editDocId = safeNewsId(document.getElementById('edit-doc-id').value);
+        const editDocIdEl = document.getElementById('edit-doc-id');
+        if (!submitBtn || !editDocIdEl) return;
+        const editDocId = safeNewsId(editDocIdEl.value);
         submitBtn.disabled = true;
         try {
             submitBtn.innerText = 'तैयारी हो रही है...';
-            const title = document.getElementById('news-title').value.trim();
-            const category = document.getElementById('news-category').value;
-            const reporter = document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता';
-            const content = sanitizeNewsHtml(document.getElementById('news-content-editor').innerHTML.trim());
-            const manualUrlInput = document.getElementById('news-image').value.trim();
+            const titleEl = document.getElementById('news-title');
+            const categoryEl = document.getElementById('news-category');
+            const reporterEl = document.getElementById('news-reporter');
+            const editorEl = document.getElementById('news-content-editor');
+            const manualUrlEl = document.getElementById('news-image');
             const imageFileInput = document.getElementById('news-image-files');
+            if (!titleEl || !categoryEl || !reporterEl || !editorEl || !manualUrlEl) {
+                throw new Error('समाचार फॉर्म के आवश्यक फ़ील्ड उपलब्ध नहीं हैं।');
+            }
+            const title = titleEl.value.trim();
+            const category = categoryEl.value;
+            const reporter = reporterEl.value.trim() || 'विशेष संवाददाता';
+            const content = sanitizeNewsHtml(editorEl.innerHTML.trim());
+            const manualUrlInput = manualUrlEl.value.trim();
 
             let imageUrls = [];
 
@@ -1181,13 +1522,19 @@
 
             const existing = editDocId ? newsList.find(n => n.id === editDocId) : null;
             
+            const breakingEl = document.getElementById('news-breaking');
+            const leadEl = document.getElementById('news-lead');
+            if (!breakingEl || !leadEl) {
+                throw new Error('समाचार फॉर्म के प्रकाशन विकल्प उपलब्ध नहीं हैं।');
+            }
+
             const newItem = {
                 title, 
                 category, 
                 reporter, 
                 content,
-                isBreaking: document.getElementById('news-breaking').checked,
-                isLead: document.getElementById('news-lead').checked,
+                isBreaking: Boolean(breakingEl.checked),
+                isLead: Boolean(leadEl.checked),
                 date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
                 views: existing ? Number(existing.views || 0) : 0,
                 image: imageUrls[0],     // Primary image for compatibility
@@ -1218,12 +1565,16 @@
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
         const submitBtn = document.getElementById('elec-submit-btn');
+        const titleEl = document.getElementById('elec-title');
+        const subtitleEl = document.getElementById('elec-subtitle');
+        const linkEl = document.getElementById('elec-link');
+        if (!submitBtn || !titleEl || !subtitleEl || !linkEl) return;
         submitBtn.disabled = true; 
         submitBtn.innerText = 'अपलोड हो रहा है...';
         try {
-            const title = document.getElementById('elec-title').value.trim();
-            const subtitle = document.getElementById('elec-subtitle').value.trim() || 'चुनाव अधिसूचना / सूची';
-            const linkVal = sanitizeUrlRaw(document.getElementById('elec-link').value.trim());
+            const title = titleEl.value.trim();
+            const subtitle = subtitleEl.value.trim() || 'चुनाव अधिसूचना / सूची';
+            const linkVal = sanitizeUrlRaw(linkEl.value.trim());
             if (title.length < 3 || title.length > 220) throw new Error('दस्तावेज़ नाम अमान्य है।');
             if (!linkVal) throw new Error('दस्तावेज़ लिंक केवल मान्य HTTPS होना चाहिए।');
             await db.collection('election_docs').add({ title, subtitle, link: linkVal, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -1240,9 +1591,12 @@
     }
 
     async function deleteElectionDoc(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         if (!confirm('क्या आप इस चुनाव दस्तावेज़ को हटाना चाहते हैं?')) return;
         try {
-            await db.collection('election_docs').doc(id).delete();
+            await db.collection('election_docs').doc(safeId).delete();
             alert("दस्तावेज़ हटा दिया गया!");
             loadWidgetData(true);
         } catch (err) {
@@ -1251,18 +1605,32 @@
     }
 
     function editNewsPost(id) {
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         resetPostModalState();
-        const n = newsList.find(x => x.id === id);
+        const sourceList = Array.isArray(newsList) ? newsList : [];
+        const n = sourceList.find(x => x && x.id === safeId);
         if (!n) return;
         
-        document.getElementById('post-modal-title').innerText = "खबर एडिट करें";
-        document.getElementById('edit-doc-id').value = n.id;
-        document.getElementById('news-title').value = n.title || '';
-        document.getElementById('news-category').value = n.category || 'चुनाव अपडेट';
-        document.getElementById('news-reporter').value = n.reporter || 'विशेष संवाददाता';
-        document.getElementById('news-content-editor').innerHTML = sanitizeNewsHtml(n.content || '');
-        document.getElementById('news-breaking').checked = !!n.isBreaking;
-        document.getElementById('news-lead').checked = !!n.isLead;
+        const modalTitle = document.getElementById('post-modal-title');
+        const editDocIdEl = document.getElementById('edit-doc-id');
+        const titleEl = document.getElementById('news-title');
+        const categoryEl = document.getElementById('news-category');
+        const reporterEl = document.getElementById('news-reporter');
+        const editorEl = document.getElementById('news-content-editor');
+        const breakingEl = document.getElementById('news-breaking');
+        const leadEl = document.getElementById('news-lead');
+        const imageEl = document.getElementById('news-image');
+        const submitBtn = document.getElementById('submit-btn');
+        if (!modalTitle || !editDocIdEl || !titleEl || !categoryEl || !reporterEl || !editorEl || !breakingEl || !leadEl || !imageEl || !submitBtn) return;
+        modalTitle.innerText = "खबर एडिट करें";
+        editDocIdEl.value = n.id;
+        titleEl.value = n.title || '';
+        categoryEl.value = n.category || 'चुनाव अपडेट';
+        reporterEl.value = n.reporter || 'विशेष संवाददाता';
+        editorEl.innerHTML = sanitizeNewsHtml(n.content || '');
+        breakingEl.checked = !!n.isBreaking;
+        leadEl.checked = !!n.isLead;
         
         // Populate multiple images as comma separated if available
         let imgVal = '';
@@ -1271,16 +1639,19 @@
         } else if (n.image) {
             imgVal = n.image;
         }
-        document.getElementById('news-image').value = imgVal;
+        imageEl.value = imgVal;
         
-        document.getElementById('submit-btn').innerText = 'अपडेट करें';
+        submitBtn.innerText = 'अपडेट करें';
         openPortalModal('post-modal');
     }
 
     async function deleteNewsPost(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         if (!confirm('क्या आप सचमुच इस खबर को हटाना चाहते हैं?')) return;
         try {
-            await db.collection('news_posts').doc(id).delete();
+            await db.collection('news_posts').doc(safeId).delete();
             alert("खबर हटा दी गई!");
             loadNewsWithTTL(true);
         } catch (err) {
@@ -1291,10 +1662,15 @@
     async function handleJobSubmit(e) {
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
-        const title = document.getElementById('job-title').value.trim();
-        const posts = document.getElementById('job-posts').value.trim() || 'विस्तृत विज्ञापन देखें';
-        const lastDate = document.getElementById('job-last-date').value.trim();
-        const link = sanitizeUrlRaw(document.getElementById('job-link').value.trim()) || '#';
+        const titleEl = document.getElementById('job-title');
+        const postsEl = document.getElementById('job-posts');
+        const lastDateEl = document.getElementById('job-last-date');
+        const linkEl = document.getElementById('job-link');
+        if (!titleEl || !postsEl || !lastDateEl || !linkEl) return;
+        const title = titleEl.value.trim();
+        const posts = postsEl.value.trim() || 'विस्तृत विज्ञापन देखें';
+        const lastDate = lastDateEl.value.trim();
+        const link = sanitizeUrlRaw(linkEl.value.trim()) || '#';
         if (title.length < 3 || title.length > 220) { alert('भर्ती शीर्षक जाँचें।'); return; }
         try {
             await db.collection('job_alerts').add({ title, posts, lastDate, link, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -1310,16 +1686,20 @@
     async function handleScoreSubmit(e) {
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है। समय समाप्त।'); return; }
-        const title = document.getElementById('score-title').value.trim();
-        const score = document.getElementById('score-detail').value.trim();
-        const status = document.getElementById('score-status').value.trim();
+        const titleEl = document.getElementById('score-title');
+        const scoreEl = document.getElementById('score-detail');
+        const statusEl = document.getElementById('score-status');
+        if (!titleEl || !scoreEl || !statusEl) return;
+        const title = titleEl.value.trim();
+        const score = scoreEl.value.trim();
+        const status = statusEl.value.trim();
         if ([title, score, status].some(v => v.length < 2 || v.length > 300)) { alert('स्कोर जानकारी अमान्य है।'); return; }
         try {
             await db.collection('live_score').doc('current').set({ title, score, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
             alert('स्कोर सफलतापूर्वक अपडेट हो गया!'); 
             e.target.reset(); 
             closePortalModal('score-modal');
-            loadScore();
+            loadScore(true);
         } catch (err) { 
             alert('स्कोर अपडेट नहीं हो सका।'); 
         }
@@ -1327,21 +1707,32 @@
 
     async function handleCitizenSubmit(e) {
         e.preventDefault();
-        if (document.getElementById('citizen-hp').value) return;
-        const lastSubmitted = localStorage.getItem('last_report_time');
+        const honeypotEl = document.getElementById('citizen-hp');
+        const nameEl = document.getElementById('citizen-name');
+        const phoneEl = document.getElementById('citizen-phone');
+        const locationEl = document.getElementById('citizen-area');
+        const detailsEl = document.getElementById('citizen-msg');
+        const submitBtn = document.getElementById('citizen-submit-btn');
+        if (!honeypotEl || !nameEl || !phoneEl || !locationEl || !detailsEl || !submitBtn) return;
+        if (honeypotEl.value) return;
+        const rawLastSubmitted = localStorage.getItem('last_report_time');
+        const lastSubmitted = Number(rawLastSubmitted);
         const now = Date.now(), cooldownPeriod = 5 * 60 * 1000;
-        if (lastSubmitted && (now - parseInt(lastSubmitted, 10)) < cooldownPeriod) {
-            const remainingMinutes = Math.ceil((cooldownPeriod - (now - parseInt(lastSubmitted, 10))) / 60000);
+        const hasValidLastSubmitted = Number.isFinite(lastSubmitted) && lastSubmitted > 0 && lastSubmitted <= now;
+        if (hasValidLastSubmitted && (now - lastSubmitted) < cooldownPeriod) {
+            const remainingMinutes = Math.ceil((cooldownPeriod - (now - lastSubmitted)) / 60000);
             alert(`कृपया प्रतीक्षा करें! आप अगली सूचना ${remainingMinutes} मिनट बाद ही भेज सकते हैं।`); return;
         }
-        const name = document.getElementById('citizen-name').value.trim();
-        const phone = document.getElementById('citizen-phone').value.trim();
-        const location = document.getElementById('citizen-area').value.trim();
-        const details = document.getElementById('citizen-msg').value.trim();
+        if (rawLastSubmitted && !hasValidLastSubmitted) {
+            localStorage.removeItem('last_report_time');
+        }
+        const name = nameEl.value.trim();
+        const phone = phoneEl.value.trim();
+        const location = locationEl.value.trim();
+        const details = detailsEl.value.trim();
         if (name.length < 2 || location.length < 2 || details.length < 10) {
             alert('कृपया सभी फील्ड सही भरें।'); return;
         }
-        const submitBtn = document.getElementById('citizen-submit-btn'); 
         submitBtn.disabled = true; 
         submitBtn.innerText = 'भेजा जा रहा है...';
         try {
@@ -1364,9 +1755,12 @@
 
     async function handleAdminLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('admin-email').value.trim();
-        const pass = document.getElementById('admin-pass').value;
+        const emailEl = document.getElementById('admin-email');
+        const passEl = document.getElementById('admin-pass');
         const loginBtn = document.getElementById('login-submit-btn');
+        if (!emailEl || !passEl || !loginBtn) return;
+        const email = emailEl.value.trim();
+        const pass = passEl.value;
         loginBtn.disabled = true;
         loginBtn.innerText = 'लॉगिन हो रहा है...';
 
@@ -1388,8 +1782,10 @@
 
     function onAdminSuccess(email) {
         isAdminLoggedIn = true;
-        document.getElementById('admin-user-email').innerText = email;
-        document.getElementById('admin-action-bar').style.display = 'flex';
+        const emailEl = document.getElementById('admin-user-email');
+        const actionBar = document.getElementById('admin-action-bar');
+        if (emailEl) emailEl.innerText = typeof email === 'string' ? email : '';
+        if (actionBar) actionBar.style.display = 'flex';
         closePortalModal('admin-modal');
         renderNews(newsList);
     }
@@ -1397,7 +1793,8 @@
     async function logoutAdmin() {
         await auth.signOut();
         isAdminLoggedIn = false;
-        document.getElementById('admin-action-bar').style.display = 'none';
+        const actionBar = document.getElementById('admin-action-bar');
+        if (actionBar) actionBar.style.display = 'none';
         renderNews(newsList);
     }
 
@@ -1405,20 +1802,30 @@
 
     function safeStoreNews(list) {
         try {
-            const lightweightList = list.map(item => ({
-                id: item.id,
-                title: item.title,
-                category: item.category,
-                reporter: item.reporter,
-                date: item.date,
-                isBreaking: item.isBreaking,
-                isLead: item.isLead,
-                image: item.image || item.images?.[0] || '',
-                images: item.images || [],
-                content: (item.content || '').slice(0, 1500),
-                _isTruncated: (item.content || '').length > 1500,
-                createdAt: item.createdAt
-            }));
+            if (!Array.isArray(list)) throw new Error('Invalid news cache list');
+
+            const lightweightList = list
+                .filter(item => item && typeof item === 'object' && typeof item.id === 'string' && item.id.trim())
+                .map(item => {
+                    const content = typeof item.content === 'string' ? item.content : '';
+                    const images = Array.isArray(item.images) ? item.images : [];
+                    const image = typeof item.image === 'string' ? item.image : (typeof images[0] === 'string' ? images[0] : '');
+                    return {
+                        id: item.id,
+                        title: typeof item.title === 'string' ? item.title : '',
+                        category: typeof item.category === 'string' ? item.category : '',
+                        reporter: typeof item.reporter === 'string' ? item.reporter : '',
+                        date: typeof item.date === 'string' ? item.date : '',
+                        isBreaking: Boolean(item.isBreaking),
+                        isLead: Boolean(item.isLead),
+                        image,
+                        images: images.filter(src => typeof src === 'string'),
+                        content: content.slice(0, 1500),
+                        _isTruncated: content.length > 1500,
+                        createdAt: item.createdAt
+                    };
+                });
+
             localStorage.setItem('cached_news_list', JSON.stringify(lightweightList));
             localStorage.setItem('ckn_news_time', Date.now().toString());
         } catch (e) {
@@ -1428,10 +1835,20 @@
     }
 
     function updateBreakingTicker(list) {
+        const safeList = Array.isArray(list) ? list : [];
         const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-        const breaking = list.filter(n => n.isBreaking && (n.createdAt ? n.createdAt >= twentyFourHoursAgo : true));
+        const breaking = safeList.filter(n =>
+            n &&
+            typeof n === 'object' &&
+            n.isBreaking &&
+            typeof n.title === 'string' &&
+            n.title.trim() &&
+            (!n.createdAt || (Number.isFinite(Number(n.createdAt)) && Number(n.createdAt) >= twentyFourHoursAgo))
+        );
 
         const tickerEl = document.getElementById('breaking-ticker');
+        if (!tickerEl) return;
+
         if (breaking.length > 0) {
             tickerEl.innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
         } else {
@@ -1439,24 +1856,64 @@
         }
     }
 
-    function loadNewsWithTTL(forceRefresh = false) {
-        const cached = localStorage.getItem('cached_news_list');
-        const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
-        const now = Date.now();
+    let newsRefreshInFlight = false;
 
-        if (cached) {
+    function normalizeCachedNewsList(list) {
+        if (!Array.isArray(list)) return null;
+
+        const valid = list.filter(item =>
+            item &&
+            typeof item === 'object' &&
+            typeof item.id === 'string' &&
+            item.id.trim() &&
+            typeof item.title === 'string' &&
+            item.title.trim()
+        );
+
+        if (!valid.length) return null;
+
+        return valid.map(item => ({
+            ...item,
+            id: item.id.trim(),
+            title: item.title.trim(),
+            category: typeof item.category === 'string' ? item.category : '',
+            reporter: typeof item.reporter === 'string' ? item.reporter : '',
+            date: typeof item.date === 'string' ? item.date : '',
+            content: typeof item.content === 'string' ? item.content : '',
+            image: typeof item.image === 'string' ? item.image : '',
+            images: Array.isArray(item.images)
+                ? item.images.filter(image => typeof image === 'string')
+                : [],
+            isBreaking: Boolean(item.isBreaking),
+            isLead: Boolean(item.isLead),
+            createdAt: Number.isFinite(Number(item.createdAt)) ? Number(item.createdAt) : 0
+        }));
+    }
+
+    function loadNewsWithTTL(forceRefresh = false) {
+        const cachedList = normalizeCachedNewsList(readLocalJson('cached_news_list'));
+        const rawLastFetch = localStorage.getItem('ckn_news_time');
+        const lastFetch = Number(rawLastFetch);
+        const now = Date.now();
+        const hasValidCache = Array.isArray(cachedList) && cachedList.length > 0;
+        const hasValidFetchTime = Number.isFinite(lastFetch) && lastFetch > 0 && lastFetch <= now;
+
+        if (hasValidCache) {
+            newsList = cachedList;
+            const lead = newsList.find(n => n.isLead) || newsList[0];
+            setLeadStory(lead);
+            updateBreakingTicker(newsList);
+            renderNews(newsList);
+        } else if (localStorage.getItem('cached_news_list')) {
             try {
-                newsList = JSON.parse(cached);
-                const lead = newsList.find(n => n.isLead) || newsList[0];
-                setLeadStory(lead);
-                updateBreakingTicker(newsList);
-                renderNews(newsList);
-            } catch (e) {
                 localStorage.removeItem('cached_news_list');
-            }
+                localStorage.removeItem('ckn_news_time');
+            } catch (_) {}
         }
 
-        if (forceRefresh || !cached || (now - lastFetch) > TTL) {
+        if (forceRefresh || !hasValidCache || !hasValidFetchTime || (now - lastFetch) > TTL) {
+            if (newsRefreshInFlight) return;
+            newsRefreshInFlight = true;
             db.collection('news_posts')
                 .orderBy('createdAt', 'desc')
                 .limit(25)
@@ -1475,84 +1932,182 @@
                         updateBreakingTicker(fetchedList);
                         renderNews(newsList);
                     }
-                }).catch(err => console.warn("Cache served. Remote offline:", err));
+                }).catch(err => console.warn("Cache served. Remote offline:", err))
+                .finally(() => { newsRefreshInFlight = false; });
         }
     }
 
+    function readLocalJson(key, fallback = null) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (_) {
+            try { localStorage.removeItem(key); } catch (_) {}
+            return fallback;
+        }
+    }
+
+    let widgetJobsRefreshInFlight = false;
+    let widgetElecRefreshInFlight = false;
+
     function loadWidgetData(forceRefresh = false) {
-        const cachedJobs = localStorage.getItem('ckn_cached_jobs');
-        const cachedElec = localStorage.getItem('ckn_cached_elec');
+        const cachedJobs = readLocalJson('ckn_cached_jobs');
+        const cachedElec = readLocalJson('ckn_cached_elec');
         const lastWidgetTime = parseInt(localStorage.getItem('ckn_widget_time') || '0', 10);
         const now = Date.now();
+        const hasValidWidgetTime = Number.isFinite(lastWidgetTime) && lastWidgetTime > 0;
+        const widgetCacheFresh = hasValidWidgetTime && (now - lastWidgetTime) <= TTL;
 
-        if (cachedJobs) renderJobsHTML(JSON.parse(cachedJobs));
-        if (cachedElec) renderElecHTML(JSON.parse(cachedElec));
+        if (Array.isArray(cachedJobs)) renderJobsHTML(cachedJobs);
+        if (Array.isArray(cachedElec)) renderElecHTML(cachedElec);
 
-        if (forceRefresh || !cachedJobs || (now - lastWidgetTime) > TTL) {
-            db.collection('job_alerts').limit(5).get().then(snapshot => {
-                let jobs = snapshot.docs.map(doc => normalizeDoc(doc));
-                jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                try { localStorage.setItem('ckn_cached_jobs', JSON.stringify(jobs)); } catch(e) {}
-                renderJobsHTML(jobs);
-            }).catch(() => {});
+        const shouldRefreshJobs = forceRefresh || !Array.isArray(cachedJobs) || !widgetCacheFresh;
+        const shouldRefreshElec = forceRefresh || !Array.isArray(cachedElec) || !widgetCacheFresh;
 
-            db.collection('election_docs').limit(5).get().then(snapshot => {
-                let docs = snapshot.docs.map(doc => normalizeDoc(doc));
-                docs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                try {
-                    localStorage.setItem('ckn_cached_elec', JSON.stringify(docs));
-                    localStorage.setItem('ckn_widget_time', now.toString());
-                } catch(e) {}
-                renderElecHTML(docs);
-            }).catch(() => {});
+        const requests = [];
+
+        if (shouldRefreshJobs && !widgetJobsRefreshInFlight) {
+            widgetJobsRefreshInFlight = true;
+            requests.push(
+                db.collection('job_alerts').limit(5).get()
+                    .then(snapshot => {
+                        const jobs = snapshot.docs.map(doc => normalizeDoc(doc))
+                            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                        try { localStorage.setItem('ckn_cached_jobs', JSON.stringify(jobs)); } catch(e) {}
+                        renderJobsHTML(jobs);
+                        return true;
+                    })
+                    .catch(() => false)
+                    .finally(() => { widgetJobsRefreshInFlight = false; })
+            );
+        }
+
+        if (shouldRefreshElec && !widgetElecRefreshInFlight) {
+            widgetElecRefreshInFlight = true;
+            requests.push(
+                db.collection('election_docs').limit(5).get()
+                    .then(snapshot => {
+                        const docs = snapshot.docs.map(doc => normalizeDoc(doc))
+                            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                        try { localStorage.setItem('ckn_cached_elec', JSON.stringify(docs)); } catch(e) {}
+                        renderElecHTML(docs);
+                        return true;
+                    })
+                    .catch(() => false)
+                    .finally(() => { widgetElecRefreshInFlight = false; })
+            );
+        }
+
+        if (requests.length) {
+            Promise.all(requests).then(results => {
+                if (results.some(Boolean)) {
+                    try { localStorage.setItem('ckn_widget_time', Date.now().toString()); } catch(e) {}
+                }
+            });
         }
     }
 
     function renderJobsHTML(jobs) {
         const jobContainer = document.getElementById('job-alerts-list');
-        if (!jobs || !jobs.length) {
+        if (!jobContainer) return;
+        const safeJobs = Array.isArray(jobs) ? jobs : [];
+        if (!safeJobs.length) {
             jobContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">कोई सक्रिय फॉर्म नहीं है।</p>';
             return;
         }
-        jobContainer.innerHTML = jobs.slice(0, 5).map(job => `
+        jobContainer.innerHTML = safeJobs.slice(0, 5).filter(job => job && typeof job === 'object').map(job => {
+            const title = typeof job.title === 'string' ? job.title : '';
+            const posts = typeof job.posts === 'string' ? job.posts : '';
+            const lastDate = typeof job.lastDate === 'string' ? job.lastDate : '';
+            const link = typeof job.link === 'string' ? job.link : '#';
+            return `
             <div class="p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-800">
-                <b class="text-gray-900 dark:text-white text-xs">${escapeHTML(job.title)}</b>
+                <b class="text-gray-900 dark:text-white text-xs">${escapeHTML(title)}</b>
                 <div class="flex justify-between items-center text-[10px] text-gray-500 mt-1">
-                    <span>${escapeHTML(job.posts || '')}</span>
-                    <span class="text-red-500 font-semibold">अंतिम तिथि: ${escapeHTML(job.lastDate)}</span>
+                    <span>${escapeHTML(posts)}</span>
+                    <span class="text-red-500 font-semibold">अंतिम तिथि: ${escapeHTML(lastDate)}</span>
                 </div>
-                <a href="${sanitizeUrl(job.link || '#')}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                <a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function renderElecHTML(docs) {
         const elecContainer = document.getElementById('election-widget-list');
-        if (!docs || !docs.length) {
+        if (!elecContainer) return;
+        const safeDocs = Array.isArray(docs) ? docs : [];
+        if (!safeDocs.length) {
             elecContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">दस्तावेज़ उपलब्ध नहीं हैं।</p>';
             return;
         }
-        elecContainer.innerHTML = docs.map(doc => `
+        elecContainer.innerHTML = safeDocs.filter(doc => doc && typeof doc === 'object').map(doc => {
+            const title = typeof doc.title === 'string' ? doc.title : '';
+            const subtitle = typeof doc.subtitle === 'string' ? doc.subtitle : '';
+            const link = typeof doc.link === 'string' ? doc.link : '#';
+            const docId = typeof doc.id === 'string' ? doc.id : '';
+            return `
             <div class="p-2.5 bg-amber-50 dark:bg-amber-950/30 rounded border border-amber-200 dark:border-amber-900 mb-2">
-                <p class="font-bold text-amber-900 dark:text-amber-200">📄 ${escapeHTML(doc.title)}</p>
-                <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(doc.subtitle || '')}</p>
+                <p class="font-bold text-amber-900 dark:text-amber-200">📄 ${escapeHTML(title)}</p>
+                <p class="text-[11px] text-gray-600 dark:text-gray-300 mt-1">${escapeHTML(subtitle)}</p>
                 <div class="flex gap-2 mt-2">
-                    <a href="${sanitizeUrl(doc.link)}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold text-[11px]">दस्तावेज़ देखें</a>
-                    ${isAdminLoggedIn ? `<button onclick="deleteElectionDoc('${doc.id}')" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिलीट</button>` : ''}
+                    <a href="${sanitizeUrl(link)}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center bg-amber-600 hover:bg-amber-700 text-white py-1 rounded font-bold text-[11px]">दस्तावेज़ देखें</a>
+                    ${isAdminLoggedIn && docId ? `<button onclick="deleteElectionDoc(decodeURIComponent('${safeNewsIdAttr(docId)}'))" class="bg-red-600 text-white px-2 py-1 rounded text-[10px]">डिलीट</button>` : ''}
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
-    function loadScore() {
+    function renderLiveScore(data) {
+        if (!data || typeof data !== 'object') return;
+
+        const titleEl = document.getElementById('match-title');
+        const scoreEl = document.getElementById('match-score');
+        const statusEl = document.getElementById('match-status');
+
+        const title = typeof data.title === 'string' ? data.title.trim() : '';
+        const score = typeof data.score === 'string' ? data.score.trim() : '';
+        const status = typeof data.status === 'string' ? data.status.trim() : '';
+
+        if (titleEl) titleEl.innerText = title;
+        if (scoreEl) scoreEl.innerText = score;
+        if (statusEl) statusEl.innerText = status;
+    }
+
+    let liveScoreRefreshInFlight = false;
+
+    function loadScore(forceRefresh = false) {
+        const cacheKey = 'ckn_live_score_cache_v1';
+        const ttl = 30 * 1000;
+        const now = Date.now();
+        const cached = readLocalJson(cacheKey);
+        const cachedTime = cached && Number(cached.time);
+        const hasFreshCache = !forceRefresh &&
+            cached &&
+            cached.data &&
+            Number.isFinite(cachedTime) &&
+            cachedTime > 0 &&
+            (now - cachedTime) < ttl;
+
+        if (hasFreshCache) {
+            renderLiveScore(cached.data);
+            return;
+        }
+
+        if (liveScoreRefreshInFlight) return;
+        liveScoreRefreshInFlight = true;
+
         db.collection('live_score').doc('current').get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('match-title').innerText = data.title || '';
-                document.getElementById('match-score').innerText = data.score || '';
-                document.getElementById('match-status').innerText = data.status || '';
-            }
-        }).catch(() => {});
+            if (!doc.exists) return;
+            const data = doc.data() || {};
+            renderLiveScore(data);
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), data }));
+            } catch (_) {}
+        }).catch(() => {}).finally(() => {
+            liveScoreRefreshInFlight = false;
+        });
     }
 
     let deferredPrompt = null;
@@ -1564,26 +2119,36 @@
     });
 
     function triggerPwaInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((res) => {
-                if (res.outcome === 'accepted') document.getElementById('pwa-install-btn').style.display = 'none';
-                deferredPrompt = null;
-            });
-        }
+        if (!deferredPrompt) return;
+
+        const promptEvent = deferredPrompt;
+        deferredPrompt = null;
+        promptEvent.prompt();
+
+        promptEvent.userChoice.then((res) => {
+            if (res.outcome === 'accepted') {
+                const pwaBtn = document.getElementById('pwa-install-btn');
+                if (pwaBtn) pwaBtn.style.display = 'none';
+            }
+        }).catch(() => {});
     }
 
     async function enablePushNotifications() {
-        if (!('Notification' in window) || !messaging) {
+        if (!('Notification' in window)) {
             alert("यह डिवाइस वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
             return;
         }
         try {
+            const loadedMessaging = await loadFirebaseMessaging();
+            if (!loadedMessaging) {
+                alert("यह डिवाइस वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
+                return;
+            }
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
                 const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                 await navigator.serviceWorker.ready;
-                const token = await messaging.getToken({
+                const token = await loadedMessaging.getToken({
                     vapidKey: "BIs4iab2gPUGk3EQu8xD6KVU4d0a81aa2VRQdZ61n9N5_uIseC8ob6yAlQQyrsiIIINBmNOKvO8Dq6x4R8Zu9kA",
                     serviceWorkerRegistration: registration
                 });
@@ -1603,11 +2168,64 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
+            const registerSiteWorker = () => navigator.serviceWorker.register('/sw.js').catch(() => {});
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(registerSiteWorker, { timeout: 2500 });
+            } else {
+                setTimeout(registerSiteWorker, 1200);
+            }
         }
-        fetchLiveWeather();
+        setTimeout(fetchLiveWeather, 700);
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
         checkCookieConsent();
+
+        const staticHandlers = [
+            ['ai-voice-btn', 'click', startAiVoiceBulletin],
+            ['header-citizen-btn', 'click', () => openPortalModal('citizen-modal')],
+            ['brand-home-link', 'click', () => filterNews('all')],
+            ['calendar-reset-btn', 'click', resetCalendarFilter],
+            ['new-post-btn', 'click', triggerOpenNewPostModal],
+            ['new-job-btn', 'click', triggerOpenJobModal],
+            ['new-election-btn', 'click', triggerOpenElectionModal],
+            ['new-score-btn', 'click', triggerOpenScoreModal],
+            ['reports-btn', 'click', triggerOpenReportsModal],
+            ['logout-admin-btn', 'click', logoutAdmin],
+            ['lead-image', 'click', openLeadModal],
+            ['lead-title', 'click', openLeadModal],
+            ['accept-cookies-btn', 'click', acceptCookies]
+        ];
+        staticHandlers.forEach(([id, eventName, handler]) => {
+            const el = document.getElementById(id);
+            if (el && typeof handler === 'function') el.addEventListener(eventName, handler);
+        });
+
+        const directHandlers = [
+            ['pwa-install-btn', 'click', triggerPwaInstall],
+            ['push-notify-btn', 'click', enablePushNotifications],
+            ['dark-mode-btn', 'click', toggleDarkMode],
+            ['admin-login-btn', 'click', () => openPortalModal('admin-modal')],
+            ['news-calendar-picker', 'change', e => filterNewsByDate(e.target.value)],
+            ['search-input', 'input', scheduleLiveSearch]
+        ];
+        directHandlers.forEach(([id, eventName, handler]) => {
+            const el = document.getElementById(id);
+            if (el && typeof handler === 'function') el.addEventListener(eventName, handler);
+        });
+
+        const formHandlers = [
+            ['news-post-form', handleNewsSubmit],
+            ['job-alert-form', handleJobSubmit],
+            ['election-doc-form', handleElectionSubmit],
+            ['live-score-form', handleScoreSubmit],
+            ['citizen-report-form', handleCitizenSubmit],
+            ['admin-login-form', handleAdminLogin]
+        ];
+        formHandlers.forEach(([id, handler]) => {
+            const form = document.getElementById(id);
+            if (form && typeof handler === 'function') {
+                form.addEventListener('submit', handler);
+            }
+        });
 
         auth.onAuthStateChanged(async user => {
             if (user && user.uid === ADMIN_UID) {
@@ -1618,8 +2236,16 @@
         });
 
         loadNewsWithTTL();
-        loadWidgetData();
-        loadScore();
+
+        const runNonCriticalWidgets = () => {
+            loadWidgetData();
+            loadScore();
+        };
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(runNonCriticalWidgets, { timeout: 1800 });
+        } else {
+            setTimeout(runNonCriticalWidgets, 900);
+        }
     });
 
     window.addEventListener('keydown', function (e) {
