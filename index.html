@@ -1541,12 +1541,16 @@
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
         const submitBtn = document.getElementById('elec-submit-btn');
+        const titleEl = document.getElementById('elec-title');
+        const subtitleEl = document.getElementById('elec-subtitle');
+        const linkEl = document.getElementById('elec-link');
+        if (!submitBtn || !titleEl || !subtitleEl || !linkEl) return;
         submitBtn.disabled = true; 
         submitBtn.innerText = 'अपलोड हो रहा है...';
         try {
-            const title = document.getElementById('elec-title').value.trim();
-            const subtitle = document.getElementById('elec-subtitle').value.trim() || 'चुनाव अधिसूचना / सूची';
-            const linkVal = sanitizeUrlRaw(document.getElementById('elec-link').value.trim());
+            const title = titleEl.value.trim();
+            const subtitle = subtitleEl.value.trim() || 'चुनाव अधिसूचना / सूची';
+            const linkVal = sanitizeUrlRaw(linkEl.value.trim());
             if (title.length < 3 || title.length > 220) throw new Error('दस्तावेज़ नाम अमान्य है।');
             if (!linkVal) throw new Error('दस्तावेज़ लिंक केवल मान्य HTTPS होना चाहिए।');
             await db.collection('election_docs').add({ title, subtitle, link: linkVal, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
