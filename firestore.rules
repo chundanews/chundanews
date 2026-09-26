@@ -103,7 +103,7 @@ service cloud.firestore {
     }
 
     match /panchayat_results/{docId} {
-      allow read: if true;
+      allow read: if isAdmin() || resource.data.status == 'published';
       allow create, update: if isAdmin()
         && request.resource.data.keys().hasOnly([
           'district','panchayatSamiti','gramPanchayat','village','ward','post',
