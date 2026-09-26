@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>विस्तार से खबर - CHUNDA KSHETRA NEWS</title>
+    <meta id="meta-description" name="description" content="CHUNDA KSHETRA NEWS की ताज़ा और विस्तृत खबर।">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="theme-color" content="#b91c1c">
+    <link id="canonical-link" rel="canonical" href="https://chundanewslive.in/article.html">
+    <meta id="og-title" property="og:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-description" property="og:description" content="CHUNDA KSHETRA NEWS की ताज़ा और विस्तृत खबर।">
+    <meta id="og-url" property="og:url" content="https://chundanewslive.in/article.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="CHUNDA KSHETRA NEWS">
+    <meta id="og-image" property="og:image" content="https://chundanewslive.in/icon-512.png">
+    <meta property="og:locale" content="hi_IN">
+    <meta id="twitter-title" name="twitter:title" content="CHUNDA KSHETRA NEWS">
+    <meta id="twitter-description" name="twitter:description" content="CHUNDA KSHETRA NEWS की ताज़ा और विस्तृत खबर।">
+    <meta id="twitter-image" name="twitter:image" content="https://chundanewslive.in/icon-512.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script id="article-schema" type="application/ld+json">{"@context":"https://schema.org","@type":"NewsArticle","publisher":{"@type":"NewsMediaOrganization","name":"CHUNDA KSHETRA NEWS","url":"https://chundanewslive.in/"},"inLanguage":"hi-IN"}</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Mukta', sans-serif; }</style>
@@ -71,6 +87,81 @@
             return String(html);
         }
 
+        function cleanText(value) {
+            const temp = document.createElement('div');
+            temp.innerHTML = String(value || '');
+            return (temp.textContent || temp.innerText || '').replace(/\s+/g, ' ').trim();
+        }
+
+        function makeDescription(data) {
+            const source = data.excerpt || data.summary || data.description || cleanText(data.content || '');
+            const text = cleanText(source);
+            if (text.length <= 160) return text || 'CHUNDA KSHETRA NEWS की ताज़ा और विस्तृत खबर।';
+            return text.slice(0, 157).replace(/\s+\S*$/, '') + '...';
+        }
+
+        function setMeta(id, content) {
+            const el = document.getElementById(id);
+            if (el && content) el.setAttribute('content', content);
+        }
+
+        function setArticleSeo(data, id) {
+            const title = cleanText(data.title || 'विस्तृत खबर');
+            const description = makeDescription(data);
+            const canonicalUrl = 'https://chundanewslive.in/article.html?id=' + encodeURIComponent(id);
+            const imageUrl = sanitizeUrl((Array.isArray(data.images) && data.images.length) ? data.images[0] : data.image) || 'https://chundanewslive.in/icon-512.png';
+
+            document.title = title + ' - CHUNDA KSHETRA NEWS';
+            setMeta('meta-description', description);
+            setMeta('og-title', title);
+            setMeta('og-description', description);
+            setMeta('og-url', canonicalUrl);
+            setMeta('og-image', imageUrl);
+            setMeta('twitter-title', title);
+            setMeta('twitter-description', description);
+            setMeta('twitter-image', imageUrl);
+
+            const canonical = document.getElementById('canonical-link');
+            if (canonical) canonical.setAttribute('href', canonicalUrl);
+
+            const published = data.createdAt && typeof data.createdAt.toDate === 'function'
+                ? data.createdAt.toDate().toISOString()
+                : (data.publishedAt || data.datePublished || data.date || '');
+            const modified = data.updatedAt && typeof data.updatedAt.toDate === 'function'
+                ? data.updatedAt.toDate().toISOString()
+                : (data.updatedAt || published);
+
+            const schema = {
+                '@context': 'https://schema.org',
+                '@type': 'NewsArticle',
+                headline: title,
+                description: description,
+                url: canonicalUrl,
+                mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+                image: [imageUrl],
+                inLanguage: 'hi-IN',
+                publisher: {
+                    '@type': 'NewsMediaOrganization',
+                    name: 'CHUNDA KSHETRA NEWS',
+                    url: 'https://chundanewslive.in/',
+                    logo: { '@type': 'ImageObject', url: 'https://chundanewslive.in/icon-512.png' }
+                }
+            };
+
+            if (published) {
+                schema.datePublished = published;
+                schema.dateCreated = published;
+            }
+            if (modified) schema.dateModified = modified;
+            schema.author = data.reporter
+                ? { '@type': 'Person', name: cleanText(data.reporter) }
+                : { '@type': 'Organization', name: 'CHUNDA KSHETRA NEWS' };
+            if (data.category) schema.articleSection = cleanText(data.category);
+
+            const schemaEl = document.getElementById('article-schema');
+            if (schemaEl) schemaEl.textContent = JSON.stringify(schema);
+        }
+
         async function fetchArticle() {
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
@@ -96,11 +187,11 @@
                 if (Array.isArray(data.images) && data.images.length > 0) {
                     imagesHtml = data.images.map(imgUrl => {
                         const safeImg = sanitizeUrl(imgUrl);
-                        return safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-4 object-cover max-h-[450px]" alt="News Image" onerror="this.style.display='none'">` : '';
+                        return safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-4 object-cover max-h-[450px]" alt="${cleanText(data.title || "CHUNDA KSHETRA NEWS समाचार")}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : '';
                     }).join('');
                 } else if (data.image) {
                     const safeImg = sanitizeUrl(data.image);
-                    imagesHtml = safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[450px]" alt="News Image">` : '';
+                    imagesHtml = safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[450px]" alt="${cleanText(data.title || "CHUNDA KSHETRA NEWS समाचार")}" loading="eager" decoding="async">` : '';
                 }
 
                 container.innerHTML = `
