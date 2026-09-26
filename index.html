@@ -2046,7 +2046,7 @@
             if (permission === 'granted') {
                 const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                 await navigator.serviceWorker.ready;
-                const token = await messaging.getToken({
+                const token = await loadedMessaging.getToken({
                     vapidKey: "BIs4iab2gPUGk3EQu8xD6KVU4d0a81aa2VRQdZ61n9N5_uIseC8ob6yAlQQyrsiIIINBmNOKvO8Dq6x4R8Zu9kA",
                     serviceWorkerRegistration: registration
                 });
