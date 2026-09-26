@@ -86,14 +86,14 @@
 
         function sanitizeNewsHtml(html) {
             if (!html) return '';
-            if (window.DOMPurify) {
-                return DOMPurify.sanitize(String(html), {
-                    ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a'],
-                    ALLOWED_ATTR: ['href','target','rel'],
-                    FORBID_ATTR: ['style','class','id','onclick','onerror','onload']
-                });
+            if (!window.DOMPurify || typeof window.DOMPurify.sanitize !== 'function') {
+                return escapeHTML(String(html));
             }
-            return String(html);
+            return DOMPurify.sanitize(String(html), {
+                ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a'],
+                ALLOWED_ATTR: ['href','target','rel'],
+                FORBID_ATTR: ['style','class','id','onclick','onerror','onload']
+            });
         }
 
         async function fetchArticle() {
