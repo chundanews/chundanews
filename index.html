@@ -1742,9 +1742,11 @@
         const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
         const breaking = safeList.filter(n =>
             n &&
+            typeof n === 'object' &&
             n.isBreaking &&
             typeof n.title === 'string' &&
-            (n.createdAt ? Number(n.createdAt) >= twentyFourHoursAgo : true)
+            n.title.trim() &&
+            (!n.createdAt || (Number.isFinite(Number(n.createdAt)) && Number(n.createdAt) >= twentyFourHoursAgo))
         );
 
         const tickerEl = document.getElementById('breaking-ticker');
