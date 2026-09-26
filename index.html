@@ -1687,11 +1687,16 @@
         const submitBtn = document.getElementById('citizen-submit-btn');
         if (!honeypotEl || !nameEl || !phoneEl || !locationEl || !detailsEl || !submitBtn) return;
         if (honeypotEl.value) return;
-        const lastSubmitted = localStorage.getItem('last_report_time');
+        const rawLastSubmitted = localStorage.getItem('last_report_time');
+        const lastSubmitted = Number(rawLastSubmitted);
         const now = Date.now(), cooldownPeriod = 5 * 60 * 1000;
-        if (lastSubmitted && (now - parseInt(lastSubmitted, 10)) < cooldownPeriod) {
-            const remainingMinutes = Math.ceil((cooldownPeriod - (now - parseInt(lastSubmitted, 10))) / 60000);
+        const hasValidLastSubmitted = Number.isFinite(lastSubmitted) && lastSubmitted > 0 && lastSubmitted <= now;
+        if (hasValidLastSubmitted && (now - lastSubmitted) < cooldownPeriod) {
+            const remainingMinutes = Math.ceil((cooldownPeriod - (now - lastSubmitted)) / 60000);
             alert(`कृपया प्रतीक्षा करें! आप अगली सूचना ${remainingMinutes} मिनट बाद ही भेज सकते हैं।`); return;
+        }
+        if (rawLastSubmitted && !hasValidLastSubmitted) {
+            localStorage.removeItem('last_report_time');
         }
         const name = nameEl.value.trim();
         const phone = phoneEl.value.trim();
