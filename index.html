@@ -1144,9 +1144,13 @@
         const related = [...sameCategory, ...fallback.filter(n => !sameCategory.some(r => r.id === n.id))].slice(0, 4);
         if (!related.length) { container.innerHTML = ''; return; }
         container.innerHTML = related.map(item => {
-            const img = sanitizeUrl((Array.isArray(item.images) && item.images[0]) || item.image || '');
+            const rawImage = (Array.isArray(item.images) && item.images.length > 0)
+                ? item.images[0]
+                : (typeof item.image === 'string' ? item.image : '');
+            const img = sanitizeUrl(rawImage);
             const fallback = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600';
             const id = safeNewsIdAttr(item.id);
+            if (!id) return '';
             return `<article class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition">
                 <img src="${img || fallback}" alt="${escapeHTML(item.title || 'संबंधित खबर की तस्वीर')}" width="320" height="180" loading="lazy" decoding="async" class="w-full aspect-video object-cover">
                 <div class="p-3"><span class="text-[10px] font-bold text-red-600">${escapeHTML(item.category || 'सामान्य')}</span>
