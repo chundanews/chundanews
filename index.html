@@ -1766,6 +1766,9 @@
         }
     }
 
+    let widgetJobsRefreshInFlight = false;
+    let widgetElecRefreshInFlight = false;
+
     function loadWidgetData(forceRefresh = false) {
         const cachedJobs = readLocalJson('ckn_cached_jobs');
         const cachedElec = readLocalJson('ckn_cached_elec');
@@ -1782,7 +1785,8 @@
 
         const requests = [];
 
-        if (shouldRefreshJobs) {
+        if (shouldRefreshJobs && !widgetJobsRefreshInFlight) {
+            widgetJobsRefreshInFlight = true;
             requests.push(
                 db.collection('job_alerts').limit(5).get()
                     .then(snapshot => {
@@ -1793,10 +1797,12 @@
                         return true;
                     })
                     .catch(() => false)
+                    .finally(() => { widgetJobsRefreshInFlight = false; })
             );
         }
 
-        if (shouldRefreshElec) {
+        if (shouldRefreshElec && !widgetElecRefreshInFlight) {
+            widgetElecRefreshInFlight = true;
             requests.push(
                 db.collection('election_docs').limit(5).get()
                     .then(snapshot => {
@@ -1807,6 +1813,7 @@
                         return true;
                     })
                     .catch(() => false)
+                    .finally(() => { widgetElecRefreshInFlight = false; })
             );
         }
 
