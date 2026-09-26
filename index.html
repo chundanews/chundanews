@@ -1208,10 +1208,12 @@
         const safeId = safeNewsId(id);
         if (!safeId) return;
 
-        const sourceList = Array.isArray(newsList) ? newsList : [];
-        const item = (leadNewsItem && leadNewsItem.id === safeId)
+        const sourceList = Array.isArray(newsList)
+            ? newsList.filter(n => n && typeof n === 'object' && typeof n.id === 'string' && n.id.trim())
+            : [];
+        const item = (leadNewsItem && safeNewsId(leadNewsItem.id) === safeId)
             ? leadNewsItem
-            : sourceList.find(n => n && n.id === safeId);
+            : sourceList.find(n => safeNewsId(n.id) === safeId);
         if (!item || typeof item !== 'object' || typeof item.title !== 'string') return;
 
         const shareTitle = `📰 *${item.title}*`;
@@ -1220,8 +1222,10 @@
         const cleanContent = tempDiv.textContent || tempDiv.innerText || '';
         const shareExcerpt = cleanContent ? (cleanContent.length > 100 ? cleanContent.substring(0, 100) + '...' : cleanContent) : '';
         
-        const newsUrl = `${window.location.origin}/article.html?id=${encodeURIComponent(id)}`;
-        const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
+        const newsUrl = `${window.location.origin}/article.html?id=${encodeURIComponent(safeId)}`;
+        const rawImg = (Array.isArray(item.images) && item.images.length > 0)
+            ? item.images[0]
+            : (typeof item.image === 'string' ? item.image : '');
         const imageUrl = sanitizeUrl(rawImg);
 
         const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${typeof item.reporter === 'string' && item.reporter.trim() ? item.reporter : 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
