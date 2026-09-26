@@ -1649,10 +1649,18 @@
     }
 
     function updateBreakingTicker(list) {
+        const safeList = Array.isArray(list) ? list : [];
         const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-        const breaking = list.filter(n => n.isBreaking && (n.createdAt ? n.createdAt >= twentyFourHoursAgo : true));
+        const breaking = safeList.filter(n =>
+            n &&
+            n.isBreaking &&
+            typeof n.title === 'string' &&
+            (n.createdAt ? Number(n.createdAt) >= twentyFourHoursAgo : true)
+        );
 
         const tickerEl = document.getElementById('breaking-ticker');
+        if (!tickerEl) return;
+
         if (breaking.length > 0) {
             tickerEl.innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
         } else {
