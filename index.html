@@ -1170,8 +1170,14 @@
     }
 
     async function shareWhatsAppWithImage(id) {
-        const item = (leadNewsItem && leadNewsItem.id === id) ? leadNewsItem : newsList.find(n => n.id === id);
-        if (!item) return;
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
+
+        const sourceList = Array.isArray(newsList) ? newsList : [];
+        const item = (leadNewsItem && leadNewsItem.id === safeId)
+            ? leadNewsItem
+            : sourceList.find(n => n && n.id === safeId);
+        if (!item || typeof item !== 'object' || typeof item.title !== 'string') return;
 
         const shareTitle = `📰 *${item.title}*`;
         const tempDiv = document.createElement('div');
@@ -1183,7 +1189,7 @@
         const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
         const imageUrl = sanitizeUrl(rawImg);
 
-        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${item.reporter || 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
+        const shareText = `${shareTitle}\n\n${shareExcerpt ? shareExcerpt + '\n\n' : ''}${imageUrl ? '📸 *फोटो देखें:*\n' + imageUrl + '\n\n' : ''}🎙️ *रिपोर्टर:* ${typeof item.reporter === 'string' && item.reporter.trim() ? item.reporter : 'विशेष संवाददाता'}\n\n🔗 *पूरी खबर पढ़ने के लिए क्लिक करें:*\n${newsUrl}`;
 
         if (navigator.share) {
             try {
