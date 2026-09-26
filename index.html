@@ -1384,9 +1384,11 @@
     }
 
     async function deleteCitizenReport(id) {
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         if (!confirm('क्या आप इस नागरिक रिपोर्ट को हमेशा के लिए हटाना चाहते हैं?')) return;
         try {
-            await db.collection('citizen_reports').doc(id).delete();
+            await db.collection('citizen_reports').doc(safeId).delete();
             alert("नागरिक रिपोर्ट सफलतापूर्वक हटा दी गई!");
             loadCitizenReportsList();
         } catch (err) {
