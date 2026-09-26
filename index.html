@@ -1769,8 +1769,9 @@
                             .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                         try { localStorage.setItem('ckn_cached_jobs', JSON.stringify(jobs)); } catch(e) {}
                         renderJobsHTML(jobs);
+                        return true;
                     })
-                    .catch(() => {})
+                    .catch(() => false)
             );
         }
 
@@ -1782,14 +1783,17 @@
                             .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                         try { localStorage.setItem('ckn_cached_elec', JSON.stringify(docs)); } catch(e) {}
                         renderElecHTML(docs);
+                        return true;
                     })
-                    .catch(() => {})
+                    .catch(() => false)
             );
         }
 
         if (requests.length) {
-            Promise.allSettled(requests).then(() => {
-                try { localStorage.setItem('ckn_widget_time', Date.now().toString()); } catch(e) {}
+            Promise.all(requests).then(results => {
+                if (results.some(Boolean)) {
+                    try { localStorage.setItem('ckn_widget_time', Date.now().toString()); } catch(e) {}
+                }
             });
         }
     }
