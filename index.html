@@ -844,8 +844,11 @@
     let currentCategory = 'all';
     let leadNewsItem = null;
 
+    let liveWeatherRefreshInFlight = false;
+
     async function fetchLiveWeather() {
         const weatherElement = document.getElementById('live-weather-display');
+        if (liveWeatherRefreshInFlight) return;
         const url = 'https://api.open-meteo.com/v1/forecast?latitude=24.5858&longitude=73.7125&current=temperature_2m,weather_code&timezone=Asia%2FKolkata';
         const labels = {0:'साफ मौसम',1:'मुख्यतः साफ',2:'आंशिक बादल',3:'बादल',45:'कोहरा',48:'कोहरा',51:'हल्की बूंदाबांदी',53:'बूंदाबांदली',55:'बूंदाबांदली',61:'हल्की बारिश',63:'बारिश',65:'तेज़ बारिश',80:'बारिश की बौछार',81:'बारिश की बौछार',82:'तेज़ बौछार',95:'गरज के साथ बारिश',96:'ओलावृष्टि संभव',99:'ओलावृष्टि संभव'};
         const cacheKey = 'ckn_weather_cache_v1';
@@ -868,6 +871,9 @@
                 return;
             }
         } catch (_) {}
+        if (liveWeatherRefreshInFlight) return;
+        liveWeatherRefreshInFlight = true;
+
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('Weather request failed');
@@ -880,6 +886,8 @@
             } catch (_) {}
         } catch (error) {
             if (weatherElement) weatherElement.innerHTML = '<i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i> उदयपुर: मौसम उपलब्ध नहीं';
+        } finally {
+            liveWeatherRefreshInFlight = false;
         }
     }
 
