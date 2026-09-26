@@ -1668,21 +1668,27 @@
 
     async function handleCitizenSubmit(e) {
         e.preventDefault();
-        if (document.getElementById('citizen-hp').value) return;
+        const honeypotEl = document.getElementById('citizen-hp');
+        const nameEl = document.getElementById('citizen-name');
+        const phoneEl = document.getElementById('citizen-phone');
+        const locationEl = document.getElementById('citizen-area');
+        const detailsEl = document.getElementById('citizen-msg');
+        const submitBtn = document.getElementById('citizen-submit-btn');
+        if (!honeypotEl || !nameEl || !phoneEl || !locationEl || !detailsEl || !submitBtn) return;
+        if (honeypotEl.value) return;
         const lastSubmitted = localStorage.getItem('last_report_time');
         const now = Date.now(), cooldownPeriod = 5 * 60 * 1000;
         if (lastSubmitted && (now - parseInt(lastSubmitted, 10)) < cooldownPeriod) {
             const remainingMinutes = Math.ceil((cooldownPeriod - (now - parseInt(lastSubmitted, 10))) / 60000);
             alert(`कृपया प्रतीक्षा करें! आप अगली सूचना ${remainingMinutes} मिनट बाद ही भेज सकते हैं।`); return;
         }
-        const name = document.getElementById('citizen-name').value.trim();
-        const phone = document.getElementById('citizen-phone').value.trim();
-        const location = document.getElementById('citizen-area').value.trim();
-        const details = document.getElementById('citizen-msg').value.trim();
+        const name = nameEl.value.trim();
+        const phone = phoneEl.value.trim();
+        const location = locationEl.value.trim();
+        const details = detailsEl.value.trim();
         if (name.length < 2 || location.length < 2 || details.length < 10) {
             alert('कृपया सभी फील्ड सही भरें।'); return;
         }
-        const submitBtn = document.getElementById('citizen-submit-btn'); 
         submitBtn.disabled = true; 
         submitBtn.innerText = 'भेजा जा रहा है...';
         try {
