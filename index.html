@@ -1717,20 +1717,30 @@
 
     function safeStoreNews(list) {
         try {
-            const lightweightList = list.map(item => ({
-                id: item.id,
-                title: item.title,
-                category: item.category,
-                reporter: item.reporter,
-                date: item.date,
-                isBreaking: item.isBreaking,
-                isLead: item.isLead,
-                image: item.image || item.images?.[0] || '',
-                images: item.images || [],
-                content: (item.content || '').slice(0, 1500),
-                _isTruncated: (item.content || '').length > 1500,
-                createdAt: item.createdAt
-            }));
+            if (!Array.isArray(list)) throw new Error('Invalid news cache list');
+
+            const lightweightList = list
+                .filter(item => item && typeof item === 'object' && typeof item.id === 'string' && item.id.trim())
+                .map(item => {
+                    const content = typeof item.content === 'string' ? item.content : '';
+                    const images = Array.isArray(item.images) ? item.images : [];
+                    const image = typeof item.image === 'string' ? item.image : (typeof images[0] === 'string' ? images[0] : '');
+                    return {
+                        id: item.id,
+                        title: typeof item.title === 'string' ? item.title : '',
+                        category: typeof item.category === 'string' ? item.category : '',
+                        reporter: typeof item.reporter === 'string' ? item.reporter : '',
+                        date: typeof item.date === 'string' ? item.date : '',
+                        isBreaking: Boolean(item.isBreaking),
+                        isLead: Boolean(item.isLead),
+                        image,
+                        images: images.filter(src => typeof src === 'string'),
+                        content: content.slice(0, 1500),
+                        _isTruncated: content.length > 1500,
+                        createdAt: item.createdAt
+                    };
+                });
+
             localStorage.setItem('cached_news_list', JSON.stringify(lightweightList));
             localStorage.setItem('ckn_news_time', Date.now().toString());
         } catch (e) {
