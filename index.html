@@ -882,8 +882,13 @@
             const response = await fetch(url);
             if (!response.ok) throw new Error('Weather request failed');
             const data = await response.json();
-            const temp = Math.round(data.current.temperature_2m);
-            const description = labels[data.current.weather_code] || 'मौसम उपलब्ध';
+            const current = data && typeof data.current === 'object' ? data.current : null;
+            const rawTemp = current && current.temperature_2m;
+            const weatherCode = current && current.weather_code;
+            const tempNumber = Number(rawTemp);
+            if (!Number.isFinite(tempNumber)) throw new Error('Invalid weather temperature');
+            const temp = Math.round(tempNumber);
+            const description = labels[weatherCode] || 'मौसम उपलब्ध';
             renderWeather(temp, description);
             try {
                 sessionStorage.setItem(cacheKey, JSON.stringify({timestamp: Date.now(), temp, description}));
