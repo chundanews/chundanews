@@ -660,9 +660,13 @@
     function sanitizeUrlRaw(url) {
         if (!url) return '';
         const trimmed = String(url).trim();
-        if (trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/')) {
-            return trimmed;
-        }
+        if (trimmed.startsWith('data:image/')) return trimmed;
+        try {
+            const parsed = new URL(trimmed, window.location.origin);
+            if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+                return parsed.href;
+            }
+        } catch (_) {}
         return '';
     }
 
