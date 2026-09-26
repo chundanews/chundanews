@@ -25,15 +25,13 @@ jobs:
 
       - name: Generate sitemap
         env:
-          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          FIREBASE_WEB_API_KEY: ${{ secrets.FIREBASE_WEB_API_KEY }}
         run: |
-          if [ -z "$FIREBASE_SERVICE_ACCOUNT_JSON" ]; then
-            echo "FIREBASE_SERVICE_ACCOUNT_JSON secret is required."
+          if [ -z "$FIREBASE_WEB_API_KEY" ]; then
+            echo "FIREBASE_WEB_API_KEY secret is required."
             exit 1
           fi
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > serviceAccountKey.json
           npm run generate-sitemap
-          rm -f serviceAccountKey.json
 
       - name: Commit sitemap
         run: |
