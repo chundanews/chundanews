@@ -1098,8 +1098,11 @@
     function renderRelatedNews(currentId, currentCategory) {
         const container = document.getElementById('related-news');
         if (!container) return;
-        const sameCategory = currentCategory ? newsList.filter(n => n.id !== currentId && n.category === currentCategory) : [];
-        const fallback = newsList.filter(n => n.id !== currentId);
+        const sourceList = Array.isArray(newsList) ? newsList : [];
+        const safeCurrentId = typeof currentId === 'string' ? currentId : '';
+        const safeCategory = typeof currentCategory === 'string' ? currentCategory : '';
+        const sameCategory = safeCategory ? sourceList.filter(n => n && n.id !== safeCurrentId && n.category === safeCategory) : [];
+        const fallback = sourceList.filter(n => n && n.id !== safeCurrentId);
         const related = [...sameCategory, ...fallback.filter(n => !sameCategory.some(r => r.id === n.id))].slice(0, 4);
         if (!related.length) { container.innerHTML = ''; return; }
         container.innerHTML = related.map(item => {
