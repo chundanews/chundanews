@@ -1227,9 +1227,22 @@
     }
 
     function filterNewsByDate(selectedDateStr) {
-        if (!selectedDateStr) return;
+        if (typeof selectedDateStr !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(selectedDateStr)) return;
         const [selYear, selMonth, selDay] = selectedDateStr.split('-').map(Number);
-        const filtered = newsList.filter(item => {
+        const selectedDate = new Date(selYear, selMonth - 1, selDay);
+        if (
+            !Number.isInteger(selYear) ||
+            !Number.isInteger(selMonth) ||
+            !Number.isInteger(selDay) ||
+            selMonth < 1 || selMonth > 12 ||
+            selDay < 1 || selDay > 31 ||
+            selectedDate.getFullYear() !== selYear ||
+            selectedDate.getMonth() !== selMonth - 1 ||
+            selectedDate.getDate() !== selDay
+        ) return;
+
+        const safeNewsList = Array.isArray(newsList) ? newsList : [];
+        const filtered = safeNewsList.filter(item => {
             const timestamp = Number(item.createdAt) || 0;
             if (!timestamp) return false;
             const itemDate = new Date(timestamp);
