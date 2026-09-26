@@ -133,17 +133,32 @@
                 document.getElementById('twitter-title').setAttribute('content', articleTitle);
                 document.getElementById('twitter-description').setAttribute('content', articleDescription || articleTitle);
                 document.getElementById('twitter-image').setAttribute('content', firstImage || 'https://chundanewslive.in/favicon.ico');
+                const articleAuthor = String(data.reporter || 'विशेष संवाददाता').trim() || 'विशेष संवाददाता';
                 const schema = {
-                    '@context':'https://schema.org','@type':'NewsArticle','headline':articleTitle,
+                    '@context':'https://schema.org',
+                    '@type':'NewsArticle',
+                    'headline':articleTitle,
                     'description':articleDescription || articleTitle,
-                    'author':{'@type':'Person','name':String(data.reporter || 'विशेष संवाददाता')},
-                    'publisher':{'@type':'Organization','name':'CHUNDA KSHETRA NEWS','url':'https://chundanewslive.in/'},
+                    'inLanguage':'hi-IN',
+                    'author':{'@type':'Person','name':articleAuthor},
+                    'publisher':{
+                        '@type':'Organization',
+                        'name':'CHUNDA KSHETRA NEWS',
+                        'url':'https://chundanewslive.in/',
+                        'logo':{'@type':'ImageObject','url':'https://chundanewslive.in/favicon.ico'}
+                    },
                     'mainEntityOfPage':{'@type':'WebPage','@id':canonical},
                     'articleSection':articleCategory
                 };
                 if(firstImage) schema.image=[firstImage];
-                if(data.createdAt && data.createdAt.toDate) schema.datePublished=data.createdAt.toDate().toISOString();
-                if(data.updatedAt && data.updatedAt.toDate) schema.dateModified=data.updatedAt.toDate().toISOString();
+                if(data.createdAt && typeof data.createdAt.toDate === 'function') {
+                    schema.datePublished=data.createdAt.toDate().toISOString();
+                }
+                if(data.updatedAt && typeof data.updatedAt.toDate === 'function') {
+                    schema.dateModified=data.updatedAt.toDate().toISOString();
+                } else if(schema.datePublished) {
+                    schema.dateModified=schema.datePublished;
+                }
                 document.getElementById('news-article-schema').textContent = JSON.stringify(schema);
 
                 // Multiple Images handling for article page
