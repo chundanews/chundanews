@@ -1857,7 +1857,15 @@
         const ttl = 30 * 1000;
         const now = Date.now();
         const cached = readLocalJson(cacheKey);
-        if (!forceRefresh && cached && cached.data && (now - Number(cached.time || 0)) < ttl) {
+        const cachedTime = cached && Number(cached.time);
+        const hasFreshCache = !forceRefresh &&
+            cached &&
+            cached.data &&
+            Number.isFinite(cachedTime) &&
+            cachedTime > 0 &&
+            (now - cachedTime) < ttl;
+
+        if (hasFreshCache) {
             renderLiveScore(cached.data);
             return;
         }
