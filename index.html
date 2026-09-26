@@ -913,6 +913,7 @@
     }
 
     function closePortalModal(id) {
+        if (typeof id !== 'string' || !id.trim()) return;
         const m = document.getElementById(id);
         if (m) { m.style.display = 'none'; m.setAttribute('aria-hidden', 'true'); }
         if (!document.querySelector('.portal-modal[style*="display: flex"]')) {
