@@ -75,6 +75,15 @@
             return '';
         }
 
+        function escapeHTML(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function sanitizeNewsHtml(html) {
             if (!html) return '';
             if (window.DOMPurify) {
@@ -100,7 +109,7 @@
             try {
                 const doc = await db.collection('news_posts').doc(id).get();
                 if (!doc.exists) {
-                    container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है。<br><small class="text-gray-400">ID: ${id}</small></p>`;
+                    container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है。<br><small class="text-gray-400">ID: ${escapeHTML(id)}</small></p>`;
                     return;
                 }
 
@@ -150,9 +159,9 @@
                 }
 
                 container.innerHTML = `
-                    <div class="article-header"><span class="inline-flex bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-xs font-bold px-3 py-1 rounded-full">${data.category || 'सामान्य'}</span>
-                    <h1 class="article-title font-black mt-4 mb-4">${data.title || ''}</h1>
-                    <div class="article-meta"><span>✍️ ${data.reporter || 'विशेष संवाददाता'}</span><span>•</span><span>🗓️ ${data.date || 'आज'}</span></div></div><div class="article-actions"><button class="article-action" type="button" onclick="navigator.share?navigator.share({title:document.title,url:location.href}):navigator.clipboard.writeText(location.href).then(()=>alert('खबर का लिंक कॉपी हो गया।'))">↗️ शेयर</button><button class="article-action" type="button" onclick="navigator.clipboard.writeText(location.href).then(()=>alert('खबर का लिंक कॉपी हो गया।'))">🔗 लिंक कॉपी</button><a class="article-action" href="/">← होम</a></div>
+                    <div class="article-header"><span class="inline-flex bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 text-xs font-bold px-3 py-1 rounded-full">${escapeHTML(data.category || 'सामान्य')}</span>
+                    <h1 class="article-title font-black mt-4 mb-4">${escapeHTML(data.title || '')}</h1>
+                    <div class="article-meta"><span>✍️ ${escapeHTML(data.reporter || 'विशेष संवाददाता')}</span><span>•</span><span>🗓️ ${escapeHTML(data.date || 'आज')}</span></div></div><div class="article-actions"><button class="article-action" type="button" onclick="navigator.share?navigator.share({title:document.title,url:location.href}):navigator.clipboard.writeText(location.href).then(()=>alert('खबर का लिंक कॉपी हो गया।'))">↗️ शेयर</button><button class="article-action" type="button" onclick="navigator.clipboard.writeText(location.href).then(()=>alert('खबर का लिंक कॉपी हो गया।'))">🔗 लिंक कॉपी</button><a class="article-action" href="/">← होम</a></div>
                     
                     ${imagesHtml}
 
@@ -161,7 +170,7 @@
                     </div>
                 `;
             } catch (err) {
-                container.innerHTML = `<p class="text-center text-red-500 py-8">खबर लोड करने में नेटवर्क त्रुटि हुई।<br><small class="text-gray-400 font-mono">Error: ${err.message}</small></p>`;
+                container.innerHTML = `<p class="text-center text-red-500 py-8">खबर लोड करने में नेटवर्क त्रुटि हुई।<br><small class="text-gray-400 font-mono">Error: ${escapeHTML(err && err.message ? err.message : 'अज्ञात त्रुटि')}</small></p>`;
             }
         }
 
