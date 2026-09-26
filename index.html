@@ -1390,8 +1390,10 @@
     
     function triggerOpenReportsModal() { 
         openPortalModal('reports-modal'); 
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
         db.collection('citizen_reports').get().then(snapshot => {
-            localStorage.setItem('admin_seen_reports_count', snapshot.size.toString());
+            if (!snapshot || typeof snapshot.size !== 'number') return;
+            localStorage.setItem('admin_seen_reports_count', String(snapshot.size));
             const badge = document.getElementById('citizen-reports-badge');
             if (badge) badge.classList.add('hidden');
         });
@@ -1404,9 +1406,13 @@
 
         reportsList.innerHTML = '<p class="text-center text-gray-400 py-6">रिपोर्टें लोड हो रही हैं...</p>';
 
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+            reportsList.innerHTML = '<p class="text-center text-red-500 py-6">एडमिन लॉगिन आवश्यक है।</p>';
+            return;
+        }
         db.collection('citizen_reports').get().then(snapshot => {
-            if (snapshot && !snapshot.empty) {
-                const reportDocs = snapshot.docs.slice().sort((a,b) => {
+            if (snapshot && !snapshot.empty && Array.isArray(snapshot.docs)) {
+                const reportDocs = snapshot.docs.slice().filter(doc => doc && typeof doc.data === 'function' && doc.id).sort((a,b) => {
                     const da = a.data(), dbb = b.data();
                     return (timestampToMillis(dbb.createdAt) || timestampToMillis(dbb.timestamp)) - (timestampToMillis(da.createdAt) || timestampToMillis(da.timestamp));
                 });
