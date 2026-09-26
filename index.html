@@ -1132,11 +1132,15 @@
     function renderRelatedNews(currentId, currentCategory) {
         const container = document.getElementById('related-news');
         if (!container) return;
-        const sourceList = Array.isArray(newsList) ? newsList : [];
-        const safeCurrentId = typeof currentId === 'string' ? currentId : '';
-        const safeCategory = typeof currentCategory === 'string' ? currentCategory : '';
-        const sameCategory = safeCategory ? sourceList.filter(n => n && n.id !== safeCurrentId && n.category === safeCategory) : [];
-        const fallback = sourceList.filter(n => n && n.id !== safeCurrentId);
+        const sourceList = Array.isArray(newsList)
+            ? newsList.filter(n => n && typeof n === 'object' && typeof n.id === 'string' && n.id.trim())
+            : [];
+        const safeCurrentId = safeNewsId(currentId);
+        const safeCategory = typeof currentCategory === 'string' ? currentCategory.trim() : '';
+        const sameCategory = safeCategory
+            ? sourceList.filter(n => safeNewsId(n.id) !== safeCurrentId && typeof n.category === 'string' && n.category.trim() === safeCategory)
+            : [];
+        const fallback = sourceList.filter(n => safeNewsId(n.id) !== safeCurrentId);
         const related = [...sameCategory, ...fallback.filter(n => !sameCategory.some(r => r.id === n.id))].slice(0, 4);
         if (!related.length) { container.innerHTML = ''; return; }
         container.innerHTML = related.map(item => {
