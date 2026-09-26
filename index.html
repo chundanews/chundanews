@@ -160,15 +160,15 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <button id="pwa-install-btn" aria-label="वेबसाइट ऐप इंस्टॉल करें" style="display:none;" onclick="triggerPwaInstall()" class="text-xs bg-amber-500 hover:bg-amber-400 text-black px-2.5 py-1.5 rounded-lg font-bold shadow flex items-center gap-1 transition">
+            <button id="pwa-install-btn" aria-label="वेबसाइट ऐप इंस्टॉल करें" style="display:none;" class="text-xs bg-amber-500 hover:bg-amber-400 text-black px-2.5 py-1.5 rounded-lg font-bold shadow flex items-center gap-1 transition">
                 📲 ऐप इंस्टॉल
             </button>
-            <button type="button" onclick="enablePushNotifications()" aria-label="समाचार नोटिफिकेशन चालू करें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400 border text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700" title="नोटिफिकेशन चालू करें">
+            <button id="push-notify-btn" type="button" aria-label="समाचार नोटिफिकेशन चालू करें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400 border text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-700" title="नोटिफिकेशन चालू करें">
                 🔔
             </button>
-            <button type="button" onclick="toggleDarkMode()" aria-label="डार्क मोड बदलें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
+            <button id="dark-mode-btn" type="button" aria-label="डार्क मोड बदलें" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border" title="थीम बदलें">🌙</button>
             
-            <button id="admin-login-btn" onclick="openPortalModal('admin-modal')" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
+            <button id="admin-login-btn" class="text-xs bg-gray-900 dark:bg-red-700 text-white px-3 py-2 rounded-lg font-bold shadow hover:opacity-90">
                 🔒 एडमिन लॉगिन
             </button>
         </div>
@@ -193,12 +193,12 @@
                 <div class="flex items-center gap-1.5 bg-gray-900 border border-gray-700 rounded px-2 py-1">
                     <i class="fa-regular fa-calendar text-red-500 text-xs"></i>
                     <label for="news-calendar-picker" class="sr-only">खबर की तारीख चुनें</label>
-                    <input type="date" id="news-calendar-picker" onchange="filterNewsByDate(this.value)" aria-label="खबर की तारीख चुनें" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
+                    <input type="date" id="news-calendar-picker" aria-label="खबर की तारीख चुनें" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
                     <button onclick="resetCalendarFilter()" title="रीसेट" class="text-gray-400 hover:text-white text-[10px] ml-1">&times;</button>
                 </div>
                 <div class="hidden lg:block relative w-44">
                     <label for="search-input" class="sr-only">खबर खोजें</label>
-                    <input type="text" id="search-input" oninput="scheduleLiveSearch()" placeholder="खबर खोजें..." aria-label="खबर खोजें" class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
+                    <input type="text" id="search-input" placeholder="खबर खोजें..." aria-label="खबर खोजें" class="w-full bg-gray-800 text-white border border-gray-700 rounded-full pl-3 pr-8 py-1 text-xs focus:outline-none focus:border-red-500">
                     <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2 text-gray-400 text-xs"></i>
                 </div>
             </div>
@@ -2178,6 +2178,19 @@
         setTimeout(fetchLiveWeather, 700);
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
         checkCookieConsent();
+
+        const directHandlers = [
+            ['pwa-install-btn', 'click', triggerPwaInstall],
+            ['push-notify-btn', 'click', enablePushNotifications],
+            ['dark-mode-btn', 'click', toggleDarkMode],
+            ['admin-login-btn', 'click', () => openPortalModal('admin-modal')],
+            ['news-calendar-picker', 'change', e => filterNewsByDate(e.target.value)],
+            ['search-input', 'input', scheduleLiveSearch]
+        ];
+        directHandlers.forEach(([id, eventName, handler]) => {
+            const el = document.getElementById(id);
+            if (el && typeof handler === 'function') el.addEventListener(eventName, handler);
+        });
 
         const formHandlers = [
             ['news-post-form', handleNewsSubmit],
