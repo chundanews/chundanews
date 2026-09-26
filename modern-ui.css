@@ -21,6 +21,9 @@ body{
   text-rendering:optimizeLegibility;
 }
 button,input,select{font:inherit}
+button,a,input,select,textarea{ -webkit-tap-highlight-color:transparent; }
+button:not([disabled]),a[href],input,select,textarea{ touch-action:manipulation; }
+button:disabled{ cursor:not-allowed; opacity:.65; }
 img{max-width:100%;height:auto}
 ::selection{background:#fecaca;color:#7f1d1d}
 
