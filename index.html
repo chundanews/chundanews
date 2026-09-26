@@ -1440,8 +1440,9 @@
             return; 
         }
         const submitBtn = document.getElementById('submit-btn');
-        const editDocId = safeNewsId(document.getElementById('edit-doc-id').value);
-        if (!submitBtn) return;
+        const editDocIdEl = document.getElementById('edit-doc-id');
+        if (!submitBtn || !editDocIdEl) return;
+        const editDocId = safeNewsId(editDocIdEl.value);
         submitBtn.disabled = true;
         try {
             submitBtn.innerText = 'तैयारी हो रही है...';
@@ -1497,13 +1498,19 @@
 
             const existing = editDocId ? newsList.find(n => n.id === editDocId) : null;
             
+            const breakingEl = document.getElementById('news-breaking');
+            const leadEl = document.getElementById('news-lead');
+            if (!breakingEl || !leadEl) {
+                throw new Error('समाचार फॉर्म के प्रकाशन विकल्प उपलब्ध नहीं हैं।');
+            }
+
             const newItem = {
                 title, 
                 category, 
                 reporter, 
                 content,
-                isBreaking: document.getElementById('news-breaking').checked,
-                isLead: document.getElementById('news-lead').checked,
+                isBreaking: Boolean(breakingEl.checked),
+                isLead: Boolean(leadEl.checked),
                 date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
                 views: existing ? Number(existing.views || 0) : 0,
                 image: imageUrls[0],     // Primary image for compatibility
