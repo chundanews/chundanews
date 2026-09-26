@@ -50,7 +50,18 @@ service cloud.firestore {
         && request.resource.data.link is string
         && request.resource.data.link.size() <= 2048
         && request.resource.data.createdAt == request.time;
-      allow update: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['title','posts','lastDate','link','createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 3
+        && request.resource.data.title.size() <= 220
+        && request.resource.data.posts is string
+        && request.resource.data.posts.size() <= 500
+        && request.resource.data.lastDate is string
+        && request.resource.data.lastDate.size() <= 100
+        && request.resource.data.link is string
+        && request.resource.data.link.size() <= 2048
+        && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isAdmin();
     }
 
@@ -79,27 +90,47 @@ service cloud.firestore {
 
     match /election_docs/{docId} {
       allow read: if true;
-      allow create, update: if isAdmin()
+      allow create: if isAdmin()
         && request.resource.data.keys().hasOnly(['title','subtitle','link','createdAt'])
         && request.resource.data.title is string
         && request.resource.data.title.size() <= 220
         && request.resource.data.subtitle is string
         && request.resource.data.subtitle.size() <= 500
         && request.resource.data.link is string
-        && request.resource.data.link.size() <= 2048;
+        && request.resource.data.link.size() <= 2048
+        && request.resource.data.createdAt == request.time;
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['title','subtitle','link','createdAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 220
+        && request.resource.data.subtitle is string
+        && request.resource.data.subtitle.size() <= 500
+        && request.resource.data.link is string
+        && request.resource.data.link.size() <= 2048
+        && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isAdmin();
     }
 
     match /live_score/{docId} {
       allow read: if true;
-      allow create, update: if isAdmin()
+      allow create: if isAdmin()
         && request.resource.data.keys().hasOnly(['title','score','status','updatedAt'])
         && request.resource.data.title is string
         && request.resource.data.title.size() <= 300
         && request.resource.data.score is string
         && request.resource.data.score.size() <= 300
         && request.resource.data.status is string
-        && request.resource.data.status.size() <= 300;
+        && request.resource.data.status.size() <= 300
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['title','score','status','updatedAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 300
+        && request.resource.data.score is string
+        && request.resource.data.score.size() <= 300
+        && request.resource.data.status is string
+        && request.resource.data.status.size() <= 300
+        && request.resource.data.updatedAt == request.time;
       allow delete: if isAdmin();
     }
 
