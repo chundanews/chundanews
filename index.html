@@ -1277,17 +1277,21 @@
 
     function handleLiveSearch() {
         const input = document.getElementById('search-input');
-        const q = input.value.toLowerCase().trim();
+        if (!input) return;
+
+        const q = String(input.value || '').toLowerCase().trim();
         const countEl = document.getElementById('news-count');
+        const safeNewsList = Array.isArray(newsList) ? newsList : [];
         if (!q) {
             filterNews(currentCategory);
             return;
         }
-        const filtered = newsList.filter(n => {
-            const title = (n.title || '').toLowerCase();
-            const content = (n.content || '').toLowerCase();
-            const category = (n.category || '').toLowerCase();
-            const reporter = (n.reporter || '').toLowerCase();
+        const filtered = safeNewsList.filter(n => {
+            if (!n || typeof n !== 'object') return false;
+            const title = String(n.title || '').toLowerCase();
+            const content = String(n.content || '').toLowerCase();
+            const category = String(n.category || '').toLowerCase();
+            const reporter = String(n.reporter || '').toLowerCase();
             return title.includes(q) || content.includes(q) || category.includes(q) || reporter.includes(q);
         });
         renderNews(filtered);
