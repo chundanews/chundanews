@@ -1623,10 +1623,15 @@
     async function handleJobSubmit(e) {
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
-        const title = document.getElementById('job-title').value.trim();
-        const posts = document.getElementById('job-posts').value.trim() || 'विस्तृत विज्ञापन देखें';
-        const lastDate = document.getElementById('job-last-date').value.trim();
-        const link = sanitizeUrlRaw(document.getElementById('job-link').value.trim()) || '#';
+        const titleEl = document.getElementById('job-title');
+        const postsEl = document.getElementById('job-posts');
+        const lastDateEl = document.getElementById('job-last-date');
+        const linkEl = document.getElementById('job-link');
+        if (!titleEl || !postsEl || !lastDateEl || !linkEl) return;
+        const title = titleEl.value.trim();
+        const posts = postsEl.value.trim() || 'विस्तृत विज्ञापन देखें';
+        const lastDate = lastDateEl.value.trim();
+        const link = sanitizeUrlRaw(linkEl.value.trim()) || '#';
         if (title.length < 3 || title.length > 220) { alert('भर्ती शीर्षक जाँचें।'); return; }
         try {
             await db.collection('job_alerts').add({ title, posts, lastDate, link, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
