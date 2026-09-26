@@ -2,8 +2,6 @@ const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 const fs = require('fs');
 
-// Apni Firebase Admin SDK ki service account key file yahan lagayein
-// (Ya aap web SDK config use karke bhi data fetch kar sakte hain)
 const serviceAccount = require('./serviceAccountKey.json');
 
 initializeApp({
@@ -11,44 +9,52 @@ initializeApp({
 });
 
 const db = getFirestore();
-const DOMAIN = 'https://chundanewsive.in'; // Aapka domain naam (jaisa sitemap me hai)
+const DOMAIN = 'https://chundanewslive.in';
+
+function getIsoDate(value) {
+  if (!value) return new Date().toISOString();
+
+  if (typeof value.toDate === 'function') {
+    return value.toDate().toISOString();
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+}
 
 async function generateSitemap() {
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-  // Sabse pehle Homepage add karein
-  xml += `  <url>\n`;
-  xml += `    <loc>${DOMAIN}/</loc>\n`;
-  xml += `    <changefreq>hourly</changefreq>\n`;
-  xml += `    <priority>1.0</priority>\n`;
-  xml += `  </url>\n`;
+  xml += '  <url>\n';
+  xml += '    <loc>' + DOMAIN + '/</loc>\n';
+  xml += '    <changefreq>hourly</changefreq>\n';
+  xml += '    <priority>1.0</priority>\n';
+  xml += '  </url>\n';
 
   try {
-    // 'articles' collection se saare documents fetch karein (apne collection ka naam yahan check kar lein)
-    const snapshot = await db.collection('articles').get();
-    
+    const snapshot = await db.collection('news_posts').get();
+
     snapshot.forEach((doc) => {
       const data = doc.data();
-      // Maan lijiye aapke article ka slug ya id field 'slug' ya 'id' hai
-      const articleSlug = data.slug || doc.id; 
-      const lastMod = data.updatedAt ? new Date(data.updatedAt.toDate()).toISOString() : new Date().toISOString();
+      const articleId = encodeURIComponent(doc.id);
+      const lastMod = getIsoDate(data.updatedAt || data.createdAt || data.publishedAt);
 
-      xml += `  <url>\n`;
-      xml += `    <loc>${DOMAIN}/article/${articleSlug}</loc>\n`;
-      xml += `    <lastmod>${lastMod}</lastmod>\n`;
-      xml += `    <changefreq>daily</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
+      xml += '  <url>\n';
+      xml += '    <loc>' + DOMAIN + '/article.html?id=' + articleId + '</loc>\n';
+      xml += '    <lastmod>' + lastMod + '</lastmod>\n';
+      xml += '    <changefreq>daily</changefreq>\n';
+      xml += '    <priority>0.8</priority>\n';
+      xml += '  </url>\n';
     });
 
-    xml += `</urlset>`;
+    xml += '</urlset>\n';
 
-    // Sitemap file ko root folder me save karein
-    fs.writeFileSync('./sitemap.xml', xml);
-    console.log('Sitemap.xml successfully generate ho gaya hai aur saare articles add ho gaye hain!');
+    fs.writeFileSync('./sitemap.xml', xml, 'utf8');
+    console.log('Sitemap generated successfully for news_posts.');
   } catch (error) {
-    console.erorr('Error generating sitemap:', error);
+    console.error('Error generating sitemap:', error);
+    process.exitCode = 1;
   }
 }
 
