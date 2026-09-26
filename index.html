@@ -1807,9 +1807,11 @@
 
     function loadNewsWithTTL(forceRefresh = false) {
         const cachedList = normalizeCachedNewsList(readLocalJson('cached_news_list'));
-        const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
+        const rawLastFetch = localStorage.getItem('ckn_news_time');
+        const lastFetch = Number(rawLastFetch);
         const now = Date.now();
         const hasValidCache = Array.isArray(cachedList) && cachedList.length > 0;
+        const hasValidFetchTime = Number.isFinite(lastFetch) && lastFetch > 0 && lastFetch <= now;
 
         if (hasValidCache) {
             newsList = cachedList;
@@ -1824,7 +1826,7 @@
             } catch (_) {}
         }
 
-        if (forceRefresh || !hasValidCache || !Number.isFinite(lastFetch) || (now - lastFetch) > TTL) {
+        if (forceRefresh || !hasValidCache || !hasValidFetchTime || (now - lastFetch) > TTL) {
             if (newsRefreshInFlight) return;
             newsRefreshInFlight = true;
             db.collection('news_posts')
