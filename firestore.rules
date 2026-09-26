@@ -76,6 +76,32 @@ service cloud.firestore {
 
       allow read, update, delete: if isAdmin();
     }
+    match /panchayat_elections/{docId} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'district','panchayatSamiti','gramPanchayat','village',
+          'reservation','wards','sourceUrl','notes','createdAt','updatedAt'
+        ])
+        && request.resource.data.district is string
+        && request.resource.data.panchayatSamiti is string
+        && request.resource.data.gramPanchayat is string
+        && request.resource.data.village is string
+        && request.resource.data.reservation is string
+        && request.resource.data.wards is string
+        && request.resource.data.sourceUrl is string
+        && request.resource.data.notes is string
+        && request.resource.data.district.size() <= 150
+        && request.resource.data.panchayatSamiti.size() <= 150
+        && request.resource.data.gramPanchayat.size() <= 150
+        && request.resource.data.village.size() <= 150
+        && request.resource.data.reservation.size() <= 300
+        && request.resource.data.wards.size() <= 2000
+        && request.resource.data.sourceUrl.size() <= 2048
+        && request.resource.data.notes.size() <= 3000;
+      allow delete: if isAdmin();
+    }
+
     match /election_docs/{docId} {
       allow read: if true;
       allow create, update: if isAdmin()
