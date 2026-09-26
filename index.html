@@ -1711,9 +1711,12 @@
 
     async function handleAdminLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('admin-email').value.trim();
-        const pass = document.getElementById('admin-pass').value;
+        const emailEl = document.getElementById('admin-email');
+        const passEl = document.getElementById('admin-pass');
         const loginBtn = document.getElementById('login-submit-btn');
+        if (!emailEl || !passEl || !loginBtn) return;
+        const email = emailEl.value.trim();
+        const pass = passEl.value;
         loginBtn.disabled = true;
         loginBtn.innerText = 'लॉगिन हो रहा है...';
 
