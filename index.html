@@ -1444,6 +1444,7 @@
     }
 
     async function deleteCitizenReport(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
         const safeId = safeNewsId(id);
         if (!safeId) return;
         if (!confirm('क्या आप इस नागरिक रिपोर्ट को हमेशा के लिए हटाना चाहते हैं?')) return;
@@ -1590,9 +1591,12 @@
     }
 
     async function deleteElectionDoc(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
+        const safeId = safeNewsId(id);
+        if (!safeId) return;
         if (!confirm('क्या आप इस चुनाव दस्तावेज़ को हटाना चाहते हैं?')) return;
         try {
-            await db.collection('election_docs').doc(id).delete();
+            await db.collection('election_docs').doc(safeId).delete();
             alert("दस्तावेज़ हटा दिया गया!");
             loadWidgetData(true);
         } catch (err) {
@@ -1642,6 +1646,7 @@
     }
 
     async function deleteNewsPost(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) return;
         const safeId = safeNewsId(id);
         if (!safeId) return;
         if (!confirm('क्या आप सचमुच इस खबर को हटाना चाहते हैं?')) return;
