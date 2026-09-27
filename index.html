@@ -1470,12 +1470,10 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
 
         try {
-            const snapshot = await db.collection('news_posts').limit(100).get();
+            const snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get();
             const fetchedList = snapshot.docs
                 .map(doc => normalizeDoc(doc))
-                .filter(item => item && item.id)
-                .sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0))
-                .slice(0, 25);
+                .filter(item => item && item.id);
 
             if (fetchedList.length) {
                 newsList = fetchedList;
@@ -1490,7 +1488,18 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             }
         } catch (err) {
             console.error('News loading failed:', err);
-            renderNews([]);
+            try {
+                const fallbackSnapshot = await db.collection('news_posts').limit(300).get();
+                const fallbackList = fallbackSnapshot.docs
+                    .map(doc => normalizeDoc(doc))
+                    .filter(item => item && item.id)
+                    .sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
+                
+                newsList = fallbackList;
+                renderNews(fallbackList);
+            } catch (fallbackErr) {
+                renderNews([]);
+            }
         }
     }
 
