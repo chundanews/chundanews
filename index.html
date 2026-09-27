@@ -704,9 +704,6 @@
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
     } catch (e) {}
 
-    // App Check is intentionally disabled on the public client while Firestore
-    // public-read access is being stabilized. Re-enable only after App Check
-    // enforcement and the production domain are verified together.
     const ENABLE_APP_CHECK = false;
     const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
 
@@ -1634,9 +1631,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
-        }
+        // sw.js registration hata diya gaya hai taaki 404/Unexpected token error na aaye
         fetchLiveWeather();
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
         checkCookieConsent();
