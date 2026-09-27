@@ -704,9 +704,14 @@
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
     } catch (e) {}
 
+    // App Check is intentionally disabled on the public client while Firestore
+    // public-read access is being stabilized. Re-enable only after App Check
+    // enforcement and the production domain are verified together.
+    const ENABLE_APP_CHECK = false;
     const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
 
     function initFirebaseAppCheck() {
+        if (!ENABLE_APP_CHECK) return;
         try {
             const provider = new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY);
             const appCheck = firebase.appCheck();
@@ -716,16 +721,18 @@
         }
     }
 
-    if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
-        grecaptcha.enterprise.ready(initFirebaseAppCheck);
-    } else {
-        window.addEventListener('load', () => {
-            if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
-                grecaptcha.enterprise.ready(initFirebaseAppCheck);
-            } else {
-                initFirebaseAppCheck();
-            }
-        });
+    if (ENABLE_APP_CHECK) {
+        if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+            grecaptcha.enterprise.ready(initFirebaseAppCheck);
+        } else {
+            window.addEventListener('load', () => {
+                if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+                    grecaptcha.enterprise.ready(initFirebaseAppCheck);
+                } else {
+                    initFirebaseAppCheck();
+                }
+            });
+        }
     }
 
     let messaging = null;
