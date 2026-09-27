@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ckn-news-v2';
+const CACHE_NAME = 'ckn-news-v3';
 const STATIC_ASSETS = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', event => {
