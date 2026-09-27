@@ -7,7 +7,28 @@ const FIREBASE_API_KEY = process.env.FIREBASE_WEB_API_KEY;
 function firestoreQuery(collection, field, value) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({structuredQuery:{from:[{collectionId:collection}],where:{fieldFilter:{field:{fieldPath:field},op:'EQUAL',value:{stringValue:value}}}}});
-    const req=https.request('https://firestore.googleapis.com/v1/projects/'+PROJECT_ID+'/databases/(default)/documents:runQuery?key='+encodeURIComponent(FIREBASE_API_KEY||''),{method:'POST',headers:{'Content-Type':'application/json','Content-Length:Buffer.byteLength(body)}},res=>{let data='';res.on('data',d=>data+=d);res.on('end',()=>{if(res.statusCode<200||res.statusCode>=300)return reject(new Error('Firestore query failed: HTTP '+res.statusCode+' '+data));try{resolve(JSON.parse(data).filter(x=>x.document).map(x=>x.document));}catch(e){reject(e);}})});req.on('error',reject);req.write(body);req.end();});
+    const req = https.request('https://firestore.googleapis.com/v1/projects/'+PROJECT_ID+'/databases/(default)/documents:runQuery?key='+encodeURIComponent(FIREBASE_API_KEY||''), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, res => {
+      let data = '';
+      res.on('data', d => data += d);
+      res.on('end', () => {
+        if (res.statusCode < 200 || res.statusCode >= 300) return reject(new Error('Firestore query failed: HTTP '+res.statusCode+' '+data));
+        try {
+          resolve(JSON.parse(data).filter(x => x.document).map(x => x.document));
+        } catch(e) {
+          reject(e);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
 }
 
 function fromFirestoreFields(fields){const out={};for(const [k,v] of Object.entries(fields||{})){out[k]=v.timestampValue||v.stringValue||v.integerValue||v.doubleValue||v.booleanValue||v.arrayValue?.values||null;}return out;}
