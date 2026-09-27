@@ -1452,6 +1452,39 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
     }
 
+    function firestoreRestValue(value) {
+        if (!value || typeof value !== 'object') return value;
+        if ('stringValue' in value) return value.stringValue;
+        if ('integerValue' in value) return Number(value.integerValue);
+        if ('doubleValue' in value) return Number(value.doubleValue);
+        if ('booleanValue' in value) return value.booleanValue;
+        if ('timestampValue' in value) return value.timestampValue;
+        if ('nullValue' in value) return null;
+        if ('referenceValue' in value) return value.referenceValue;
+        if ('geoPointValue' in value) return value.geoPointValue;
+        if ('bytesValue' in value) return value.bytesValue;
+        if ('arrayValue' in value) return (value.arrayValue.values || []).map(firestoreRestValue);
+        if ('mapValue' in value) return Object.fromEntries(
+            Object.entries(value.mapValue.fields || {}).map(([k, v]) => [k, firestoreRestValue(v)])
+        );
+        return value;
+    }
+
+    async function loadNewsViaRest() {
+        const url = 'https://firestore.googleapis.com/v1/projects/chunda-news/databases/(default)/documents/news_posts?pageSize=300&key=' + encodeURIComponent(firebaseConfig.apiKey);
+        const response = await fetch(url, { method: 'GET', cache: 'no-store' });
+        if (!response.ok) throw new Error('Firestore REST HTTP ' + response.status);
+        const payload = await response.json();
+        return (payload.documents || []).map(doc => ({
+            id: doc.name.split('/').pop(),
+            ...Object.fromEntries(Object.entries(doc.fields || {}).map(([k, v]) => [k, firestoreRestValue(v)]))
+        })).map(item => ({
+            ...item,
+            createdAt: timestampToMillis(item.createdAt) || timestampToMillis(item.timestamp),
+            timestamp: timestampToMillis(item.timestamp) || timestampToMillis(item.createdAt)
+        })).sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
+    }
+
     async function loadNewsWithTTL(forceRefresh = false) {
         const cached = localStorage.getItem('cached_news_list');
         const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
@@ -1503,7 +1536,19 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 renderNews(fallbackList);
             } catch (fallbackErr) {
                 console.error('News fallback loading failed:', fallbackErr);
-                renderNews([]);
+                try {
+                    const restList = await loadNewsViaRest();
+                    newsList = restList;
+                    safeStoreNews(restList);
+                    const lead = restList.find(n => n.isLead) || restList[0];
+                    if (lead) setLeadStory(lead);
+                    updateBreakingTicker(restList);
+                    renderNews(restList);
+                    console.warn('News loaded through Firestore REST fallback:', restList.length);
+                } catch (restErr) {
+                    console.error('News REST fallback failed:', restErr);
+                    renderNews([]);
+                }
             }
         }
     }
