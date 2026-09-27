@@ -341,7 +341,7 @@
                     <h3 class="text-sm font-black text-white tracking-wide">CHUNDA KSHETRA NEWS</h3>
                 </div>
                 <p class="text-[11px] text-gray-400 leading-relaxed max-w-xl">
-                    ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर एवं संपूर्ण दक्षिण राजस्थान की जनसमस्याओं, रोज़गार, कृषि एवं क्षेत्रीय हलचल को निष्पक्ष व प्रामाणिक रूप से प्रस्तुत करने वाला अग्रणी डिजिटल नेटवर्क।
+                    ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा एवं संपूर्ण दक्षिण राजस्थान की जनसमस्याओं, रोज़गार, कृषि एवं क्षेत्रीय हलचल को निष्पक्ष व प्रामाणिक रूप से प्रस्तुत करने वाला अग्रणी डिजिटल नेटवर्क।
                 </p>
             </div>
 
@@ -450,7 +450,7 @@
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="election-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">🗳️ चुनाव दस्तावेज़ / PDF लिंक जोड़ें</h3>
         <form onsubmit="handleElectionSubmit(event)" class="space-y-3 text-xs">
-            <input type="text" id="elec-title" required placeholder="डॉक्यूमेंट का नाम (उदा. वार्डवार मतदाता सूची)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
+            <input type="text" id="elec-title" required placeholder="दस्तावेज़ का नाम (उदा. वार्डवार मतदाता सूची)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="elec-subtitle" placeholder="विवरण / अंतिम तिथि (उदा. अंतिम प्रकाशन)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="url" id="elec-link" required placeholder="Google Drive / PDF का डायरेक्ट लिंक (https://...)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
@@ -1055,7 +1055,7 @@
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
     function triggerOpenElectionModal() { openPortalModal('election-modal'); }
     function openPanchayatHub(){openPortalModal('panchayat-hub-modal');const i=document.getElementById('panchayat-search');if(i)setTimeout(()=>i.focus(),50);}
-    function searchPanchayatInfo(){const q=(document.getElementById('panchayat-search')?.value||'').trim().toLowerCase(),o=document.getElementById('panchayat-search-results');if(!o)return;if(q.length<2){o.innerHTML='<p class="text-center text-xs text-gray-400 py-6">कम से कम 2 अक्षर लिखें।</p>';return;}const d=(window.cknPanchayatElections||[]).filter(v=>[v.district,v.panchayatSamiti,v.gramPanchayat,v.village,v.reservation,v.wards,v.notes].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,12);const results=(window.cknPanchayatResults||[]).filter(v=>[v.district,v.gramPanchayat,v.village,v.ward,v.post,v.winner,v.candidates].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,20);if(results.length){o.innerHTML=(d.length?o.innerHTML:'')+'<h4 class="font-black text-sm mt-4 mb-2">📊 चुनाव परिणाम</h4>'+results.map(v=>'<article class="p-4 rounded-xl border border-green-200 bg-green-50 dark:bg-green-950/20 mb-2"><h4 class="font-black text-sm">'+escapeHTML(v.village)+'</h4><p class="text-[10px] text-gray-500">'+escapeHTML(v.gramPanchayat)+' • वार्ड '+escapeHTML(v.ward)+' • '+escapeHTML(v.post)+'</p><div class="mt-2 space-y-1">'+(Array.isArray(v.candidates)?v.candidates.map((x,i)=>'<div class="flex justify-between text-xs '+((v.status==='published'||v.status==='verified')&&i===0?'font-black':'')+'"><span>'+(i===0?'🏆 ':'')+escapeHTML(x.name)+'</span><span>'+escapeHTML(String(x.votes))+' वोट</span></div>').join('') : escapeHTML(v.candidates||'उपलब्ध नहीं'))+'</div><p class="text-xs mt-1"><b>स्थिति:</b> '+(v.status==='published'?'प्रकाशित':v.status==='verified'?'सत्यापित':'लंबित')+'</p>'+(v.sourceUrl?'<a class="inline-block mt-2 text-[10px] font-bold text-blue-600" href="'+sanitizeUrl(v.sourceUrl)+'" target="_blank" rel="noopener noreferrer">स्रोत →</a>':'')+'</article>').join('');} else if(!d.length){o.innerHTML='<div class="p-4 text-center text-xs text-gray-500 border rounded-lg">इस नाम से अभी कोई जानकारी प्रकाशित नहीं है।</div>';return;}o.innerHTML=d.map(v=>'<article class="p-4 rounded-xl border mb-2"><h4 class="font-black text-sm">'+escapeHTML(v.village)+'</h4><p class="text-[10px] text-gray-500">'+escapeHTML(v.gramPanchayat)+' • '+escapeHTML(v.panchayatSamiti)+' • '+escapeHTML(v.district)+'</p><p class="text-xs mt-2"><b>सरपंच आरक्षण:</b> '+escapeHTML(v.reservation||'उपलब्ध नहीं')+'</p><p class="text-xs mt-1"><b>वार्ड जानकारी:</b> '+escapeHTML(v.wards||'उपलब्ध नहीं')+'</p>'+(v.sourceUrl?'<a class="inline-block mt-2 text-[10px] font-bold text-blue-600" href="'+sanitizeUrl(v.sourceUrl)+'" target="_blank" rel="noopener noreferrer">आधिकारिक स्रोत →</a>':'')+(v.notes?'<p class="text-[10px] mt-2 text-gray-500">'+escapeHTML(v.notes)+'</p>':'')+'</article>').join('');}
+    function searchPanchayatInfo(){const q=(document.getElementById('panchayat-search')?.value||'').trim().toLowerCase(),o=document.getElementById('panchayat-search-results');if(!o)return;if(q.length<2){o.innerHTML='<p class="text-center text-xs text-gray-400 py-6">कम से कम 2 अक्षर लिखें।</p>';return;}const d=(window.cknPanchayatElections||[]).filter(v=>[v.district,v.panchayatSamiti,v.gramPanchayat,v.village,v.reservation,v.wards,v.notes].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,12);const results=(window.cknPanchayatResults||[]).filter(v=>[v.district,v.gramPanchayat,v.village,v.ward,v.post,v.winner,v.candidates].filter(Boolean).join(' ').toLowerCase().includes(q)).slice(0,20);if(results.length){o.innerHTML=(d.length?o.innerHTML:'')+'<h4 class="font-black text-sm mt-4 mb-2">📊 चुनाव परिणाम</h4>'+results.map(v=>'<article class="p-4 rounded-xl border border-green-200 bg-green-50 dark:bg-green-950/20 mb-2"><h4 class="font-black text-sm">'+escapeHTML(v.village)+'</h4><p class="text-[10px] text-gray-500">'+escapeHTML(v.gramPanchayat)+' • वार्ड '+escapeHTML(v.ward)+' • '+escapeHTML(v.post)+'</p><div class="mt-2 space-y-1">'+(Array.isArray(v.candidates)?v.candidates.map((x,i)=><div class="flex justify-between text-xs '+((v.status==='published'||v.status==='verified')&&i===0?'font-black':'')+'"><span>'+(i===0?'🏆 ':'')+escapeHTML(x.name)+'</span><span>'+escapeHTML(String(x.votes))+' वोट</span></div>').join('') : escapeHTML(v.candidates||'उपलब्ध नहीं'))+'</div><p class="text-xs mt-1"><b>स्थिति:</b> '+(v.status==='published'?'प्रकाशित':v.status==='verified'?'सत्यापित':'लंबित')+'</p>'+(v.sourceUrl?'<a class="inline-block mt-2 text-[10px] font-bold text-blue-600" href="'+sanitizeUrl(v.sourceUrl)+'" target="_blank" rel="noopener noreferrer">स्रोत →</a>':'')+'</article>').join('');} else if(!d.length){o.innerHTML='<div class="p-4 text-center text-xs text-gray-500 border rounded-lg">इस नाम से अभी कोई जानकारी प्रकाशित नहीं है।</div>';return;}o.innerHTML=d.map(v=>'<article class="p-4 rounded-xl border mb-2"><h4 class="font-black text-sm">'+escapeHTML(v.village)+'</h4><p class="text-[10px] text-gray-500">'+escapeHTML(v.gramPanchayat)+' • '+escapeHTML(v.panchayatSamiti)+' • '+escapeHTML(v.district)+'</p><p class="text-xs mt-2"><b>सरपंच आरक्षण:</b> '+escapeHTML(v.reservation||'उपलब्ध नहीं')+'</p><p class="text-xs mt-1"><b>वार्ड जानकारी:</b> '+escapeHTML(v.wards||'उपलब्ध नहीं')+'</p>'+(v.sourceUrl?'<a class="inline-block mt-2 text-[10px] font-bold text-blue-600" href="'+sanitizeUrl(v.sourceUrl)+'" target="_blank" rel="noopener noreferrer">आधिकारिक स्रोत →</a>':'')+(v.notes?'<p class="text-[10px] mt-2 text-gray-500">'+escapeHTML(v.notes)+'</p>':'')+'</article>').join('');}
     function triggerOpenPanchayatAdminModal(){openPortalModal('panchayat-admin-modal');}
     function loadResultEntryOptions(level){const all=window.cknPanchayatElections||[];const d=document.getElementById('pr-district'),ps=document.getElementById('pr-ps'),gp=document.getElementById('pr-gp'),v=document.getElementById('pr-village');let rows=all;if(level==='district'){ps.value='';gp.value='';v.value='';}if(d.value)rows=rows.filter(x=>String(x.district||'')===d.value);const psVals=[...new Set(rows.map(x=>x.panchayatSamiti).filter(Boolean))].sort();ps.innerHTML='<option value="">पंचायत समिति चुनें</option>'+psVals.map(x=>'<option>'+escapeHTML(x)+'</option>').join('');if(level!=='district'&&ps.value)rows=rows.filter(x=>String(x.panchayatSamiti||'')===ps.value);const gpVals=[...new Set(rows.map(x=>x.gramPanchayat).filter(Boolean))].sort();gp.innerHTML='<option value="">ग्राम पंचायत चुनें</option>'+gpVals.map(x=>'<option>'+escapeHTML(x)+'</option>').join('');if(level!=='district'&&level!=='ps'&&gp.value)rows=rows.filter(x=>String(x.gramPanchayat||'')===gp.value);const vVals=[...new Set(rows.map(x=>x.village).filter(Boolean))].sort();v.innerHTML='<option value="">गांव चुनें</option>'+vVals.map(x=>'<option>'+escapeHTML(x)+'</option>').join('');}
     function triggerOpenPanchayatResultModal(){openPortalModal('panchayat-result-modal');loadResultEntryOptions('district');}
@@ -1453,7 +1453,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
         const now = Date.now();
 
-        if (cached) {
+        if (!forceRefresh && cached && (now - lastFetch) <= TTL) {
             try {
                 newsList = JSON.parse(cached);
                 if (Array.isArray(newsList) && newsList.length) {
@@ -1461,14 +1461,13 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                     setLeadStory(lead);
                     updateBreakingTicker(newsList);
                     renderNews(newsList);
+                    return;
                 }
             } catch (e) {
                 localStorage.removeItem('cached_news_list');
                 localStorage.removeItem('ckn_news_time');
             }
         }
-
-        if (!forceRefresh && cached && (now - lastFetch) <= TTL) return;
 
         try {
             const snapshot = await db.collection('news_posts').limit(100).get();
@@ -1486,12 +1485,12 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 setLeadStory(lead);
                 updateBreakingTicker(fetchedList);
                 renderNews(fetchedList);
-            } else if (!newsList.length) {
+            } else {
                 renderNews([]);
             }
         } catch (err) {
             console.error('News loading failed:', err);
-            if (!newsList || !newsList.length) renderNews([]);
+            renderNews([]);
         }
     }
 
