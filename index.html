@@ -877,87 +877,115 @@
 
     function renderNews(list) {
         const container = document.getElementById('news-container');
-        document.getElementById('news-count').textContent = `${list.length} खबरें`;
+        const safeList = Array.isArray(list) ? list.filter(item => item && typeof item === 'object') : [];
+        const countEl = document.getElementById('news-count');
+        if (countEl) countEl.textContent = `${safeList.length} खबरें`;
 
-        if (!list.length) {
+        if (!container) return;
+        if (!safeList.length) {
             container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800">इस श्रेणी या दिनांक में कोई खबर उपलब्ध नहीं है।</div>`;
             return;
         }
 
-        container.innerHTML = list.map(item => {
-            const rawImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
-            const displayImg = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-            const safeId = escapeHTML(item.id);
-            
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
-            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+        container.innerHTML = safeList.map(item => {
+            try {
+                const id = String(item.id || '').trim();
+                if (!id) return '';
 
-            return `
-            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
-                <div>
-                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                        <img src="${displayImg}" width="400" height="225" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
-                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
-                            ${escapeHTML(item.category || 'सामान्य')}
-                        </span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 mb-2 font-medium">
-                            <i class="fa-regular fa-clock text-red-500"></i> <span>${escapeHTML(item.date || 'आज')}</span>
-                            <span>•</span>
-                            <span class="text-red-600 font-bold">CKN Desk</span>
+                const title = String(item.title || 'बिना शीर्षक');
+                const category = String(item.category || 'सामान्य');
+                const date = String(item.date || 'आज');
+                const rawImg = Array.isArray(item.images) && item.images.length
+                    ? item.images[0]
+                    : (item.image || '');
+                let displayImg = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+                try { displayImg = sanitizeUrl(rawImg) || displayImg; } catch (e) {}
+
+                let plainText = '';
+                try {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = sanitizeNewsHtml(String(item.content || ''));
+                    plainText = tempDiv.textContent || tempDiv.innerText || '';
+                } catch (e) {
+                    plainText = String(item.content || '').replace(/<[^>]*>/g, ' ');
+                }
+
+                const safeId = escapeHTML(id);
+                return `
+                <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
+                    <div>
+                        <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
+                            <img src="${displayImg}" width="400" height="225" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
+                            <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
+                                ${escapeHTML(category)}
+                            </span>
                         </div>
-                        <h3 class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
-                            ${escapeHTML(item.title)}
-                        </h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 mb-2 font-medium">
+                                <i class="fa-regular fa-clock text-red-500"></i> <span>${escapeHTML(date)}</span>
+                                <span>•</span>
+                                <span class="text-red-600 font-bold">CKN Desk</span>
+                            </div>
+                            <h3 class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
+                                ${escapeHTML(title)}
+                            </h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="px-5 pb-5 pt-0">
-                    <div class="flex justify-between items-center text-xs pt-3 border-t border-gray-100 dark:border-gray-800">
-                        <button onclick="openReaderModal('${safeId}')" class="text-red-600 hover:text-red-700 font-bold flex items-center gap-1">
-                            विस्तार से पढ़ें <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                        </button>
-                        <div class="flex gap-2.5">
-                            <button onclick="copyNewsLink('${safeId}')" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
-                                <i class="fa-solid fa-copy"></i>
+                    <div class="px-5 pb-5 pt-0">
+                        <div class="flex justify-between items-center text-xs pt-3 border-t border-gray-100 dark:border-gray-800">
+                            <button onclick="openReaderModal('${safeId}')" class="text-red-600 hover:text-red-700 font-bold flex items-center gap-1">
+                                विस्तार से पढ़ें <i class="fa-solid fa-arrow-right text-[10px]"></i>
                             </button>
-                            <button onclick="shareWhatsAppWithImage('${safeId}')" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
-                                <i class="fa-solid fa-share-nodes"></i>
-                            </button>
+                            <div class="flex gap-2.5">
+                                <button onclick="copyNewsLink('${safeId}')" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                                <button onclick="shareWhatsAppWithImage('${safeId}')" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                </button>
+                            </div>
                         </div>
+                        ${isAdminLoggedIn ? `
+                            <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
+                                <button onclick="editNewsPost('${safeId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
+                                <button onclick="deleteNewsPost('${safeId}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
+                            </div>
+                        ` : ''}
                     </div>
-                    ${isAdminLoggedIn ? `
-                        <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
-                            <button onclick="editNewsPost('${safeId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
-                            <button onclick="deleteNewsPost('${safeId}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        `;
+                </div>`;
+            } catch (itemErr) {
+                console.warn('Skipping malformed news item:', itemErr, item);
+                return '';
+            }
         }).join('');
     }
 
     function setLeadStory(item) {
-        if (!item) return;
-        leadNewsItem = item;
-        document.getElementById('lead-news-section').classList.remove('hidden');
-        document.getElementById('lead-title').innerText = item.title || '';
-        document.getElementById('lead-category').innerText = item.category || 'प्रमुख';
-        document.getElementById('lead-reporter').innerText = item.reporter || "विशेष संवाददाता";
-        document.getElementById('lead-date').innerText = item.date || "आज";
-        
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = sanitizeNewsHtml(item.content || '');
-        document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
+        if (!item || typeof item !== 'object') return;
+        try {
+            leadNewsItem = item;
+            document.getElementById('lead-news-section').classList.remove('hidden');
+            document.getElementById('lead-title').innerText = String(item.title || '');
+            document.getElementById('lead-category').innerText = String(item.category || 'प्रमुख');
+            document.getElementById('lead-reporter').innerText = String(item.reporter || 'विशेष संवाददाता');
+            document.getElementById('lead-date').innerText = String(item.date || 'आज');
 
-        const rawLeadImg = (Array.isArray(item.images) && item.images.length > 0) ? item.images[0] : (item.image || '');
-        document.getElementById('lead-image').src = sanitizeUrl(rawLeadImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-        document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
-        document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
-        document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
+            const tempDiv = document.createElement('div');
+            try { tempDiv.innerHTML = sanitizeNewsHtml(String(item.content || '')); }
+            catch (e) { tempDiv.textContent = String(item.content || ''); }
+            document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
+
+            const rawLeadImg = Array.isArray(item.images) && item.images.length ? item.images[0] : (item.image || '');
+            let leadImg = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+            try { leadImg = sanitizeUrl(rawLeadImg) || leadImg; } catch (e) {}
+            document.getElementById('lead-image').src = leadImg;
+            document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
+            document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
+            document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
+        } catch (err) {
+            console.warn('Lead story render skipped:', err);
+        }
     }
 
     function openLeadModal() {
@@ -1448,14 +1476,17 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
     }
 
     function updateBreakingTicker(list) {
-        const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-        const breaking = list.filter(n => n.isBreaking && (n.createdAt ? n.createdAt >= twentyFourHoursAgo : true));
-
-        const tickerEl = document.getElementById('breaking-ticker');
-        if (breaking.length > 0) {
-            tickerEl.innerText = breaking.map(b => '🔴 ' + b.title).join('    ✦    ');
-        } else {
-            tickerEl.innerText = 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
+        try {
+            const safeList = Array.isArray(list) ? list : [];
+            const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
+            const breaking = safeList.filter(n => n && n.isBreaking && (!n.createdAt || Number(n.createdAt) >= twentyFourHoursAgo));
+            const tickerEl = document.getElementById('breaking-ticker');
+            if (!tickerEl) return;
+            tickerEl.innerText = breaking.length
+                ? breaking.map(b => '🔴 ' + String(b.title || '')).join('    ✦    ')
+                : 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
+        } catch (err) {
+            console.warn('Breaking ticker skipped:', err);
         }
     }
 
