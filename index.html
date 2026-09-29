@@ -1486,7 +1486,9 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
         const now = Date.now();
 
-        if (!forceRefresh && cached && (now - lastFetch) <= TTL) {
+        // Render cache immediately for fast first paint, but never stop here.
+        // Always continue to Firestore so newly published news appears immediately.
+        if (cached) {
             try {
                 newsList = JSON.parse(cached);
                 if (Array.isArray(newsList) && newsList.length) {
@@ -1494,7 +1496,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                     setLeadStory(lead);
                     updateBreakingTicker(newsList);
                     renderNews(newsList);
-                    return;
                 }
             } catch (e) {
                 localStorage.removeItem('cached_news_list');
@@ -1503,7 +1504,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
 
         try {
-            const snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get();
+            const snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get({ source: 'server' });
             const fetchedList = snapshot.docs
                 .map(doc => normalizeDoc(doc))
                 .filter(item => item && item.id);
@@ -1522,7 +1523,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         } catch (err) {
             console.error('News loading failed:', err);
             try {
-                const fallbackSnapshot = await db.collection('news_posts').limit(300).get();
+                const fallbackSnapshot = await db.collection('news_posts').limit(300).get({ source: 'server' });
                 const fallbackList = fallbackSnapshot.docs
                     .map(doc => normalizeDoc(doc))
                     .filter(item => item && item.id)
