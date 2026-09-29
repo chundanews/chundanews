@@ -732,9 +732,20 @@
         }
     }
 
+    // Messaging is initialized lazily so notification support can never block news loading.
     let messaging = null;
-    if (firebase.messaging.isSupported()) {
-        messaging = firebase.messaging();
+    async function getMessagingSafe() {
+        if (messaging) return messaging;
+        try {
+            if (!firebase.messaging || typeof firebase.messaging.isSupported !== 'function') return null;
+            const supported = await firebase.messaging.isSupported();
+            if (!supported) return null;
+            messaging = firebase.messaging();
+            return messaging;
+        } catch (err) {
+            console.warn('Messaging disabled:', err);
+            return null;
+        }
     }
 
     let isAdminLoggedIn = false;
@@ -1541,6 +1552,10 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 renderNews([]);
                 const count = document.getElementById('news-count');
                 if (count) count.textContent = 'खबरें लोड नहीं हो सकीं';
+                const container = document.getElementById('news-container');
+                if (container) {
+                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800"><b>समाचार अभी लोड नहीं हो सके।</b><div class="text-xs mt-2">कृपया पेज रीफ्रेश करें।</div></div>';
+                }
             }
         }
     }
@@ -1640,7 +1655,8 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
     }
 
     async function enablePushNotifications() {
-        if (!('Notification' in window) || !messaging) {
+        const safeMessaging = await getMessagingSafe();
+        if (!('Notification' in window) || !safeMessaging) {
             alert("यह डिवाइस वेब पुश नोटिफिकेशन सपोर्ट नहीं करता।");
             return;
         }
