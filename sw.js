@@ -4,7 +4,6 @@ const STATIC_ASSETS = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // Use addAll, par agar koi asset fail ho toh service worker crash na ho
       return Promise.allSettled(
         STATIC_ASSETS.map(asset => cache.add(asset).catch(err => console.warn('Failed to cache:', asset, err)))
       );
@@ -31,7 +30,8 @@ self.addEventListener('fetch', event => {
       url.hostname.includes('firebaseio.com') ||
       url.hostname.includes('google-analytics.com') ||
       url.hostname.includes('gstatic.com') ||
-      url.hostname.includes('open-meteo.com')) return;
+      url.hostname.includes('open-meteo.com') ||
+      url.hostname.includes('imgbb.com')) return;
 
   if (request.method !== 'GET') return;
 
@@ -39,12 +39,12 @@ self.addEventListener('fetch', event => {
   if (url.origin === self.location.origin) {
     event.respondWith(
       fetch(request).then(response => {
-        // Sirf valid (ok) responses ko hi cache karein, warna ignore karein
-        if (response && response.status === 200 && response.type === 'basic') {
+        // response.ok check karna zyada safe hota hai (status 200-299)
+        if (response && response.ok) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(request, copy).catch(err => {
-              console.error('Cache put failed for:', request.url, err);
+              console.warn('Cache put skipped for:', request.url);
             });
           });
         }
