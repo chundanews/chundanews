@@ -1504,7 +1504,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
 
         try {
-            const snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get({ source: 'server' });
+            const snapshot = await db.collection('news_posts').limit(300).get({ source: 'server' });
             const fetchedList = snapshot.docs
                 .map(doc => normalizeDoc(doc))
                 .filter(item => item && item.id);
