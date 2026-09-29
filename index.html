@@ -1523,26 +1523,23 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         } catch (err) {
             console.error('News loading failed:', err);
             try {
-                const fallbackSnapshot = await db.collection('news_posts').limit(300).get({ source: 'server' });
-                const fallbackList = fallbackSnapshot.docs
-                    .map(doc => normalizeDoc(doc))
-                    .filter(item => item && item.id)
-                    .sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
-                
-                newsList = fallbackList;
-                renderNews(fallbackList);
-            } catch (fallbackErr) {
-                console.error('News fallback loading failed:', fallbackErr);
-                try {
-                    const restList = await loadNewsViaRest();
+                const restList = await loadNewsViaRest();
+                if (restList.length) {
                     newsList = restList;
                     safeStoreNews(restList);
                     const lead = restList.find(n => n.isLead) || restList[0];
                     if (lead) setLeadStory(lead);
                     updateBreakingTicker(restList);
                     renderNews(restList);
-                } catch (restErr) {
-                    console.error('News REST fallback failed:', restErr);
+                } else {
+                    renderNews([]);
+                }
+            } catch (restErr) {
+                console.error('News REST fallback failed:', restErr);
+                // Keep cached news visible if the live Firebase request fails.
+                if (Array.isArray(newsList) && newsList.length) {
+                    renderNews(newsList);
+                } else {
                     renderNews([]);
                 }
             }
