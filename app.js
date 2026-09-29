@@ -1050,6 +1050,15 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 const lead = fetchedList.find(n => n.isLead) || fetchedList[0];
                 if (lead) setLeadStory(lead);
                 updateBreakingTicker(fetchedList);
+                // Always sync the main feed with the freshly fetched Firestore list.
+                // This prevents an old category/filter state from hiding newly published news.
+                currentCategory = 'all';
+                const categoryTitle = document.getElementById('current-category-title');
+                if (categoryTitle) {
+                    categoryTitle.innerHTML = '<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ताज़ा समाचार फीड';
+                }
+                const calendar = document.getElementById('news-calendar-picker');
+                if (calendar) calendar.value = '';
                 renderNews(fetchedList);
                 return;
             }
