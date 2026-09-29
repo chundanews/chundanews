@@ -1048,10 +1048,18 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
 
         try {
-            const snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get({ source: 'server' });
+            let snapshot;
+            try {
+                snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get({ source: 'server' });
+            } catch (orderedErr) {
+                console.warn('Ordered news query failed, using compatibility fallback:', orderedErr);
+                snapshot = await db.collection('news_posts').limit(1000).get({ source: 'server' });
+            }
+
             const fetchedList = snapshot.docs
                 .map(doc => normalizeDoc(doc))
-                .filter(item => item && item.id);
+                .filter(item => item && item.id)
+                .sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
 
             if (fetchedList.length) {
                 newsList = fetchedList;
