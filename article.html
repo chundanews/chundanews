@@ -170,7 +170,7 @@
 
         async function fetchArticle() {
             const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
+            const id = params.get('id') || params.get('news_id');
             const container = document.getElementById('article-container');
 
             if (!id) {
@@ -179,7 +179,12 @@
             }
 
             try {
-                const doc = await db.collection('news_posts').doc(id).get();
+                let doc;
+                try {
+                    doc = await db.collection('news_posts').doc(id).get({ source: 'server' });
+                } catch (serverErr) {
+                    doc = await db.collection('news_posts').doc(id).get();
+                }
                 if (!doc.exists) {
                     container.innerHTML = `<p class="text-center text-red-500 py-8">यह खबर या तो हटा दी गई है या उपलब्ध नहीं है。<br><small class="text-gray-400">ID: ${id}</small></p>`;
                     return;
