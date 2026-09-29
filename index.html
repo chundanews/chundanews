@@ -697,40 +697,56 @@
     };
 
     firebase.initializeApp(firebaseConfig);
+
+    // App Check is required when Firestore enforcement is enabled. Initialize it
+    // before any Firestore reads so the public news feed gets a verified token.
+    const ENABLE_APP_CHECK = true;
+    const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
+
+    let appCheckReady = Promise.resolve();
+
+    function initFirebaseAppCheck() {
+        if (!ENABLE_APP_CHECK) return Promise.resolve();
+        try {
+            const provider = new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY);
+            const appCheck = firebase.appCheck();
+            appCheck.activate(provider, true);
+            return Promise.resolve();
+        } catch (err) {
+            console.warn("App Check:", err);
+            return Promise.resolve();
+        }
+    }
+
+    if (ENABLE_APP_CHECK) {
+        appCheckReady = new Promise(resolve => {
+            const start = () => {
+                try {
+                    if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+                        grecaptcha.enterprise.ready(() => {
+                            initFirebaseAppCheck().finally(resolve);
+                        });
+                    } else {
+                        initFirebaseAppCheck().finally(resolve);
+                    }
+                } catch (e) {
+                    resolve();
+                }
+            };
+            if (document.readyState === 'loading') {
+                window.addEventListener('load', start, { once: true });
+            } else {
+                start();
+            }
+        });
+    }
+
     const db = firebase.firestore();
     const auth = firebase.auth();
 
     try {
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
     } catch (e) {}
-
-    const ENABLE_APP_CHECK = false;
-    const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
-
-    function initFirebaseAppCheck() {
-        if (!ENABLE_APP_CHECK) return;
-        try {
-            const provider = new firebase.appCheck.ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY);
-            const appCheck = firebase.appCheck();
-            appCheck.activate(provider, true);
-        } catch (err) {
-            console.warn("App Check:", err);
-        }
-    }
-
-    if (ENABLE_APP_CHECK) {
-        if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
-            grecaptcha.enterprise.ready(initFirebaseAppCheck);
-        } else {
-            window.addEventListener('load', () => {
-                if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
-                    grecaptcha.enterprise.ready(initFirebaseAppCheck);
-                } else {
-                    initFirebaseAppCheck();
-                }
-            });
-        }
-    }
 
     let messaging = null;
     async function getMessagingSafe() {
@@ -1543,6 +1559,9 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
     }
 
     async function loadNewsWithTTL(forceRefresh = false) {
+        // If App Check enforcement is active, wait for attestation before
+        // touching Firestore. REST reads cannot carry the App Check token.
+        try { await appCheckReady; } catch (e) {}
         const cached = localStorage.getItem('cached_news_list');
 
         if (cached) {
@@ -1561,9 +1580,10 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             }
         }
 
-        try {
-            const restList = await loadNewsViaRest();
-            if (restList.length) {
+        if (!ENABLE_APP_CHECK) {
+            try {
+                const restList = await loadNewsViaRest();
+                if (restList.length) {
                 newsList = restList;
                 safeStoreNews(restList);
                 const lead = restList.find(n => n.isLead) || restList[0];
@@ -1571,9 +1591,10 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 updateBreakingTicker(restList);
                 renderNews(restList);
                 return;
+                }
+            } catch (restErr) {
+                console.warn('News REST-first read failed:', restErr);
             }
-        } catch (restErr) {
-            console.warn('News REST-first read failed:', restErr);
         }
 
         try {
