@@ -338,12 +338,22 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         if (countEl) countEl.textContent = `${safeList.length} खबरें`;
 
         if (!container) return;
+
+        // DOM hardening: never let a stale/hidden loading state hide freshly fetched news.
+        container.hidden = false;
+        container.removeAttribute('hidden');
+        container.style.display = 'grid';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+
         if (!safeList.length) {
             container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800">इस श्रेणी या दिनांक में कोई खबर उपलब्ध नहीं है।</div>`;
             return;
         }
 
-        container.innerHTML = safeList.map(item => {
+        let renderedCards = '';
+        try {
+            renderedCards = safeList.map(item => {
             try {
                 const id = String(item.id || '').trim();
                 if (!id) return '';
@@ -414,7 +424,19 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
                 console.warn('Skipping malformed news item:', itemErr, item);
                 return '';
             }
-        }).join('');
+            }).join('');
+        } catch (renderErr) {
+            console.error('News cards render failed:', renderErr);
+            renderedCards = safeList.map(item => {
+                const id = escapeHTML(String(item.id || ''));
+                const title = escapeHTML(String(item.title || 'बिना शीर्षक'));
+                return id ? '<article class="bg-white dark:bg-gray-900 rounded-xl border p-4 shadow-sm"><h3 class="font-bold text-base text-gray-900 dark:text-white">' + title + '</h3><button class="mt-3 text-red-600 font-bold text-xs" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button></article>' : '';
+            }).join('');
+        }
+        container.innerHTML = renderedCards;
+        if (!container.children.length && safeList.length) {
+            container.textContent = 'समाचार उपलब्ध हैं, लेकिन कार्ड render नहीं हो पाए। कृपया रीफ्रेश करें।';
+        }
     }
 
     function setLeadStory(item) {
