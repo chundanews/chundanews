@@ -644,7 +644,7 @@
     }
 
     function normalizeDoc(doc) {
-        const data = doc.data();
+        const data = doc.data() || {};
         return {
             id: doc.id,
             ...data,
@@ -1159,7 +1159,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
             let imageUrls = [];
 
-            // 1. Process manual URLs (comma separated)
             if (manualUrlInput) {
                 const urls = manualUrlInput.split(',').map(u => u.trim()).filter(u => u);
                 for (let u of urls) {
@@ -1167,7 +1166,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 }
             }
 
-            // 2. Process multiple uploaded files via ImgBB
             if (imageFileInput && imageFileInput.files && imageFileInput.files.length > 0) {
                 const totalFiles = imageFileInput.files.length;
                 for (let i = 0; i < totalFiles; i++) {
@@ -1187,7 +1185,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
             submitBtn.innerText = 'समाचार सेव हो रहा है...';
             
-            // Fallback image if empty
             if (imageUrls.length === 0) {
                 imageUrls.push("https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800");
             }
@@ -1203,8 +1200,8 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 isLead: document.getElementById('news-lead').checked,
                 date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
                 views: existing ? Number(existing.views || 0) : 0,
-                image: imageUrls[0],     // Primary image for compatibility
-                images: imageUrls        // Full array of multiple images
+                image: imageUrls[0], 
+                images: imageUrls 
             };
 
             if (editDocId) {
@@ -1277,7 +1274,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         document.getElementById('news-breaking').checked = !!n.isBreaking;
         document.getElementById('news-lead').checked = !!n.isLead;
         
-        // Populate multiple images as comma separated if available
         let imgVal = '';
         if (Array.isArray(n.images) && n.images.length > 0) {
             imgVal = n.images.join(', ');
@@ -1544,7 +1540,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                     if (lead) setLeadStory(lead);
                     updateBreakingTicker(restList);
                     renderNews(restList);
-                    console.warn('News loaded through Firestore REST fallback:', restList.length);
                 } catch (restErr) {
                     console.error('News REST fallback failed:', restErr);
                     renderNews([]);
@@ -1676,7 +1671,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        // sw.js registration hata diya gaya hai taaki 404/Unexpected token error na aaye
         fetchLiveWeather();
         if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
         checkCookieConsent();
