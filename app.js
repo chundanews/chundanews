@@ -976,13 +976,16 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
     async function loadNewsWithTTL(forceRefresh = false) {
         try { await appCheckReady; } catch (e) {}
+
+        let cacheLoaded = false;
         const cached = localStorage.getItem('cached_news_list');
 
         if (cached) {
             try {
                 const cachedList = JSON.parse(cached);
                 if (Array.isArray(cachedList) && cachedList.length) {
-                    newsList = cachedList;
+                    newsList = cachedList.filter(n => n && n.id);
+                    cacheLoaded = newsList.length > 0;
                     const lead = newsList.find(n => n.isLead) || newsList[0];
                     if (lead) setLeadStory(lead);
                     updateBreakingTicker(newsList);
@@ -994,13 +997,19 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             }
         }
 
+        // Primary: Firestore SDK, server-first so newly published news appears immediately.
         try {
             let snapshot;
             try {
-                snapshot = await db.collection('news_posts').orderBy('createdAt', 'desc').limit(300).get({ source: 'server' });
+                snapshot = await db.collection('news_posts')
+                    .orderBy('createdAt', 'desc')
+                    .limit(300)
+                    .get({ source: 'server' });
             } catch (orderedErr) {
                 console.warn('Ordered news query failed, using compatibility fallback:', orderedErr);
-                snapshot = await db.collection('news_posts').limit(1000).get({ source: 'server' });
+                snapshot = await db.collection('news_posts')
+                    .limit(1000)
+                    .get({ source: 'server' });
             }
 
             const fetchedList = snapshot.docs
@@ -1014,8 +1023,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 const lead = fetchedList.find(n => n.isLead) || fetchedList[0];
                 if (lead) setLeadStory(lead);
                 updateBreakingTicker(fetchedList);
-                // Always sync the main feed with the freshly fetched Firestore list.
-                // This prevents an old category/filter state from hiding newly published news.
                 currentCategory = 'all';
                 const categoryTitle = document.getElementById('current-category-title');
                 if (categoryTitle) {
@@ -1026,19 +1033,48 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 renderNews(fetchedList);
                 return;
             }
+        } catch (sdkErr) {
+            console.error('News SDK read failed:', sdkErr);
+        }
 
-            if (!newsList.length) renderNews([]);
-        } catch (err) {
-            console.error('News SDK read failed:', err);
-            if (!newsList.length) {
-                renderNews([]);
-                const count = document.getElementById('news-count');
-                if (count) count.textContent = 'खबरें लोड नहीं हो सकीं';
-                const container = document.getElementById('news-container');
-                if (container) {
-                    container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800"><b>समाचार अभी लोड नहीं हो सके।</b><div class="text-xs mt-2">कृपया पेज रीफ्रेश करें।</div></div>';
+        // Secondary: Firestore REST fallback. This was present in the project but
+        // was not being called when the SDK failed, leaving the page with only
+        // stale cache/empty state. REST read is public under the current rules.
+        try {
+            const restList = await loadNewsViaRest();
+            if (Array.isArray(restList) && restList.length) {
+                newsList = restList;
+                safeStoreNews(restList);
+                const lead = restList.find(n => n.isLead) || restList[0];
+                if (lead) setLeadStory(lead);
+                updateBreakingTicker(restList);
+                currentCategory = 'all';
+                const categoryTitle = document.getElementById('current-category-title');
+                if (categoryTitle) {
+                    categoryTitle.innerHTML = '<span class="w-3 h-3 bg-red-600 rounded-sm"></span> ताज़ा समाचार फीड';
                 }
+                const calendar = document.getElementById('news-calendar-picker');
+                if (calendar) calendar.value = '';
+                renderNews(restList);
+                return;
             }
+        } catch (restErr) {
+            console.error('News REST fallback failed:', restErr);
+        }
+
+        // Last resort: keep a valid cached feed visible instead of replacing it
+        // with an empty/error state.
+        if (cacheLoaded && newsList.length) {
+            renderNews(newsList);
+            return;
+        }
+
+        renderNews([]);
+        const count = document.getElementById('news-count');
+        if (count) count.textContent = 'खबरें लोड नहीं हो सकीं';
+        const container = document.getElementById('news-container');
+        if (container) {
+            container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800"><b>समाचार अभी लोड नहीं हो सके।</b><div class="text-xs mt-2">कृपया पेज रीफ्रेश करें।</div></div>';
         }
     }
 
