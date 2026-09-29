@@ -114,6 +114,14 @@
             const canonicalUrl = 'https://chundanewslive.in/article.html?id=' + encodeURIComponent(id);
             const imageUrl = sanitizeUrl((Array.isArray(data.images) && data.images.length) ? data.images[0] : data.image) || 'https://chundanewslive.in/icon-512.png';
 
+            // Pehle dates calculate karein taaki meta tags mein error na aaye
+            const published = data.createdAt && typeof data.createdAt.toDate === 'function'
+                ? data.createdAt.toDate().toISOString()
+                : (data.publishedAt || data.datePublished || data.date || '');
+            const modified = data.updatedAt && typeof data.updatedAt.toDate === 'function'
+                ? data.updatedAt.toDate().toISOString()
+                : (data.updatedAt || published);
+
             document.title = title + ' - CHUNDA KSHETRA NEWS';
             setMeta('meta-description', description);
             setMeta('og-title', title);
@@ -129,13 +137,6 @@
 
             const canonical = document.getElementById('canonical-link');
             if (canonical) canonical.setAttribute('href', canonicalUrl);
-
-            const published = data.createdAt && typeof data.createdAt.toDate === 'function'
-                ? data.createdAt.toDate().toISOString()
-                : (data.publishedAt || data.datePublished || data.date || '');
-            const modified = data.updatedAt && typeof data.updatedAt.toDate === 'function'
-                ? data.updatedAt.toDate().toISOString()
-                : (data.updatedAt || published);
 
             const schema = {
                 '@context': 'https://schema.org',
@@ -191,7 +192,7 @@
                 }
 
                 const data = doc.data();
-                document.title = (data.title || 'विस्तृत खबर') + " - CHUNDA KSHETRA NEWS";
+                setArticleSeo(data, id);
 
                 // Multiple Images handling for article page
                 let imagesHtml = '';
