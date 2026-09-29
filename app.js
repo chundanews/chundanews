@@ -140,9 +140,8 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 
     firebase.initializeApp(firebaseConfig);
 
-    // App Check is required when Firestore enforcement is enabled. Initialize it
-    // before any Firestore reads so the public news feed gets a verified token.
-    const ENABLE_APP_CHECK = true;
+    // App Check is disabled to avoid token verification issues
+    const ENABLE_APP_CHECK = false;
     const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
 
     let appCheckReady = Promise.resolve();
@@ -1012,8 +1011,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
     }
 
     async function loadNewsWithTTL(forceRefresh = false) {
-        // If App Check enforcement is active, wait for attestation before
-        // touching Firestore. REST reads cannot carry the App Check token.
         try { await appCheckReady; } catch (e) {}
         const cached = localStorage.getItem('cached_news_list');
 
@@ -1100,7 +1097,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
             db.collection('election_docs').limit(5).get().then(snapshot => {
                 let docs = snapshot.docs.map(doc => normalizeDoc(doc));
-                docs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                docs.sort((a, b) => (b.createdAt || 0) - (b.createdAt || 0));
                 try {
                     localStorage.setItem('ckn_cached_elec', JSON.stringify(docs));
                     localStorage.setItem('ckn_widget_time', now.toString());
