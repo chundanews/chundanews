@@ -1483,17 +1483,15 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
     async function loadNewsWithTTL(forceRefresh = false) {
         const cached = localStorage.getItem('cached_news_list');
-        const lastFetch = parseInt(localStorage.getItem('ckn_news_time') || '0', 10);
-        const now = Date.now();
 
-        // Render cache immediately for fast first paint, but never stop here.
-        // Always continue to Firestore so newly published news appears immediately.
+        // Always show a cached feed first when available.
         if (cached) {
             try {
-                newsList = JSON.parse(cached);
-                if (Array.isArray(newsList) && newsList.length) {
+                const cachedList = JSON.parse(cached);
+                if (Array.isArray(cachedList) && cachedList.length) {
+                    newsList = cachedList;
                     const lead = newsList.find(n => n.isLead) || newsList[0];
-                    setLeadStory(lead);
+                    if (lead) setLeadStory(lead);
                     updateBreakingTicker(newsList);
                     renderNews(newsList);
                 }
@@ -1503,6 +1501,23 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             }
         }
 
+        // REST-first: public reads do not depend on Firestore SDK state/indexes.
+        try {
+            const restList = await loadNewsViaRest();
+            if (restList.length) {
+                newsList = restList;
+                safeStoreNews(restList);
+                const lead = restList.find(n => n.isLead) || restList[0];
+                if (lead) setLeadStory(lead);
+                updateBreakingTicker(restList);
+                renderNews(restList);
+                return;
+            }
+        } catch (restErr) {
+            console.warn('News REST-first read failed:', restErr);
+        }
+
+        // SDK fallback.
         try {
             const snapshot = await db.collection('news_posts').limit(300).get({ source: 'server' });
             const fetchedList = snapshot.docs
@@ -1512,36 +1527,20 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             if (fetchedList.length) {
                 newsList = fetchedList;
                 safeStoreNews(fetchedList);
-
                 const lead = fetchedList.find(n => n.isLead) || fetchedList[0];
-                setLeadStory(lead);
+                if (lead) setLeadStory(lead);
                 updateBreakingTicker(fetchedList);
                 renderNews(fetchedList);
-            } else {
-                renderNews([]);
+                return;
             }
+
+            if (!newsList.length) renderNews([]);
         } catch (err) {
-            console.error('News loading failed:', err);
-            try {
-                const restList = await loadNewsViaRest();
-                if (restList.length) {
-                    newsList = restList;
-                    safeStoreNews(restList);
-                    const lead = restList.find(n => n.isLead) || restList[0];
-                    if (lead) setLeadStory(lead);
-                    updateBreakingTicker(restList);
-                    renderNews(restList);
-                } else {
-                    renderNews([]);
-                }
-            } catch (restErr) {
-                console.error('News REST fallback failed:', restErr);
-                // Keep cached news visible if the live Firebase request fails.
-                if (Array.isArray(newsList) && newsList.length) {
-                    renderNews(newsList);
-                } else {
-                    renderNews([]);
-                }
+            console.error('News SDK read failed:', err);
+            if (!newsList.length) {
+                renderNews([]);
+                const count = document.getElementById('news-count');
+                if (count) count.textContent = 'खबरें लोड नहीं हो सकीं';
             }
         }
     }
@@ -1668,23 +1667,40 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
     }
 
+    window.addEventListener('error', (event) => {
+        console.error('CKN runtime error:', event.error || event.message);
+    });
+    window.addEventListener('unhandledrejection', (event) => {
+        console.error('CKN unhandled rejection:', event.reason);
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
-        fetchLiveWeather();
-        if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics();
-        checkCookieConsent();
+        // News is the primary page payload: start it first and isolate optional widgets.
+        loadNewsWithTTL().catch(err => console.error('News startup failed:', err));
 
-        auth.onAuthStateChanged(async user => {
-            if (user && user.uid === ADMIN_UID) {
-                onAdminSuccess(user.email);
-            } else if (user) {
-                await auth.signOut().catch(() => {});
-            }
-        });
+        try { fetchLiveWeather().catch(() => {}); } catch (e) {}
+        try { if (localStorage.getItem('ckn_cookies_accepted') === 'true') loadAnalytics(); } catch (e) {}
+        try { checkCookieConsent(); } catch (e) {}
 
-        loadNewsWithTTL();
-        loadWidgetData();
-        loadPanchayatElectionData();
-        loadScore();
+        try {
+            auth.onAuthStateChanged(async user => {
+                try {
+                    if (user && user.uid === ADMIN_UID) {
+                        onAdminSuccess(user.email);
+                    } else if (user) {
+                        await auth.signOut().catch(() => {});
+                    }
+                } catch (e) {
+                    console.error('Auth state error:', e);
+                }
+            });
+        } catch (e) {
+            console.error('Auth listener error:', e);
+        }
+
+        try { loadWidgetData(); } catch (e) { console.error('Widget load error:', e); }
+        try { loadPanchayatElectionData(); } catch (e) { console.error('Election widget error:', e); }
+        try { loadScore(); } catch (e) { console.error('Score load error:', e); }
     });
 
     window.addEventListener('keydown', function (e) {
