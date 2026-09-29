@@ -1131,7 +1131,7 @@
             o.innerHTML='<div class="p-4 text-center text-xs text-gray-500 border rounded-lg">इस नाम से अभी कोई जानकारी प्रकाशित नहीं है।</div>';
             return;
         }
-        o.innerHTML=d.map(v=>`<article class="p-4 rounded-xl border mb-2"><h4 class="font-black text-sm">${escapeHTML(v.village)}</h4><p class="text-[10px] text-gray-500">${escapeHTML(v.gramPanchayat)} • ${escapeHTML(v.panchayatSamiti)} •${escapeHTML(v.district)}</p><p class="text-xs mt-2"><b>सरपंच आरक्षण:</b> ${escapeHTML(v.reservation||'उपलब्ध नहीं')}</p><p class="text-xs mt-1"><b>वार्ड जानकारी:</b> ${escapeHTML(v.wards\vert{}\vert{}'उपलब्ध नहीं')}</p>${(v.sourceUrl?`<a class="inline-block mt-2 text-[10px] font-bold text-blue-600" href="${sanitizeUrl(v.sourceUrl)}" target="_blank" rel="noopener noreferrer">आधिकारिक स्रोत →</a>`:'')}${(v.notes?`<p class="text-[10px] mt-2 text-gray-500">${escapeHTML(v.notes)}</p>`:'')}</article>`).join('');
+        o.innerHTML=d.map(v=>`<article class="p-4 rounded-xl border mb-2"><h4 class="font-black text-sm">${escapeHTML(v.village)}</h4><p class="text-[10px] text-gray-500">${escapeHTML(v.gramPanchayat)} • ${escapeHTML(v.panchayatSamiti)} •${escapeHTML(v.district)}</p><p class="text-xs mt-2"><b>सरपंच आरक्षण:</b> ${escapeHTML(v.reservation||'उपलब्ध नहीं')}</p><p class="text-xs mt-1"><b>वार्ड जानकारी:</b> ${escapeHTML(v.wards||'उपलब्ध नहीं')}</p>${(v.sourceUrl?`<a class="inline-block mt-2 text-[10px] font-bold text-blue-600" href="${sanitizeUrl(v.sourceUrl)}" target="_blank" rel="noopener noreferrer">आधिकारिक स्रोत →</a>`:'')}${(v.notes?`<p class="text-[10px] mt-2 text-gray-500">${escapeHTML(v.notes)}</p>`:'')}</article>`).join('');
     }
 
     function triggerOpenPanchayatAdminModal(){openPortalModal('panchayat-admin-modal');}
