@@ -1030,23 +1030,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             }
         }
 
-        if (!ENABLE_APP_CHECK) {
-            try {
-                const restList = await loadNewsViaRest();
-                if (restList.length) {
-                newsList = restList;
-                safeStoreNews(restList);
-                const lead = restList.find(n => n.isLead) || restList[0];
-                if (lead) setLeadStory(lead);
-                updateBreakingTicker(restList);
-                renderNews(restList);
-                return;
-                }
-            } catch (restErr) {
-                console.warn('News REST-first read failed:', restErr);
-            }
-        }
-
         try {
             let snapshot;
             try {
