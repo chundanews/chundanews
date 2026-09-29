@@ -1545,7 +1545,18 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
     async function loadNewsViaRest() {
         const url = 'https://firestore.googleapis.com/v1/projects/chunda-news/databases/(default)/documents/news_posts?pageSize=300&key=' + encodeURIComponent(firebaseConfig.apiKey);
-        const response = await fetch(url, { method: 'GET', cache: 'no-store' });
+        const headers = {};
+        if (ENABLE_APP_CHECK) {
+            try {
+                const tokenResult = await firebase.appCheck().getToken(false);
+                if (tokenResult && tokenResult.token) {
+                    headers['X-Firebase-AppCheck'] = tokenResult.token;
+                }
+            } catch (appCheckErr) {
+                console.warn('App Check token unavailable for REST read:', appCheckErr);
+            }
+        }
+        const response = await fetch(url, { method: 'GET', headers, cache: 'no-store' });
         if (!response.ok) throw new Error('Firestore REST HTTP ' + response.status);
         const payload = await response.json();
         return (payload.documents || []).map(doc => ({
