@@ -333,13 +333,15 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 
     function renderNews(list) {
         const container = document.getElementById('news-container');
-        const safeList = Array.isArray(list) ? list.filter(item => item && typeof item === 'object') : [];
         const countEl = document.getElementById('news-count');
-        if (countEl) countEl.textContent = `${safeList.length} खबरें`;
+        const safeList = Array.isArray(list) ? list.filter(n => n && n.id) : [];
 
-        if (!container) return;
+        if (countEl) countEl.textContent = safeList.length + ' खबरें';
+        if (!container) {
+            console.error('News DOM container #news-container not found');
+            return;
+        }
 
-        // DOM hardening: never let a stale/hidden loading state hide freshly fetched news.
         container.hidden = false;
         container.removeAttribute('hidden');
         container.style.display = 'grid';
@@ -347,95 +349,35 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         container.style.opacity = '1';
 
         if (!safeList.length) {
-            container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-800">इस श्रेणी या दिनांक में कोई खबर उपलब्ध नहीं है।</div>`;
+            container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500 bg-white rounded-xl border">इस समय कोई खबर उपलब्ध नहीं है।</div>';
             return;
         }
 
-        let renderedCards = '';
-        try {
-            renderedCards = safeList.map(item => {
-            try {
-                const id = String(item.id || '').trim();
-                if (!id) return '';
+        // Minimal, dependency-free card renderer. This deliberately avoids
+        // sanitizers/complex template logic so one bad news document cannot
+        // prevent the entire feed from appearing.
+        const cards = safeList.map(item => {
+            const id = String(item.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+            if (!id) return '';
+            const title = String(item.title || 'बिना शीर्षक')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+            const category = String(item.category || 'सामान्य')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            const date = String(item.date || 'आज')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return '<article class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">' +
+                '<div class="p-5">' +
+                '<div class="text-[11px] text-red-600 font-bold mb-2">' + category + ' • ' + date + '</div>' +
+                '<h3 class="font-bold text-lg text-gray-900 dark:text-white leading-snug">' + title + '</h3>' +
+                '<button type="button" class="mt-4 text-red-600 font-bold text-sm" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button>' +
+                '</div></article>';
+        }).join('');
 
-                const title = String(item.title || 'बिना शीर्षक');
-                const category = String(item.category || 'सामान्य');
-                const date = String(item.date || 'आज');
-                const rawImg = Array.isArray(item.images) && item.images.length
-                    ? item.images[0]
-                    : (item.image || '');
-                let displayImg = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-                try { displayImg = sanitizeUrl(rawImg) || displayImg; } catch (e) {}
+        container.innerHTML = cards;
 
-                let plainText = '';
-                try {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = sanitizeNewsHtml(String(item.content || ''));
-                    plainText = tempDiv.textContent || tempDiv.innerText || '';
-                } catch (e) {
-                    plainText = String(item.content || '').replace(/<[^>]*>/g, ' ');
-                }
-
-                const safeId = escapeHTML(id);
-                return `
-                <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group">
-                    <div>
-                        <div class="aspect-video w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                            <img src="${displayImg}" width="400" height="225" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 cursor-pointer" onclick="openReaderModal('${safeId}')" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'">
-                            <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow uppercase tracking-wide">
-                                ${escapeHTML(category)}
-                            </span>
-                        </div>
-                        <div class="p-5">
-                            <div class="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 mb-2 font-medium">
-                                <i class="fa-regular fa-clock text-red-500"></i> <span>${escapeHTML(date)}</span>
-                                <span>•</span>
-                                <span class="text-red-600 font-bold">CKN Desk</span>
-                            </div>
-                            <h3 class="font-bold text-base text-gray-900 dark:text-white line-clamp-2 group-hover:text-red-600 transition cursor-pointer leading-snug" onclick="openReaderModal('${safeId}')">
-                                ${escapeHTML(title)}
-                            </h3>
-                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-2.5 line-clamp-2 leading-relaxed">${escapeHTML(plainText)}</p>
-                        </div>
-                    </div>
-                    <div class="px-5 pb-5 pt-0">
-                        <div class="flex justify-between items-center text-xs pt-3 border-t border-gray-100 dark:border-gray-800">
-                            <button onclick="openReaderModal('${safeId}')" class="text-red-600 hover:text-red-700 font-bold flex items-center gap-1">
-                                विस्तार से पढ़ें <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </button>
-                            <div class="flex gap-2.5">
-                                <button onclick="copyNewsLink('${safeId}')" class="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-red-600 transition" title="लिंक कॉपी करें">
-                                    <i class="fa-solid fa-copy"></i>
-                                </button>
-                                <button onclick="shareWhatsAppWithImage('${safeId}')" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 hover:bg-emerald-100 transition" title="व्हाट्सएप पर शेयर करें">
-                                    <i class="fa-solid fa-share-nodes"></i>
-                                </button>
-                            </div>
-                        </div>
-                        ${isAdminLoggedIn ? `
-                            <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-800 flex gap-2">
-                                <button onclick="editNewsPost('${safeId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">एडिट</button>
-                                <button onclick="deleteNewsPost('${safeId}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-[11px] font-semibold flex-1 transition">डिलीट</button>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>`;
-            } catch (itemErr) {
-                console.warn('Skipping malformed news item:', itemErr, item);
-                return '';
-            }
-            }).join('');
-        } catch (renderErr) {
-            console.error('News cards render failed:', renderErr);
-            renderedCards = safeList.map(item => {
-                const id = escapeHTML(String(item.id || ''));
-                const title = escapeHTML(String(item.title || 'बिना शीर्षक'));
-                return id ? '<article class="bg-white dark:bg-gray-900 rounded-xl border p-4 shadow-sm"><h3 class="font-bold text-base text-gray-900 dark:text-white">' + title + '</h3><button class="mt-3 text-red-600 font-bold text-xs" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button></article>' : '';
-            }).join('');
-        }
-        container.innerHTML = renderedCards;
-        if (!container.children.length && safeList.length) {
-            container.textContent = 'समाचार उपलब्ध हैं, लेकिन कार्ड render नहीं हो पाए। कृपया रीफ्रेश करें।';
+        if (!container.children.length) {
+            container.innerHTML = '<div class="col-span-full text-center py-12 text-red-600 font-bold">News मिली है, लेकिन card render नहीं हो पाया।</div>';
         }
     }
 
