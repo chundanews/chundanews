@@ -140,7 +140,6 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 
     firebase.initializeApp(firebaseConfig);
 
-    // App Check is disabled to avoid token verification issues
     const ENABLE_APP_CHECK = false;
     const RECAPTCHA_SITE_KEY = '6LclU7AtAAAAANtGTXOZ3Ob0Z5uJmFS3pLMbrmD2';
 
@@ -331,6 +330,7 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         window.location.href = `article.html?id=${encodeURIComponent(safeId)}`;
     }
 
+    // --- UPDATED RENDER NEWS WITH EDIT/DELETE & PHOTO SHARE BUTTONS ---
     function renderNews(list) {
         const container = document.getElementById('news-container');
         const countEl = document.getElementById('news-count');
@@ -353,9 +353,6 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
             return;
         }
 
-        // Minimal, dependency-free card renderer. This deliberately avoids
-        // sanitizers/complex template logic so one bad news document cannot
-        // prevent the entire feed from appearing.
         const cards = safeList.map(item => {
             const id = String(item.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
             if (!id) return '';
@@ -366,11 +363,27 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
                 .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
             const date = String(item.date || 'आज')
                 .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-            return '<article class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">' +
+
+            // Admin edit & delete buttons if logged in
+            let adminButtons = '';
+            if (isAdminLoggedIn) {
+                adminButtons = `
+                    <div class="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-800">
+                        <button onclick="editNewsPost('${id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-2.5 py-1 rounded">✏️ एडिट करें</button>
+                        <button onclick="deleteNewsPost('${id}')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded">🗑️ डिलीट</button>
+                    </div>
+                `;
+            }
+
+            return '<article class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col justify-between">' +
                 '<div class="p-5">' +
                 '<div class="text-[11px] text-red-600 font-bold mb-2">' + category + ' • ' + date + '</div>' +
-                '<h3 class="font-bold text-lg text-gray-900 dark:text-white leading-snug">' + title + '</h3>' +
-                '<button type="button" class="mt-4 text-red-600 font-bold text-sm" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button>' +
+                '<h3 class="font-bold text-lg text-gray-900 dark:text-white leading-snug cursor-pointer hover:text-red-600" onclick="openReaderModal(\'' + id + '\')">' + title + '</h3>' +
+                '<div class="flex items-center justify-between mt-4">' +
+                '<button type="button" class="text-red-600 font-bold text-sm" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button>' +
+                '<button type="button" onclick="shareWhatsAppWithImage(\'' + id + '\')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"><i class="fa-solid fa-share-nodes"></i> शेयर</button>' +
+                '</div>' +
+                adminButtons +
                 '</div></article>';
         }).join('');
 
@@ -997,7 +1010,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             }
         }
 
-        // Primary: Firestore SDK, server-first so newly published news appears immediately.
         try {
             let snapshot;
             try {
@@ -1037,9 +1049,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             console.error('News SDK read failed:', sdkErr);
         }
 
-        // Secondary: Firestore REST fallback. This was present in the project but
-        // was not being called when the SDK failed, leaving the page with only
-        // stale cache/empty state. REST read is public under the current rules.
         try {
             const restList = await loadNewsViaRest();
             if (Array.isArray(restList) && restList.length) {
@@ -1062,8 +1071,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             console.error('News REST fallback failed:', restErr);
         }
 
-        // Last resort: keep a valid cached feed visible instead of replacing it
-        // with an empty/error state.
         if (cacheLoaded && newsList.length) {
             renderNews(newsList);
             return;
