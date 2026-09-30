@@ -330,7 +330,7 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         window.location.href = `article.html?id=${encodeURIComponent(safeId)}`;
     }
 
-    // --- UPDATED RENDER NEWS WITH EDIT/DELETE & PHOTO SHARE BUTTONS ---
+    // --- RENDER NEWS WITH EDIT/DELETE & COPY/SHARE BUTTONS ---
     function renderNews(list) {
         const container = document.getElementById('news-container');
         const countEl = document.getElementById('news-count');
@@ -364,7 +364,6 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
             const date = String(item.date || 'आज')
                 .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-            // Admin edit & delete buttons if logged in
             let adminButtons = '';
             if (isAdminLoggedIn) {
                 adminButtons = `
@@ -381,7 +380,10 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
                 '<h3 class="font-bold text-lg text-gray-900 dark:text-white leading-snug cursor-pointer hover:text-red-600" onclick="openReaderModal(\'' + id + '\')">' + title + '</h3>' +
                 '<div class="flex items-center justify-between mt-4">' +
                 '<button type="button" class="text-red-600 font-bold text-sm" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button>' +
+                '<div class="flex gap-1.5">' +
+                '<button type="button" onclick="copyNewsLink(\'' + id + '\')" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition" title="लिंक कॉपी करें"><i class="fa-solid fa-copy"></i></button>' +
                 '<button type="button" onclick="shareWhatsAppWithImage(\'' + id + '\')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"><i class="fa-solid fa-share-nodes"></i> शेयर</button>' +
+                '</div>' +
                 '</div>' +
                 adminButtons +
                 '</div></article>';
@@ -729,7 +731,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             if (title.length < 3 || title.length > 220) throw new Error('दस्तावेज़ नाम अमान्य है।');
             if (!linkVal) throw new Error('दस्तावेज़ लिंक केवल मान्य HTTPS होना चाहिए।');
             await db.collection('election_docs').add({ title, subtitle, link: linkVal, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            alert('चुनाव दस्तावेज़ लिंक जोड़ दिया गया!');
+            alert('चुनाव दस्तावेज़ लिंक जोड़ दिया गया!'); 
             e.target.reset(); 
             closePortalModal('election-modal');
             loadWidgetData(true);
