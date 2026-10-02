@@ -197,7 +197,6 @@
         <button onclick="triggerOpenPanchayatAdminModal()" class="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-500">+ पंचायत चुनाव जानकारी</button>
         <button onclick="triggerOpenPanchayatResultModal()" class="bg-green-600 text-white px-3 py-1 rounded font-bold hover:bg-green-500">+ पंचायत परिणाम</button>
         <button onclick="openPanchayatResultManager()" class="bg-blue-600 text-white px-3 py-1 rounded font-bold hover:bg-blue-500">✏️ परिणाम संपादित करें</button>
-        <button onclick="triggerOpenScoreModal()" class="bg-sky-500 text-white px-3 py-1 rounded font-bold hover:bg-sky-400">🏏 लाइव स्कोर अपडेट</button>
         <button onclick="triggerOpenReportsModal()" class="bg-blue-600 px-3 py-1 rounded font-bold hover:bg-blue-500 relative">
             📥 प्राप्त रिपोर्ट 
             <span id="citizen-reports-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0.2 rounded-full hidden">0</span>
@@ -293,17 +292,6 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 shadow-sm">
-                <div class="bg-gradient-to-r from-red-600 to-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-black flex items-center justify-between mb-3">
-                    <span>🏏 क्षेत्रीय खेल / टूर्नामेंट स्कोर</span>
-                    <span class="bg-white text-red-700 px-1.5 py-0.2 rounded text-[9px] animate-pulse">LIVE</span>
-                </div>
-                <div id="live-score-box" class="text-xs text-center py-2 bg-gray-50 dark:bg-gray-800/50 rounded border border-gray-100 dark:border-gray-800">
-                    <p class="font-bold text-gray-800 dark:text-gray-200" id="match-title">क्षेत्रीय प्रीमियर लीग</p>
-                    <p class="text-sm font-black text-red-600 my-1" id="match-score">स्कोर उपलब्ध नहीं</p>
-                    <p class="text-[10px] text-gray-500" id="match-status">लाइव अपडेट्स के लिए बने रहें</p>
-                </div>
-            </div>
 
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 shadow-sm">
                 <div class="bg-indigo-800 text-white px-3 py-2 font-bold rounded-lg text-xs flex items-center justify-between mb-3">
@@ -456,21 +444,6 @@
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
                 <button type="button" onclick="closePortalModal('election-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
                 <button type="submit" id="elec-submit-btn" class="bg-amber-600 text-white px-5 py-1.5 rounded font-bold">अपलोड करें</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="score-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
-        <h3 id="score-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">लाइव स्कोर अपडेट करें</h3>
-        <form onsubmit="handleScoreSubmit(event)" class="space-y-3 text-xs">
-            <input type="text" id="score-title" placeholder="मैच टाइटल (उदा. प्रीमियर लीग)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
-            <input type="text" id="score-detail" placeholder="स्कोर (उदा. टीम A: 120/4 (14.2 ov))" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
-            <input type="text" id="score-status" placeholder="स्थिति (उदा. टीम B को जीत के लिए 24 रन चाहिए)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2" required>
-            <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
-                <button type="button" onclick="closePortalModal('score-modal')" class="px-4 py-1.5 rounded border dark:border-gray-700">रद्द करें</button>
-                <button type="submit" id="score-submit-btn" class="bg-sky-600 text-white px-5 py-1.5 rounded font-bold">अपडेट करें</button>
             </div>
         </form>
     </div>
