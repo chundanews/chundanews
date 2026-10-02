@@ -930,16 +930,34 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
     }
 
+    // Breaking News is a daily feed: only today's posts (Asia/Kolkata) are allowed.
+    function getIndiaDateKey(value) {
+        const ms = timestampToMillis(value);
+        if (!ms) return '';
+        return new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(new Date(ms));
+    }
+
+    function isBreakingForToday(item) {
+        return !!(item && item.isBreaking && getIndiaDateKey(item.createdAt || item.timestamp) === getIndiaDateKey(Date.now()));
+    }
+
+    function filterTodayBreaking(list) {
+        return (Array.isArray(list) ? list : []).filter(isBreakingForToday);
+    }
+
     function updateBreakingTicker(list) {
         try {
-            const safeList = Array.isArray(list) ? list : [];
-            const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-            const breaking = safeList.filter(n => n && n.isBreaking && (!n.createdAt || Number(n.createdAt) >= twentyFourHoursAgo));
+            const breaking = filterTodayBreaking(list);
             const tickerEl = document.getElementById('breaking-ticker');
             if (!tickerEl) return;
             tickerEl.innerText = breaking.length
                 ? breaking.map(b => '🔴 ' + String(b.title || '')).join('    ✦    ')
-                : 'चूंडा क्षेत्र न्यूज़ पर आपका स्वागत है — निष्पक्ष, सटीक और क्षेत्रीय आवाज़...';
+                : 'आज की ब्रेकिंग न्यूज़ अभी उपलब्ध नहीं है।';
         } catch (err) {
             console.warn('Breaking ticker skipped:', err);
         }
