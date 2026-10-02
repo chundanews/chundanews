@@ -810,24 +810,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
     }
 
-    async function handleScoreSubmit(e) {
-        e.preventDefault();
-        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है। समय समाप्त।'); return; }
-        const title = document.getElementById('score-title').value.trim();
-        const score = document.getElementById('score-detail').value.trim();
-        const status = document.getElementById('score-status').value.trim();
-        if ([title, score, status].some(v => v.length < 2 || v.length > 300)) { alert('स्कोर जानकारी अमान्य है।'); return; }
-        try {
-            await db.collection('live_score').doc('current').set({ title, score, status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            alert('स्कोर सफलतापूर्वक अपडेट हो गया!'); 
-            e.target.reset(); 
-            closePortalModal('score-modal');
-            loadScore();
-        } catch (err) { 
-            alert('स्कोर अपडेट नहीं हो सका।'); 
-        }
-    }
-
     async function handleCitizenSubmit(e) {
         e.preventDefault();
         if (document.getElementById('citizen-hp').value) return;
@@ -1168,17 +1150,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 </div>
             </div>
         `).join('');
-    }
-
-    function loadScore() {
-        db.collection('live_score').doc('current').get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('match-title').innerText = data.title || '';
-                document.getElementById('match-score').innerText = data.score || '';
-                document.getElementById('match-status').innerText = data.status || '';
-            }
-        }).catch(() => {});
     }
 
     let deferredPrompt = null;
