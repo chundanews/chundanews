@@ -149,19 +149,6 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    match /live_score/{docId} {
-      allow read: if true;
-      allow create, update: if isAdmin()
-        && request.resource.data.keys().hasOnly(['title','score','status','updatedAt'])
-        && request.resource.data.title is string
-        && request.resource.data.title.size() <= 300
-        && request.resource.data.score is string
-        && request.resource.data.score.size() <= 300
-        && request.resource.data.status is string
-        && request.resource.data.status.size() <= 300;
-      allow delete: if isAdmin();
-    }
-
     match /fcm_subscribers/{tokenId} {
       // Token must be the document ID. Users may create/update their own token
       // record, but cannot delete arbitrary subscribers.
