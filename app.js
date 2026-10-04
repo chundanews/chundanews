@@ -207,6 +207,9 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     let newsList = [];
     let currentCategory = 'all';
     let leadNewsItem = null;
+    let leadNewsItems = [];
+    let leadStoryTimer = null;
+    let activeLeadIndex = 0;
 
     async function fetchLiveWeather() {
         const weatherElement = document.getElementById('live-weather-display');
@@ -396,31 +399,110 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         }
     }
 
-    function setLeadStory(item) {
-        if (!item || typeof item !== 'object') return;
-        try {
-            leadNewsItem = item;
-            document.getElementById('lead-news-section').classList.remove('hidden');
-            document.getElementById('lead-title').innerText = String(item.title || '');
-            document.getElementById('lead-category').innerText = String(item.category || 'प्रमुख');
-            document.getElementById('lead-reporter').innerText = String(item.reporter || 'विशेष संवाददाता');
-            document.getElementById('lead-date').innerText = String(item.date || 'आज');
+    function renderLeadStories(list) {
+        const section = document.getElementById('lead-news-section');
+        const track = document.getElementById('lead-stories-track');
+        const dots = document.getElementById('lead-story-dots');
+        if (!section || !track || !dots) return;
 
+        const leads = (Array.isArray(list) ? list : [])
+            .filter(item => item && item.id && item.isLead)
+            .sort((x, y) => (y.createdAt || y.timestamp || 0) - (x.createdAt || x.timestamp || 0))
+            .slice(0, 5);
+
+        leadNewsItems = leads;
+        leadNewsItem = leads[0] || null;
+
+        if (!leads.length) {
+            section.classList.add('hidden');
+            track.innerHTML = '';
+            dots.innerHTML = '';
+            if (leadStoryTimer) { clearInterval(leadStoryTimer); leadStoryTimer = null; }
+            return;
+        }
+
+        section.classList.remove('hidden');
+        track.innerHTML = leads.map((item, index) => {
+            const id = safeNewsId(item.id).replace(/[^a-zA-Z0-9_-]/g, '');
+            const title = escapeHTML(item.title || 'बिना शीर्षक');
+            const category = escapeHTML(item.category || 'प्रमुख');
+            const reporter = escapeHTML(item.reporter || 'विशेष संवाददाता');
+            const date = escapeHTML(item.date || 'आज');
             const tempDiv = document.createElement('div');
             try { tempDiv.innerHTML = sanitizeNewsHtml(String(item.content || '')); }
             catch (e) { tempDiv.textContent = String(item.content || ''); }
-            document.getElementById('lead-excerpt').innerText = tempDiv.textContent || tempDiv.innerText || '';
+            const excerpt = escapeHTML((tempDiv.textContent || tempDiv.innerText || '').replace(/\s+/g, ' ').trim());
+            const rawImg = Array.isArray(item.images) && item.images.length ? item.images[0] : (item.image || '');
+            const img = sanitizeUrl(rawImg) || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+            return `
+                <article class="lead-story-slide min-w-full grid grid-cols-1 lg:grid-cols-12 gap-0" data-lead-index="${index}">
+                    <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
+                        <img src="${escapeHTML(img)}" alt="${title}" width="800" height="450" loading="${index === 0 ? 'eager' : 'lazy'}" class="w-full h-full object-cover cursor-pointer" onclick="openReaderModal('${id}')">
+                        <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">⭐ प्रमुख समाचार</div>
+                        <div class="absolute top-4 right-4 bg-black/70 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${index + 1} / ${leads.length}</div>
+                    </div>
+                    <div class="lg:col-span-5 p-6 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2.5 py-0.5 rounded">${category}</span>
+                            <h2 class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600" onclick="openReaderModal('${id}')">${title}</h2>
+                            <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 my-3">
+                                <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-bold text-gray-700 dark:text-gray-300">🎤 <span class="text-red-600">CKN</span> ${reporter}</span>
+                                <span>${date}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">${excerpt}</p>
+                        </div>
+                        <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2">
+                            <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg" onclick="openReaderModal('${id}')">पूरी खबर पढ़ें →</button>
+                            <div class="flex gap-2">
+                                <button class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg" onclick="copyNewsLink('${id}')"><i class="fa-solid fa-copy"></i></button>
+                                <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg" onclick="shareWhatsAppWithImage('${id}')"><i class="fa-solid fa-share-nodes"></i> शेयर</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>`;
+        }).join('');
 
-            const rawLeadImg = Array.isArray(item.images) && item.images.length ? item.images[0] : (item.image || '');
-            let leadImg = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
-            try { leadImg = sanitizeUrl(rawLeadImg) || leadImg; } catch (e) {}
-            document.getElementById('lead-image').src = leadImg;
-            document.getElementById('lead-read-btn').onclick = () => openReaderModal(item.id);
-            document.getElementById('lead-copy-btn').onclick = () => copyNewsLink(item.id);
-            document.getElementById('lead-share-btn').onclick = () => shareWhatsAppWithImage(item.id);
-        } catch (err) {
-            console.warn('Lead story render skipped:', err);
+        dots.innerHTML = leads.map((_, index) =>
+            `<button type="button" onclick="showLeadStory(${index})" aria-label="लीड स्टोरी ${index + 1}" class="lead-dot h-2.5 rounded-full transition-all ${index === 0 ? 'w-7 bg-red-600' : 'w-2.5 bg-gray-300 dark:bg-gray-700'}"></button>`
+        ).join('');
+
+        activeLeadIndex = 0;
+        updateLeadStoryPosition();
+
+        if (leadStoryTimer) clearInterval(leadStoryTimer);
+        if (leads.length > 1) {
+            leadStoryTimer = setInterval(() => {
+                showLeadStory((activeLeadIndex + 1) % leadNewsItems.length, true);
+            }, 6000);
         }
+    }
+
+    function updateLeadStoryPosition() {
+        const track = document.getElementById('lead-stories-track');
+        if (track) track.style.transform = `translateX(-${activeLeadIndex * 100}%)`;
+        document.querySelectorAll('.lead-dot').forEach((dot, index) => {
+            dot.className = 'lead-dot h-2.5 rounded-full transition-all ' + (index === activeLeadIndex
+                ? 'w-7 bg-red-600'
+                : 'w-2.5 bg-gray-300 dark:bg-gray-700');
+        });
+        leadNewsItem = leadNewsItems[activeLeadIndex] || leadNewsItems[0] || null;
+    }
+
+    function showLeadStory(index, fromTimer = false) {
+        if (!leadNewsItems.length) return;
+        activeLeadIndex = Math.max(0, Math.min(Number(index) || 0, leadNewsItems.length - 1));
+        updateLeadStoryPosition();
+        if (!fromTimer && leadStoryTimer && leadNewsItems.length > 1) {
+            clearInterval(leadStoryTimer);
+            leadStoryTimer = setInterval(() => {
+                showLeadStory((activeLeadIndex + 1) % leadNewsItems.length, true);
+            }, 6000);
+        }
+    }
+
+    function setLeadStory(item) {
+        if (item && typeof item === 'object') leadNewsItem = item;
+        renderLeadStories(newsList);
     }
 
     function openLeadModal() {
@@ -1000,8 +1082,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 if (Array.isArray(cachedList) && cachedList.length) {
                     newsList = cachedList.filter(n => n && n.id);
                     cacheLoaded = newsList.length > 0;
-                    const lead = newsList.find(n => n.isLead) || newsList[0];
-                    if (lead) setLeadStory(lead);
+                    renderLeadStories(newsList);
                     updateBreakingTicker(newsList);
                     renderNews(newsList);
                 }
@@ -1033,8 +1114,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             if (fetchedList.length) {
                 newsList = fetchedList;
                 safeStoreNews(fetchedList);
-                const lead = fetchedList.find(n => n.isLead) || fetchedList[0];
-                if (lead) setLeadStory(lead);
+                renderLeadStories(fetchedList);
                 updateBreakingTicker(fetchedList);
                 currentCategory = 'all';
                 const categoryTitle = document.getElementById('current-category-title');
@@ -1055,8 +1135,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             if (Array.isArray(restList) && restList.length) {
                 newsList = restList;
                 safeStoreNews(restList);
-                const lead = restList.find(n => n.isLead) || restList[0];
-                if (lead) setLeadStory(lead);
+                renderLeadStories(restList);
                 updateBreakingTicker(restList);
                 currentCategory = 'all';
                 const categoryTitle = document.getElementById('current-category-title');
