@@ -207,38 +207,18 @@
 
 <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
     <section id="lead-news-section" class="mb-8 hidden">
-        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
-            <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
-                <img id="lead-image" width="800" height="450" loading="lazy" class="w-full h-full object-cover cursor-pointer" onclick="openLeadModal()">
-                <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                    ⭐ प्रमुख समाचार (LEAD STORY)
-                </div>
-            </div>
-            <div class="lg:col-span-5 p-6 flex flex-col justify-between">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
                 <div>
-                    <span id="lead-category" class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs font-bold px-2.5 py-0.5 rounded"></span>
-                    <h2 id="lead-title" class="text-2xl font-black text-gray-900 dark:text-white mt-2 leading-tight cursor-pointer hover:text-red-600" onclick="openLeadModal()"></h2>
-                    <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 my-3">
-                        <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-bold text-gray-700 dark:text-gray-300">
-                            🎤 <span class="text-red-600">CKN</span> <span id="lead-reporter"></span>
-                        </span>
-                        <span id="lead-date"></span>
-                    </div>
-                    <p id="lead-excerpt" class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3"></p>
+                    <h2 class="text-lg font-black text-gray-900 dark:text-white">⭐ मुख्य लीड स्टोरी</h2>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-400">एडमिन द्वारा चुनी गई 5 तक प्रमुख खबरें</p>
                 </div>
-                <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                    <button id="lead-read-btn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
-                         पूरी खबर पढ़ें →
-                    </button>
-                    <div class="flex gap-2">
-                        <button id="lead-copy-btn" class="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 text-gray-800 dark:text-gray-200 text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
-                            <i class="fa-solid fa-copy"></i> लिंक कॉपी
-                        </button>
-                        <button id="lead-share-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
-                            <i class="fa-solid fa-share-nodes"></i> शेयर
-                        </button>
-                    </div>
-                </div>
+                <div id="lead-story-dots" class="flex items-center gap-1.5"></div>
+            </div>
+            <div class="relative overflow-hidden">
+                <div id="lead-stories-track" class="flex transition-transform duration-500 ease-out"></div>
+                <button type="button" onclick="showLeadStory((activeLeadIndex - 1 + leadNewsItems.length) % leadNewsItems.length)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-9 h-9 rounded-full shadow" aria-label="पिछली लीड स्टोरी">‹</button>
+                <button type="button" onclick="showLeadStory((activeLeadIndex + 1) % leadNewsItems.length)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-9 h-9 rounded-full shadow" aria-label="अगली लीड स्टोरी">›</button>
             </div>
         </div>
     </section>
@@ -407,7 +387,7 @@
             
             <div class="flex items-center gap-4 mt-2">
                 <label class="flex items-center gap-1.5 font-bold text-red-600"><input type="checkbox" id="news-breaking"> ब्रेकिंग टिकर में जोड़ें</label>
-                <label class="flex items-center gap-1.5 font-bold text-indigo-600"><input type="checkbox" id="news-lead"> ⭐ मुख्य लीड स्टोरी बनाएं</label>
+                <label class="flex items-center gap-1.5 font-bold text-indigo-600"><input type="checkbox" id="news-lead"> ⭐ मुख्य लीड स्टोरी में जोड़ें</label>
             </div>
             
             <div class="flex justify-end gap-2 pt-2 border-t dark:border-gray-800">
