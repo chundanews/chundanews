@@ -63,8 +63,8 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         if (!html) return '';
         if (window.DOMPurify) {
             return DOMPurify.sanitize(String(html), {
-                ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a'],
-                ALLOWED_ATTR: ['href','target','rel'],
+                ALLOWED_TAGS: ['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','a','table','thead','tbody','tr','th','td','caption'],
+                ALLOWED_ATTR: ['href','target','rel','class'],
                 FORBID_ATTR: ['style','class','id','onclick','onerror','onload']
             });
         }
@@ -591,7 +591,7 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     }
 
     function resetPostModalState() {
-        ['news-title', 'news-image', 'news-image-files', 'edit-doc-id'].forEach(id => {
+        ['news-title','news-subtitle','news-dateline','news-tags','news-image','news-image-files','edit-doc-id','news-keypoint-1','news-keypoint-2','news-keypoint-3','news-image-caption','news-image-credit'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
@@ -600,17 +600,27 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         document.getElementById('news-reporter').value = 'विशेष संवाददाता';
         document.getElementById('news-category').value = 'चुनाव अपडेट';
         document.getElementById('news-breaking').checked = false;
-        document.getElementById('news-lead').checked = false;
+        document.getElementById('news-lead').checked = false; const pv=document.getElementById('news-image-preview'); if(pv)pv.innerHTML='';
         const submitBtn = document.getElementById('submit-btn');
         submitBtn.disabled = false;
         submitBtn.innerText = 'पोस्ट करें';
     }
 
-    function triggerOpenNewPostModal() { 
-        resetPostModalState();
+    function triggerOpenNewPostModal() {
+        resetPostModalState(); restoreNewsDraft();
         document.getElementById('post-modal-title').innerText = "नई खबर पोस्ट करें";
-        openPortalModal('post-modal'); 
+        openPortalModal('post-modal');
     }
+    function formatNews(command,value=null){const e=document.getElementById('news-content-editor');if(!e)return;e.focus();try{document.execCommand(command,false,value)}catch(x){}scheduleNewsDraftSave();}
+    function insertNewsTable(){const e=document.getElementById('news-content-editor');if(!e)return;const rows=Math.min(20,Math.max(2,parseInt(prompt('कितनी rows चाहिए?','4')||'4',10))),cols=Math.min(8,Math.max(2,parseInt(prompt('कितने columns चाहिए?','3')||'3',10)));let h='<table class="news-table"><caption>तालिका</caption><thead><tr>';for(let c=1;c<=cols;c++)h+='<th>शीर्षक '+c+'</th>';h+='</tr></thead><tbody>';for(let r=1;r<rows;r++){h+='<tr>';for(let c=1;c<=cols;c++)h+='<td>जानकारी</td>';h+='</tr>';}h+='</tbody></table><p><br></p>';e.focus();document.execCommand('insertHTML',false,h);scheduleNewsDraftSave();}
+    function collectNewsDraft(){return{title:document.getElementById('news-title')?.value||'',subtitle:document.getElementById('news-subtitle')?.value||'',dateline:document.getElementById('news-dateline')?.value||'',tags:document.getElementById('news-tags')?.value||'',category:document.getElementById('news-category')?.value||'चुनाव अपडेट',reporter:document.getElementById('news-reporter')?.value||'विशेष संवाददाता',content:document.getElementById('news-content-editor')?.innerHTML||'',keyPoints:[1,2,3].map(i=>document.getElementById('news-keypoint-'+i)?.value||'').filter(Boolean),imageCaption:document.getElementById('news-image-caption')?.value||'',imageCredit:document.getElementById('news-image-credit')?.value||'',imageUrls:document.getElementById('news-image')?.value||'',isBreaking:!!document.getElementById('news-breaking')?.checked,isLead:!!document.getElementById('news-lead')?.checked};}
+    function saveNewsDraft(showAlert=true){try{localStorage.setItem('ckn_news_draft',JSON.stringify(collectNewsDraft()));const s=document.getElementById('news-autosave-status');if(s)s.textContent='💾 ड्राफ्ट सेव';if(showAlert)alert('💾 खबर का ड्राफ्ट इस डिवाइस में सेव हो गया है।')}catch(e){if(showAlert)alert('ड्राफ्ट सेव नहीं हो सका।')}}
+    let newsDraftTimer=null;function scheduleNewsDraftSave(){clearTimeout(newsDraftTimer);newsDraftTimer=setTimeout(()=>saveNewsDraft(false),700);}
+    function restoreNewsDraft(){try{const d=JSON.parse(localStorage.getItem('ckn_news_draft')||'null');if(!d)return;const m={title:'news-title',subtitle:'news-subtitle',dateline:'news-dateline',tags:'news-tags',imageCaption:'news-image-caption',imageCredit:'news-image-credit',imageUrls:'news-image'};Object.entries(m).forEach(([k,id])=>{const e=document.getElementById(id);if(e&&d[k])e.value=d[k]});if(d.category)document.getElementById('news-category').value=d.category;if(d.reporter)document.getElementById('news-reporter').value=d.reporter;document.getElementById('news-content-editor').innerHTML=sanitizeNewsHtml(d.content||'');(d.keyPoints||[]).slice(0,3).forEach((v,i)=>{const e=document.getElementById('news-keypoint-'+(i+1));if(e)e.value=v});document.getElementById('news-breaking').checked=!!d.isBreaking;document.getElementById('news-lead').checked=!!d.isLead;}catch(e){}}
+    function clearNewsDraft(){try{localStorage.removeItem('ckn_news_draft')}catch(e){}}
+    function renderNewsImagePreview(urls){const b=document.getElementById('news-image-preview');if(!b)return;b.innerHTML=(Array.isArray(urls)?urls:[]).slice(0,12).map(u=>{const s=sanitizeUrl(u);return s?'<img src="'+s+'" class="w-full h-24 object-cover rounded-lg border" alt="preview" onerror="this.remove()">':''}).join('');}
+    function previewSelectedNewsFiles(){const i=document.getElementById('news-image-files');if(i)renderNewsImagePreview([...i.files].slice(0,12).map(f=>URL.createObjectURL(f)));}
+    document.addEventListener('DOMContentLoaded',()=>{['news-title','news-subtitle','news-dateline','news-tags','news-reporter','news-content-editor','news-keypoint-1','news-keypoint-2','news-keypoint-3','news-image-caption','news-image-credit'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',scheduleNewsDraftSave)});const i=document.getElementById('news-image-files');if(i)i.addEventListener('change',previewSelectedNewsFiles);});
     
     function triggerOpenJobModal() { openPortalModal('job-modal'); }
     function triggerOpenElectionModal() { openPortalModal('election-modal'); }
@@ -729,6 +739,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
             const category = document.getElementById('news-category').value;
             const reporter = document.getElementById('news-reporter').value.trim() || 'विशेष संवाददाता';
             const content = sanitizeNewsHtml(document.getElementById('news-content-editor').innerHTML.trim());
+            const subtitle=document.getElementById('news-subtitle').value.trim(), dateline=document.getElementById('news-dateline').value.trim(), tags=document.getElementById('news-tags').value.split(',').map(x=>x.trim()).filter(Boolean).slice(0,20), keyPoints=[1,2,3].map(i=>document.getElementById('news-keypoint-'+i).value.trim()).filter(Boolean), imageCaption=document.getElementById('news-image-caption').value.trim(), imageCredit=document.getElementById('news-image-credit').value.trim();
             const manualUrlInput = document.getElementById('news-image').value.trim();
             const imageFileInput = document.getElementById('news-image-files');
 
@@ -766,17 +777,13 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
             const existing = editDocId ? newsList.find(n => n.id === editDocId) : null;
             
-            const newItem = {
-                title, 
-                category, 
-                reporter, 
-                content,
+            const newItem = {title,subtitle,dateline,tags,keyPoints,imageCaption,imageCredit,category,reporter,content,
                 isBreaking: document.getElementById('news-breaking').checked,
                 isLead: document.getElementById('news-lead').checked,
                 date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
                 views: existing ? Number(existing.views || 0) : 0,
                 image: imageUrls[0], 
-                images: imageUrls 
+                images: imageUrls, updatedAt: firebase.firestore.FieldValue.serverTimestamp() 
             };
 
             if (editDocId) {
@@ -788,8 +795,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                 alert('समाचार सफलतापूर्वक पोस्ट कर दिया गया!');
             }
             localStorage.removeItem('ckn_news_time');
-            resetPostModalState(); 
-            closePortalModal('post-modal');
+            clearNewsDraft(); resetPostModalState(); closePortalModal('post-modal');
             loadNewsWithTTL(true);
         } catch (err) {
             alert('समाचार सेव नहीं हो सका: ' + err.message);
@@ -842,9 +848,9 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         
         document.getElementById('post-modal-title').innerText = "खबर एडिट करें";
         document.getElementById('edit-doc-id').value = n.id;
-        document.getElementById('news-title').value = n.title || '';
-        document.getElementById('news-category').value = n.category || 'चुनाव अपडेट';
-        document.getElementById('news-reporter').value = n.reporter || 'विशेष संवाददाता';
+        document.getElementById('news-title').value=n.title||''; document.getElementById('news-subtitle').value=n.subtitle||''; document.getElementById('news-dateline').value=n.dateline||''; document.getElementById('news-tags').value=Array.isArray(n.tags)?n.tags.join(', '):(n.tags||'');
+        document.getElementById('news-category').value=n.category||'चुनाव अपडेट';
+        document.getElementById('news-reporter').value=n.reporter||'विशेष संवाददाता'; document.getElementById('news-keypoint-1').value=(n.keyPoints||[])[0]||''; document.getElementById('news-keypoint-2').value=(n.keyPoints||[])[1]||''; document.getElementById('news-keypoint-3').value=(n.keyPoints||[])[2]||''; document.getElementById('news-image-caption').value=n.imageCaption||''; document.getElementById('news-image-credit').value=n.imageCredit||'';
         document.getElementById('news-content-editor').innerHTML = sanitizeNewsHtml(n.content || '');
         document.getElementById('news-breaking').checked = !!n.isBreaking;
         document.getElementById('news-lead').checked = !!n.isLead;
@@ -855,7 +861,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         } else if (n.image) {
             imgVal = n.image;
         }
-        document.getElementById('news-image').value = imgVal;
+        document.getElementById('news-image').value=imgVal; renderNewsImagePreview(imgVal.split(',').map(x=>x.trim()).filter(Boolean));
         
         document.getElementById('submit-btn').innerText = 'अपडेट करें';
         openPortalModal('post-modal');
