@@ -81,7 +81,52 @@
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
-</head>
+<style id="professional-theme-v1">
+:root{--news-red:#b91c1c;--news-red-dark:#7f1d1d;--news-ink:#111827;--news-muted:#64748b;--news-border:#e5e7eb;--news-surface:#fff;--news-bg:#f5f7fa}
+html{scroll-behavior:smooth}
+body{background:var(--news-bg);color:var(--news-ink)}
+#scroll-progress{height:3px!important;background:linear-gradient(90deg,#991b1b,#dc2626,#f59e0b)!important}
+header{box-shadow:0 2px 14px rgba(15,23,42,.07)}
+header>div:first-child{padding-top:14px!important;padding-bottom:14px!important}
+header>div:first-child>div:first-child{min-width:0}
+header>div:first-child>div:first-child img{width:58px;height:58px;object-fit:contain}
+header h1{font-size:clamp(1.45rem,3vw,2.35rem)!important;letter-spacing:-.025em!important}
+header nav{box-shadow:0 3px 12px rgba(15,23,42,.12)!important}
+header nav button{padding:8px 2px;border-bottom:2px solid transparent}
+header nav button:hover{border-bottom-color:#ef4444}
+main{max-width:1280px!important}
+main section{border-radius:18px}
+#lead-news-section>div{box-shadow:0 10px 30px rgba(15,23,42,.08)!important}
+#lead-news-section .relative{background:#0f172a}
+#lead-stories-track img{transition:transform .35s ease}
+#lead-stories-track img:hover{transform:scale(1.015)}
+.animate-ticker{animation-duration:48s}
+.portal-modal>div{box-shadow:0 24px 70px rgba(0,0,0,.28)!important}
+button,a,input{transition:all .18s ease}
+input:focus{box-shadow:0 0 0 3px rgba(185,28,28,.12)}
+/* News listing/card polish without changing JS-generated markup */
+#news-list>div,#news-container>div,.news-card{border:1px solid var(--news-border)!important;border-radius:16px!important;box-shadow:0 4px 16px rgba(15,23,42,.055)!important;background:#fff!important}
+#news-list>div:hover,#news-container>div:hover,.news-card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(15,23,42,.10)!important}
+img{border-radius:12px}
+footer{margin-top:40px!important}
+@media (max-width:767px){
+ body{font-size:15px}
+ header>div:first-child{padding-left:14px!important;padding-right:14px!important}
+ header>div:first-child>div:first-child img{width:48px;height:48px}
+ header h1{font-size:1.28rem!important}
+ header p{font-size:9px!important;letter-spacing:.08em!important}
+ header nav .max-w-7xl{padding-left:10px!important;padding-right:10px!important}
+ header nav .flex.overflow-x-auto{gap:14px!important;scrollbar-width:none}
+ header nav .flex.overflow-x-auto::-webkit-scrollbar{display:none}
+ main{padding-left:12px!important;padding-right:12px!important;padding-top:16px!important}
+ #lead-news-section{margin-bottom:18px!important}
+ #lead-news-section .px-4.py-3{padding:12px!important}
+ .portal-modal{padding:10px!important}
+}
+@media (prefers-reduced-motion:reduce){
+ *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style></head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
 <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-red-600 z-50 transition-all duration-75" style="width:0%"></div>
