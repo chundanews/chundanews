@@ -33,7 +33,25 @@
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
-</head>
+<style id="professional-article-theme">
+:root{--ink:#111827;--muted:#64748b;--red:#b91c1c;--border:#e5e7eb}
+body{background:#f5f7fa!important;font-family:'Mukta',sans-serif}
+body>header{background:linear-gradient(135deg,#111827,#1f2937)!important;padding:0!important;text-align:left!important;border-bottom:3px solid #b91c1c}
+body>header a{display:block;max-width:1100px;margin:auto;padding:18px 20px;font-size:clamp(1.35rem,3vw,2rem);letter-spacing:-.02em}
+main{max-width:1100px!important;padding-top:28px!important}
+#article-container{border:1px solid #e5e7eb!important;border-radius:20px!important;box-shadow:0 12px 40px rgba(15,23,42,.08)!important;padding:clamp(18px,4vw,42px)!important}
+#article-container h1{font-size:clamp(1.8rem,4vw,3.1rem)!important;line-height:1.2!important;letter-spacing:-.02em!important;color:#0f172a}
+#article-container>span:first-child{display:inline-flex;align-items:center;background:#fef2f2!important;color:#991b1b!important;border:1px solid #fecaca;padding:5px 10px;border-radius:999px}
+#article-container img{border-radius:16px;max-height:560px!important;object-fit:cover}
+#article-container .text-sm{font-size:clamp(1rem,1.5vw,1.12rem)!important;line-height:1.9!important}
+#article-container .text-sm h2,#article-container .text-sm h3{color:#111827;margin-top:1.6em;margin-bottom:.5em}
+#article-container blockquote{border-left:4px solid #b91c1c;background:#f8fafc;padding:12px 16px;border-radius:0 10px 10px 0}
+.news-table{display:block;overflow-x:auto;white-space:nowrap;border-radius:12px}
+.news-table th{background:#111827!important;color:#fff}
+main>a,.mt-6 a{display:inline-flex;align-items:center;gap:6px;border-radius:999px!important}
+@media(max-width:767px){main{padding:16px 10px 28px!important}#article-container{border-radius:15px!important}.news-table{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
 
     <header class="bg-red-700 text-white p-4 text-center shadow-md">
