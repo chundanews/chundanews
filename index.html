@@ -399,8 +399,21 @@ header nav .max-w-7xl{min-height:42px}
             <div><p class="text-[10px] font-black tracking-widest text-red-600 uppercase">CHUNDA KSHETRA NEWS</p><h3 class="text-2xl font-black text-gray-900 dark:text-white">🗂️ समाचार संग्रह</h3><p class="text-xs text-gray-500 mt-1">महीने के अनुसार प्रकाशित खबरें देखें</p></div>
             <button onclick="closePortalModal('news-archive-modal')" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xl">×</button>
         </div>
-        <div id="news-archive-months" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
-        <div id="news-archive-results" class="mt-6"></div>
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 p-4 mb-5">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+                <div class="flex-1">
+                    <label for="news-archive-year" class="block text-[10px] font-black text-gray-500 uppercase mb-1">वर्ष</label>
+                    <select id="news-archive-year" onchange="changeNewsArchiveMonth()" class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-bold bg-white dark:bg-gray-900 text-gray-900 dark:text-white"></select>
+                </div>
+                <div class="flex-1">
+                    <label for="news-archive-month" class="block text-[10px] font-black text-gray-500 uppercase mb-1">महीना</label>
+                    <select id="news-archive-month" onchange="changeNewsArchiveMonth()" class="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-bold bg-white dark:bg-gray-900 text-gray-900 dark:text-white"></select>
+                </div>
+                <button onclick="loadNewsArchiveMonth(true)" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm">🔎 खबरें देखें</button>
+            </div>
+            <p class="text-[10px] text-gray-500 mt-3">किसी भी महीने का archive सीधे Firebase से खोजें। पुराने महीनों के लिए homepage पर लोड हुई 300 खबरों की सीमा लागू नहीं होगी।</p>
+        </div>
+        <div id="news-archive-results" class="mt-2"></div>
     </div>
 </div>
 
