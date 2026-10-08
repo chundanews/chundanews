@@ -396,6 +396,10 @@ footer{background:linear-gradient(180deg,#0b1220,#080d16)!important}
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{scroll-behavior:auto!important;transition:none!important}
 }
+</style><style id="ckn-engagement-v9">
+#ckn-smart-search{position:relative}
+#ckn-smart-search .rounded-2xl{box-shadow:0 8px 24px rgba(16,24,40,.04)}
+@media(max-width:640px){#ckn-smart-search .flex{gap:6px}#ckn-search-btn{padding-left:14px;padding-right:14px}}
 </style></head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
@@ -554,7 +558,21 @@ footer{background:linear-gradient(180deg,#0b1220,#080d16)!important}
         </div>
     </section>
 
-    <section id="ckn-editorial-grid">
+    <section id="ckn-smart-search" class="mb-6">
+  <div class="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+    <div class="flex flex-col sm:flex-row gap-2">
+      <div class="relative flex-1">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">⌕</span>
+        <input id="ckn-search-input" type="search" placeholder="खबर, गांव, पंचायत या विषय खोजें…" autocomplete="off"
+          class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-3 py-2.5 text-sm font-medium outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100">
+      </div>
+      <button id="ckn-search-btn" type="button" onclick="cknRunSearch()" class="rounded-xl bg-gray-950 px-5 py-2.5 text-xs font-black text-white hover:bg-red-700 transition">खोजें</button>
+      <button type="button" onclick="cknClearSearch()" class="rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50">रीसेट</button>
+    </div>
+    <div id="ckn-search-status" class="hidden px-1 pt-2 text-[10px] font-bold text-gray-500"></div>
+  </div>
+</section>
+<section id="ckn-editorial-grid">
 <div class="ckn-editorial-card" onclick="filterNews('क्षेत्रीय')">
 <div class="ckn-editorial-kicker">EDITOR'S FOCUS</div>
 <div class="ckn-editorial-title">आपके क्षेत्र की सबसे अहम खबरें</div>
@@ -906,5 +924,34 @@ footer{background:linear-gradient(180deg,#0b1220,#080d16)!important}
 <button onclick="openPortalModal('citizen-modal')"><i class="fa-solid fa-pen-to-square"></i>खबर भेजें</button>
 <button onclick="openPortalModal('news-archive-modal')"><i class="fa-solid fa-box-archive"></i>आर्काइव</button>
 </div>
+<script id="ckn-search-v1">
+(function(){
+  function run(){
+    const input=document.getElementById('ckn-search-input');
+    if(!input) return;
+    const q=input.value.trim().toLowerCase();
+    const status=document.getElementById('ckn-search-status');
+    const cards=[...document.querySelectorAll('#news-container > div, #news-container > article')];
+    if(!q){ cards.forEach(x=>x.style.removeProperty('display')); if(status) status.classList.add('hidden'); return; }
+    let shown=0;
+    cards.forEach(card=>{
+      const hit=(card.textContent||'').toLowerCase().includes(q);
+      card.style.display=hit?'':'none';
+      if(hit) shown++;
+    });
+    if(status){status.textContent=shown+' खबरें मिलीं';status.classList.remove('hidden');}
+    document.getElementById('news-container')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  window.cknRunSearch=run;
+  window.cknClearSearch=function(){
+    const i=document.getElementById('ckn-search-input'); if(i)i.value='';
+    run();
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    const i=document.getElementById('ckn-search-input');
+    if(i)i.addEventListener('keydown',e=>{if(e.key==='Enter')run();});
+  });
+})();
+</script>
 </body>
 </html>
