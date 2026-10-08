@@ -126,6 +126,29 @@ footer{margin-top:40px!important}
 @media (prefers-reduced-motion:reduce){
  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+</style><style id="professional-layout-v1">
+#panchayat-results-dashboard{box-shadow:0 8px 24px rgba(15,23,42,.05)!important}
+main>.grid{align-items:start}
+main>.grid>div:first-child{min-width:0}
+#news-container{gap:18px!important}
+#news-container>div{overflow:hidden}
+aside>div{overflow:hidden}
+aside>div>div:first-child{letter-spacing:.01em}
+footer{background:linear-gradient(180deg,#111827,#080b12)!important}
+footer h3{letter-spacing:.02em}
+footer .border-t{border-color:#1f2937!important}
+@media(min-width:1024px){
+ #news-container{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:1023px){
+ aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px!important}
+}
+@media(max-width:767px){
+ aside{display:block}
+ aside>div{margin-bottom:16px}
+ #news-container{grid-template-columns:1fr!important;gap:14px!important}
+ #news-container>div{border-radius:14px!important}
+}
 </style></head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
