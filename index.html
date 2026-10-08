@@ -149,6 +149,29 @@ footer .border-t{border-color:#1f2937!important}
  #news-container{grid-template-columns:1fr!important;gap:14px!important}
  #news-container>div{border-radius:14px!important}
 }
+</style><style id="professional-header-v2">
+/* Broadcast-style header polish */
+body>div.bg-gray-950:first-of-type{background:#0b1120!important}
+body>div.bg-red-700{background:#991b1b!important;height:34px}
+body>div.bg-red-700>span:first-child{background:#111827!important;border:1px solid rgba(255,255,255,.12)}
+body>div.bg-amber-600{background:#92400e!important}
+header{position:relative}
+header>div:first-child{background:linear-gradient(180deg,#fff,#fafafa)}
+header nav{background:#0b1120!important}
+header nav .max-w-7xl{min-height:42px}
+#lead-news-section>div{background:#fff!important}
+#lead-news-section .border-b{border-bottom:1px solid #e5e7eb!important}
+#lead-news-section h2{font-size:1.05rem!important}
+#lead-stories-track{min-height:270px}
+#lead-stories-track>*{min-width:100%}
+#lead-news-section button[aria-label]{backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.18)}
+#lead-story-dots button,#lead-story-dots span{transition:transform .2s ease}
+@media(max-width:767px){
+ body>div.bg-red-700{height:32px}
+ body>div.bg-amber-600{font-size:10px}
+ #lead-stories-track{min-height:210px}
+ header nav{position:sticky!important;top:0}
+}
 </style></head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
