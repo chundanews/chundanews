@@ -645,7 +645,7 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
                     '<div id="news-archive-more" class="text-center mt-5"></div>';
             }
 
-            const listEl = document.getElementById('news-archive-list');
+            const listEl = document.getElementById('news-archive-list') || document.getElementById('news-archive-results');
             if (!listEl) return;
 
             if (items.length) {
