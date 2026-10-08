@@ -1331,7 +1331,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
             db.collection('election_docs').limit(5).get().then(snapshot => {
                 let docs = snapshot.docs.map(doc => normalizeDoc(doc));
-                docs.sort((a, b) => (b.createdAt || 0) - (b.createdAt || 0));
+                docs.sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
                 try {
                     localStorage.setItem('ckn_cached_elec', JSON.stringify(docs));
                     localStorage.setItem('ckn_widget_time', now.toString());
@@ -1343,6 +1343,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
     function renderJobsHTML(jobs) {
         const jobContainer = document.getElementById('job-alerts-list');
+        if (!jobContainer) return;
         if (!jobs || !jobs.length) {
             jobContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">कोई सक्रिय फॉर्म नहीं है।</p>';
             return;
@@ -1361,6 +1362,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
     function renderElecHTML(docs) {
         const elecContainer = document.getElementById('election-widget-list');
+        if (!elecContainer) return;
         if (!docs || !docs.length) {
             elecContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">दस्तावेज़ उपलब्ध नहीं हैं।</p>';
             return;
