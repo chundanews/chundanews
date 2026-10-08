@@ -288,6 +288,39 @@ footer .max-w-7xl{max-width:1380px!important}
  aside>div{border-radius:15px!important}
 }
 </style>
+<style id="ckn-portal-v4">
+#ckn-newsroom-strip{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;margin:0 0 22px}
+.ckn-mini-panel{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:14px 16px;box-shadow:0 5px 18px rgba(16,24,40,.045)}
+.ckn-mini-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#98a2b3}
+.ckn-mini-value{font-size:18px;font-weight:800;color:#101828;margin-top:3px}
+.ckn-mini-value i{color:#c81e2b;margin-right:5px}
+#ckn-social-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#101828;border-radius:16px;padding:12px 16px;margin-bottom:22px;color:#fff}
+#ckn-social-bar .ckn-social-links{display:flex;gap:7px;flex-wrap:wrap}
+#ckn-social-bar a{width:32px;height:32px;border:1px solid rgba(255,255,255,.12);border-radius:9px;display:grid;place-items:center;color:#d0d5dd}
+#ckn-social-bar a:hover{background:#c81e2b;color:#fff;transform:translateY(-2px)}
+#lead-news-section{margin-bottom:24px}
+#lead-news-section .border-b{padding:14px 18px!important}
+#news-container>div{display:flex;flex-direction:column}
+#news-container>div .p-4{flex:1}
+.ckn-section-divider{display:flex;align-items:center;gap:10px;margin:30px 0 14px}
+.ckn-section-divider span:first-child{width:4px;height:24px;border-radius:5px;background:#c81e2b}
+.ckn-section-divider h3{font-size:19px;font-weight:900;color:#101828;margin:0}
+.ckn-section-divider:after{content:"";height:1px;background:#e4e7ec;flex:1}
+#ckn-mobile-nav{display:none}
+@media(max-width:767px){
+#ckn-newsroom-strip{grid-template-columns:1fr 1fr;gap:8px}
+#ckn-newsroom-strip .ckn-mini-panel:first-child{grid-column:1/-1}
+.ckn-mini-panel{padding:11px 12px}.ckn-mini-value{font-size:15px}
+#ckn-social-bar{align-items:flex-start;flex-direction:column}
+#ckn-social-bar .ckn-social-links{width:100%;justify-content:space-between}
+#ckn-social-bar a{width:36px;height:34px}
+#ckn-mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:58px;background:rgba(16,24,40,.97);backdrop-filter:blur(14px);z-index:1000;border-top:1px solid rgba(255,255,255,.1);justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
+#ckn-mobile-nav button{background:none;color:#98a2b3;font-size:10px;font-weight:700;padding:5px 8px}
+#ckn-mobile-nav button i{display:block;font-size:17px;margin-bottom:2px}
+#ckn-mobile-nav button.active,#ckn-mobile-nav button:hover{color:#fff}
+body{padding-bottom:58px}
+}
+</style>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
@@ -413,6 +446,21 @@ footer .max-w-7xl{max-width:1380px!important}
     </div>
 </div>
 
+<div id="ckn-newsroom-strip">
+<div class="ckn-mini-panel"><div class="ckn-mini-kicker">CHUNDA KSHETRA NEWS</div><div class="ckn-mini-value"><i class="fa-solid fa-bolt"></i>क्षेत्र की खबर, सबसे पहले</div></div>
+<div class="ckn-mini-panel"><div class="ckn-mini-kicker">DIGITAL NETWORK</div><div class="ckn-mini-value"><i class="fa-solid fa-satellite-dish"></i>24×7 अपडेट</div></div>
+<div class="ckn-mini-panel"><div class="ckn-mini-kicker">YOUR VOICE</div><div class="ckn-mini-value"><i class="fa-solid fa-pen-to-square"></i>खबर भेजें</div></div>
+</div>
+<div id="ckn-social-bar">
+<div><div class="text-xs font-black">CKN DIGITAL MEDIA</div><div class="text-[10px] text-gray-400">वेब • Facebook • Instagram • X • YouTube</div></div>
+<div class="ckn-social-links">
+<a href="https://www.facebook.com/" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+<a href="https://www.instagram.com/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+<a href="https://x.com/" target="_blank" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://www.youtube.com/" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+<a href="https://chundanewslive.in/" target="_blank" aria-label="Website"><i class="fa-solid fa-globe"></i></a>
+</div>
+</div>
 <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
     <section id="lead-news-section" class="mb-8 hidden">
         <div class="bg-white dark:bg-gray-900 rounded-2xl shadow border border-gray-200 dark:border-gray-800 overflow-hidden">
@@ -746,5 +794,12 @@ footer .max-w-7xl{max-width:1380px!important}
 
 <script src="/app.js?v=20260929-3"></script>
 
+<div id="ckn-mobile-nav">
+<button class="active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-house"></i>होम</button>
+<button onclick="document.getElementById('news-container')?.scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-newspaper"></i>खबरें</button>
+<button onclick="filterNews('चुनाव अपडेट')"><i class="fa-solid fa-landmark"></i>चुनाव</button>
+<button onclick="openPortalModal('citizen-modal')"><i class="fa-solid fa-pen-to-square"></i>खबर भेजें</button>
+<button onclick="openPortalModal('news-archive-modal')"><i class="fa-solid fa-box-archive"></i>आर्काइव</button>
+</div>
 </body>
 </html>
