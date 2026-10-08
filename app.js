@@ -356,40 +356,27 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
             return;
         }
 
-        const cards = safeList.map(item => {
-            const id = String(item.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+        const cards = safeList.map((item, index) => {
+            const id = safeNewsId(item.id).replace(/[^a-zA-Z0-9_-]/g, '');
             if (!id) return '';
-            const title = String(item.title || 'बिना शीर्षक')
-                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-                .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-            const category = String(item.category || 'सामान्य')
-                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-            const date = String(item.date || 'आज')
-                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-            let adminButtons = '';
-            if (isAdminLoggedIn) {
-                adminButtons = `
-                    <div class="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-800">
-                        <button onclick="editNewsPost('${id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-2.5 py-1 rounded">✏️ एडिट करें</button>
-                        <button onclick="deleteNewsPost('${id}')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded">🗑️ डिलीट</button>
-                    </div>
-                `;
-            }
-
-            return '<article class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col justify-between">' +
-                '<div class="p-5">' +
-                '<div class="text-[11px] text-red-600 font-bold mb-2">' + category + ' • ' + date + '</div>' +
-                '<h3 class="font-bold text-lg text-gray-900 dark:text-white leading-snug cursor-pointer hover:text-red-600" onclick="openReaderModal(\'' + id + '\')">' + title + '</h3>' +
-                '<div class="flex items-center justify-between mt-4">' +
-                '<button type="button" class="text-red-600 font-bold text-sm" onclick="openReaderModal(\'' + id + '\')">विस्तार से पढ़ें →</button>' +
-                '<div class="flex gap-1.5">' +
-                '<button type="button" onclick="copyNewsLink(\'' + id + '\')" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition" title="लिंक कॉपी करें"><i class="fa-solid fa-copy"></i></button>' +
-                '<button type="button" onclick="shareWhatsAppWithImage(\'' + id + '\')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"><i class="fa-solid fa-share-nodes"></i> शेयर</button>' +
-                '</div>' +
-                '</div>' +
+            const title = escapeHTML(item.title || 'बिना शीर्षक');
+            const category = escapeHTML(item.category || 'सामान्य');
+            const date = escapeHTML(item.date || 'आज');
+            const reporter = escapeHTML(item.reporter || 'CKN संवाददाता');
+            const rawImg = Array.isArray(item.images) && item.images.length ? item.images[0] : (item.image || '');
+            const img = sanitizeUrl(rawImg);
+            const lead = index === 0;
+            const adminButtons = isAdminLoggedIn ? '<div class="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-800"><button onclick="editNewsPost(\'' + id + '\')" class="bg-blue-600 text-white text-[10px] font-bold px-2.5 py-1 rounded">✏️ एडिट</button><button onclick="deleteNewsPost(\'' + id + '\')" class="bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded">🗑️ डिलीट</button></div>' : '';
+            const image = img ? '<div class="ckn-card-media"><img src="' + img + '" alt="' + title + '" loading="' + (lead ? 'eager' : 'lazy') + '" onerror="this.closest(\'.ckn-card-media\')?.remove()"></div>' : '';
+            return '<article class="ckn-news-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col" data-news-title="' + title + '">' +
+              image +
+              '<div class="p-4 sm:p-5 flex flex-col flex-1">' +
+                '<div class="flex items-center justify-between gap-2 mb-2"><span class="ckn-card-category">' + category + '</span><span class="ckn-card-date">' + date + '</span></div>' +
+                '<h3 class="ckn-card-title ' + (lead ? 'ckn-card-title-lead' : '') + '" onclick="openReaderModal(\'' + id + '\')">' + title + '</h3>' +
+                '<div class="mt-auto pt-4 flex items-center justify-between gap-2"><span class="ckn-card-reporter">✍️ ' + reporter + '</span><button type="button" onclick="openReaderModal(\'' + id + '\')" class="text-red-600 text-xs font-black whitespace-nowrap">पढ़ें →</button></div>' +
+                '<div class="ckn-card-actions"><button type="button" onclick="copyNewsLink(\'' + id + '\')" title="लिंक कॉपी करें">⧉ कॉपी</button><button type="button" onclick="shareWhatsAppWithImage(\'' + id + '\')" title="WhatsApp पर शेयर करें">↗ शेयर</button></div>' +
                 adminButtons +
-                '</div></article>';
+              '</div></article>';
         }).join('');
 
         container.innerHTML = cards;
