@@ -1,0 +1,52 @@
+name: Apply Lead Stories Theme Fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-lead-theme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Force white lead story panel
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path("index.html")
+          s = p.read_text(encoding="utf-8")
+          marker = "lead-stories-white-fix-v1"
+          if marker in s:
+              print("Lead Stories fix already applied.")
+              raise SystemExit(0)
+          css = """<style id="lead-stories-white-fix-v1">
+          /* Lead Stories: clean white panel with black text */
+          #lead-news-section > div { background:#fff !important; color:#111827 !important; }
+          #lead-news-section .relative { background:#fff !important; }
+          #lead-news-section .lead-story-slide { background:#fff !important; color:#111827 !important; }
+          #lead-news-section .lead-story-slide h2 { color:#111827 !important; }
+          #lead-news-section .lead-story-slide p { color:#111827 !important; }
+          #lead-news-section .lead-story-slide .text-gray-500,
+          #lead-news-section .lead-story-slide .text-gray-600,
+          #lead-news-section .lead-story-slide .text-gray-700,
+          #lead-news-section .lead-story-slide .dark\\:text-gray-300,
+          #lead-news-section .lead-story-slide .dark\\:text-gray-400,
+          #lead-news-section .lead-story-slide .dark\\:text-gray-700 { color:#111827 !important; }
+          </style>
+          """
+          if "</head>" not in s:
+              raise SystemExit("index.html missing </head>")
+          s = s.replace("</head>", css + "</head>", 1)
+          p.write_text(s, encoding="utf-8")
+      - name: Commit fix
+        shell: bash
+        run: |
+          git config user.name "CHUNDA KSHETRA NEWS"
+          git config user.email "chundakshetranews@gmail.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "fix: restore white lead story panel"
+          git push
