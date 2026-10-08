@@ -548,6 +548,13 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
     }
 
+    let newsArchiveState = {
+        key: '',
+        lastDoc: null,
+        loading: false,
+        loadedCount: 0
+    };
+
     function getNewsDateMillis(item) {
         const value = item && (item.createdAt || item.timestamp);
         if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -558,51 +565,128 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
 
     function openNewsArchive() {
         if (!document.getElementById('news-archive-modal')) return;
-        renderNewsArchiveMonths();
+        renderNewsArchivePicker();
         openPortalModal('news-archive-modal');
     }
 
-    function renderNewsArchiveMonths() {
-        const monthsEl = document.getElementById('news-archive-months');
-        const resultsEl = document.getElementById('news-archive-results');
-        if (!monthsEl || !resultsEl) return;
-        const groups = {};
-        (Array.isArray(newsList) ? newsList : []).forEach(item => {
-            const ms = getNewsDateMillis(item);
-            if (!ms) return;
-            const d = new Date(ms);
-            const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-            (groups[key] ||= []).push(item);
-        });
-        const keys = Object.keys(groups).sort((a,b) => b.localeCompare(a));
-        const formatter = new Intl.DateTimeFormat('hi-IN', {month:'long', year:'numeric'});
-        if (!keys.length) {
-            monthsEl.innerHTML = '<div class="col-span-full text-center text-sm text-gray-500 py-8">अभी archive में कोई तारीख वाली खबर उपलब्ध नहीं है।</div>';
-            resultsEl.innerHTML = '';
-            return;
-        }
-        monthsEl.innerHTML = keys.map(key => {
-            const [y,m] = key.split('-').map(Number);
-            return '<button onclick="showNewsArchiveMonth(\'' + key + '\')" class="text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 p-4 hover:border-red-500 hover:shadow-md transition"><div class="text-[10px] font-black text-red-600 uppercase">माह</div><div class="font-black text-base text-gray-900 dark:text-white mt-1">' + escapeHTML(formatter.format(new Date(y,m-1,1))) + '</div><div class="text-xs text-gray-500 mt-1">' + groups[key].length + ' खबरें →</div></button>';
+    function renderNewsArchivePicker() {
+        const yearEl = document.getElementById('news-archive-year');
+        const monthEl = document.getElementById('news-archive-month');
+        if (!yearEl || !monthEl) return;
+
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let year = currentYear; year >= 2020; year--) years.push(year);
+
+        yearEl.innerHTML = years.map(year =>
+            '<option value="' + year + '">' + year + '</option>'
+        ).join('');
+
+        monthEl.innerHTML = Array.from({length: 12}, (_, index) => {
+            const month = index + 1;
+            const label = new Intl.DateTimeFormat('hi-IN', {month:'long'}).format(new Date(2026, index, 1));
+            return '<option value="' + month + '">' + escapeHTML(label) + '</option>';
         }).join('');
-        showNewsArchiveMonth(keys[0]);
+
+        const now = new Date();
+        yearEl.value = String(now.getFullYear());
+        monthEl.value = String(now.getMonth() + 1);
+        loadNewsArchiveMonth(true);
     }
 
-    function showNewsArchiveMonth(key) {
+    function changeNewsArchiveMonth() {
+        loadNewsArchiveMonth(true);
+    }
+
+    async function loadNewsArchiveMonth(reset = true) {
+        const yearEl = document.getElementById('news-archive-year');
+        const monthEl = document.getElementById('news-archive-month');
         const resultsEl = document.getElementById('news-archive-results');
-        if (!resultsEl) return;
-        const [y,m] = key.split('-').map(Number);
-        const formatter = new Intl.DateTimeFormat('hi-IN', {month:'long', year:'numeric'});
-        const items = (Array.isArray(newsList) ? newsList : []).filter(item => {
-            const ms = getNewsDateMillis(item); if (!ms) return false;
-            const d = new Date(ms);
-            return d.getFullYear() === y && d.getMonth() + 1 === m;
-        }).sort((a,b) => getNewsDateMillis(b) - getNewsDateMillis(a));
-        resultsEl.innerHTML = '<div class="flex items-center justify-between border-b-2 border-red-600 pb-2 mb-3"><h4 class="font-black text-lg text-gray-900 dark:text-white">📰 ' + escapeHTML(formatter.format(new Date(y,m-1,1))) + '</h4><span class="text-xs font-bold bg-red-100 text-red-700 px-3 py-1 rounded-full">' + items.length + ' खबरें</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-3">' +
-            (items.length ? items.map(item => {
-                const id = safeNewsId(item.id), title = escapeHTML(item.title || 'बिना शीर्षक'), category = escapeHTML(item.category || 'सामान्य'), date = escapeHTML(item.date || new Date(getNewsDateMillis(item)).toLocaleDateString('hi-IN'));
-                return '<button onclick="openReaderModal(\'' + id + '\')" class="text-left p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-red-400 hover:shadow-sm transition"><div class="text-[10px] font-bold text-red-600 mb-1">' + category + ' • ' + date + '</div><div class="font-bold text-sm leading-snug text-gray-900 dark:text-white">' + title + '</div><div class="text-[11px] text-red-600 font-bold mt-2">पूरी खबर पढ़ें →</div></button>';
-            }).join('') : '<div class="col-span-full text-center py-8 text-sm text-gray-500">इस महीने कोई खबर नहीं मिली।</div>') + '</div>';
+        if (!yearEl || !monthEl || !resultsEl || newsArchiveState.loading) return;
+
+        const year = Number(yearEl.value);
+        const month = Number(monthEl.value);
+        if (!year || !month) return;
+
+        const key = year + '-' + String(month).padStart(2, '0');
+        if (reset) {
+            newsArchiveState = {key, lastDoc:null, loading:false, loadedCount:0};
+            resultsEl.innerHTML = '<div class="text-center py-10 text-sm text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> उस महीने की पुरानी खबरें खोजी जा रही हैं...</div>';
+        }
+
+        newsArchiveState.loading = true;
+        try {
+            const startDate = new Date(year, month - 1, 1, 0, 0, 0, 0);
+            const endDate = new Date(year, month, 1, 0, 0, 0, 0);
+            const startTs = firebase.firestore.Timestamp.fromDate(startDate);
+            const endTs = firebase.firestore.Timestamp.fromDate(endDate);
+
+            let query = db.collection('news_posts')
+                .where('createdAt', '>=', startTs)
+                .where('createdAt', '<', endTs)
+                .orderBy('createdAt', 'desc')
+                .limit(50);
+
+            if (!reset && newsArchiveState.lastDoc) {
+                query = query.startAfter(newsArchiveState.lastDoc);
+            }
+
+            const snapshot = await appCheckReady.then(() => query.get({source:'server'}));
+            const items = snapshot.docs.map(doc => normalizeDoc(doc)).filter(item => item && item.id);
+
+            if (reset) {
+                const formatter = new Intl.DateTimeFormat('hi-IN', {month:'long', year:'numeric'});
+                resultsEl.innerHTML =
+                    '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-red-600 pb-3 mb-4">' +
+                    '<div><h4 class="font-black text-lg text-gray-900 dark:text-white">📰 ' + escapeHTML(formatter.format(startDate)) + '</h4>' +
+                    '<p class="text-[11px] text-gray-500 mt-1">यह archive सीधे Firebase से लोड हो रहा है — homepage की 300 खबरों की सीमा से अलग।</p></div>' +
+                    '<span id="news-archive-count" class="text-xs font-bold bg-red-100 text-red-700 px-3 py-1 rounded-full">0 खबरें</span></div>' +
+                    '<div id="news-archive-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>' +
+                    '<div id="news-archive-more" class="text-center mt-5"></div>';
+            }
+
+            const listEl = document.getElementById('news-archive-list');
+            if (!listEl) return;
+
+            if (items.length) {
+                listEl.insertAdjacentHTML('beforeend', items.map(item => {
+                    const id = safeNewsId(item.id);
+                    const title = escapeHTML(item.title || 'बिना शीर्षक');
+                    const category = escapeHTML(item.category || 'सामान्य');
+                    const date = escapeHTML(item.date || new Date(getNewsDateMillis(item)).toLocaleDateString('hi-IN'));
+                    return '<button onclick="openReaderModal(\'' + id + '\')" class="text-left p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-red-400 hover:shadow-md transition">' +
+                        '<div class="text-[10px] font-bold text-red-600 mb-1">' + category + ' • ' + date + '</div>' +
+                        '<div class="font-bold text-sm leading-snug text-gray-900 dark:text-white">' + title + '</div>' +
+                        '<div class="text-[11px] text-red-600 font-bold mt-2">पूरी खबर पढ़ें →</div></button>';
+                }).join(''));
+            } else if (reset) {
+                listEl.innerHTML = '<div class="col-span-full text-center py-10 text-sm text-gray-500 border rounded-xl bg-gray-50 dark:bg-gray-800/40">इस महीने कोई प्रकाशित खबर नहीं मिली।</div>';
+            }
+
+            newsArchiveState.loadedCount += items.length;
+            newsArchiveState.lastDoc = snapshot.docs.length ? snapshot.docs[snapshot.docs.length - 1] : newsArchiveState.lastDoc;
+
+            const countEl = document.getElementById('news-archive-count');
+            if (countEl) countEl.textContent = newsArchiveState.loadedCount + ' खबरें लोड हुईं';
+
+            const moreEl = document.getElementById('news-archive-more');
+            if (moreEl) {
+                moreEl.innerHTML = snapshot.size === 50
+                    ? '<button onclick="loadNewsArchiveMonth(false)" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm">और पुरानी खबरें लोड करें →</button>'
+                    : (items.length ? '<div class="text-[11px] text-gray-400">इस महीने की सभी उपलब्ध खबरें लोड हो गई हैं।</div>' : '');
+            }
+        } catch (err) {
+            console.error('Historical archive query failed:', err);
+            const msg = String(err && err.message || '');
+            resultsEl.innerHTML =
+                '<div class="text-center py-10 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">' +
+                '<div class="font-black mb-1">Archive लोड नहीं हो पाया</div>' +
+                '<div class="text-xs">कृपया थोड़ी देर बाद दोबारा प्रयास करें।' +
+                (msg.includes('index') ? ' Firebase index की आवश्यकता हो सकती है।' : '') +
+                '</div></div>';
+        } finally {
+            newsArchiveState.loading = false;
+        }
     }
 
     function filterNews(cat) {
