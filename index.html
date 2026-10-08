@@ -321,6 +321,23 @@ footer .max-w-7xl{max-width:1380px!important}
 body{padding-bottom:58px}
 }
 </style>
+<style id="ckn-editorial-grid-v5">
+#ckn-editorial-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px;margin:0 0 24px}
+.ckn-editorial-card{position:relative;min-height:138px;border-radius:18px;overflow:hidden;border:1px solid #e4e7ec;background:linear-gradient(145deg,#101828,#1d2939);padding:18px;color:#fff;box-shadow:0 8px 24px rgba(16,24,40,.09);cursor:pointer}
+.ckn-editorial-card:first-child{min-height:170px;background:linear-gradient(135deg,#941522,#c81e2b)}
+.ckn-editorial-card:before{content:"";position:absolute;width:120px;height:120px;border-radius:50%;right:-35px;top:-35px;background:rgba(255,255,255,.07)}
+.ckn-editorial-card:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(16,24,40,.15)}
+.ckn-editorial-kicker{font-size:9px;letter-spacing:.12em;font-weight:900;text-transform:uppercase;opacity:.72}
+.ckn-editorial-title{font-size:20px;font-weight:900;line-height:1.15;margin-top:8px;max-width:90%}
+.ckn-editorial-card:not(:first-child) .ckn-editorial-title{font-size:16px}
+.ckn-editorial-desc{font-size:10px;color:rgba(255,255,255,.7);margin-top:8px;line-height:1.45}
+.ckn-category-row{display:flex;gap:8px;overflow:auto;padding:2px 1px 8px;margin-bottom:22px;scrollbar-width:none}
+.ckn-category-row::-webkit-scrollbar{display:none}
+.ckn-category-pill{white-space:nowrap;background:#fff;border:1px solid #e4e7ec;color:#344054;border-radius:999px;padding:8px 13px;font-size:11px;font-weight:800}
+.ckn-category-pill:hover,.ckn-category-pill.active{background:#c81e2b;border-color:#c81e2b;color:#fff}
+@media(max-width:900px){#ckn-editorial-grid{grid-template-columns:1fr 1fr}.ckn-editorial-card:first-child{grid-column:1/-1}}
+@media(max-width:600px){#ckn-editorial-grid{grid-template-columns:1fr 1fr;gap:9px}.ckn-editorial-card{min-height:120px;padding:13px;border-radius:14px}.ckn-editorial-card:first-child{min-height:145px}.ckn-editorial-title{font-size:17px}.ckn-editorial-card:not(:first-child) .ckn-editorial-title{font-size:14px}.ckn-editorial-desc{font-size:9px}}
+</style>
 </head>
 <body class="bg-slate-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans min-h-screen flex flex-col">
 
@@ -479,7 +496,34 @@ body{padding-bottom:58px}
         </div>
     </section>
 
-    <section class="mb-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-4"><div class="flex flex-col md:flex-row md:items-center justify-between gap-3"><div><h2 class="text-base font-black text-gray-900 dark:text-white">🏡 अपने गांव की चुनाव जानकारी</h2><p class="text-[11px] text-gray-500 mt-1">गांव, ग्राम पंचायत या पंचायत समिति का नाम खोजें और उपलब्ध जानकारी देखें।</p></div><button onclick="openPanchayatHub()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold">जानकारी खोजें →</button></div></section>
+    <section id="ckn-editorial-grid">
+<div class="ckn-editorial-card" onclick="filterNews('क्षेत्रीय')">
+<div class="ckn-editorial-kicker">EDITOR'S FOCUS</div>
+<div class="ckn-editorial-title">आपके क्षेत्र की सबसे अहम खबरें</div>
+<div class="ckn-editorial-desc">स्थानीय मुद्दों, जनसमस्याओं और क्षेत्रीय हलचल की खबरें एक जगह।</div>
+</div>
+<div class="ckn-editorial-card" onclick="filterNews('चुनाव अपडेट')">
+<div class="ckn-editorial-kicker">ELECTION DESK</div>
+<div class="ckn-editorial-title">चुनाव अपडेट</div>
+<div class="ckn-editorial-desc">वार्ड, पंचायत और चुनावी गतिविधियों की खबरें।</div>
+</div>
+<div class="ckn-editorial-card" onclick="filterNews('शिक्षा व रोज़गार')">
+<div class="ckn-editorial-kicker">CAREER DESK</div>
+<div class="ckn-editorial-title">शिक्षा & रोजगार</div>
+<div class="ckn-editorial-desc">भर्ती, परीक्षा और शिक्षा से जुड़ी खबरें।</div>
+</div>
+</section>
+<div class="ckn-category-row" aria-label="समाचार श्रेणियां">
+<button class="ckn-category-pill active" onclick="filterNews('all')">ताज़ा खबरें</button>
+<button class="ckn-category-pill" onclick="filterNews('क्षेत्रीय')">क्षेत्रीय</button>
+<button class="ckn-category-pill" onclick="filterNews('तहसील समाचार')">तहसील समाचार</button>
+<button class="ckn-category-pill" onclick="filterNews('ज़िला समाचार')">ज़िला समाचार</button>
+<button class="ckn-category-pill" onclick="filterNews('राजनीति')">राजनीति</button>
+<button class="ckn-category-pill" onclick="filterNews('कृषि व मौसम')">कृषि व मौसम</button>
+<button class="ckn-category-pill" onclick="filterNews('खेल (Sports)')">खेल</button>
+<button class="ckn-category-pill" onclick="filterNews('देश-विदेश')">देश-विदेश</button>
+</div>
+<section class="mb-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-4"><div class="flex flex-col md:flex-row md:items-center justify-between gap-3"><div><h2 class="text-base font-black text-gray-900 dark:text-white">🏡 अपने गांव की चुनाव जानकारी</h2><p class="text-[11px] text-gray-500 mt-1">गांव, ग्राम पंचायत या पंचायत समिति का नाम खोजें और उपलब्ध जानकारी देखें।</p></div><button onclick="openPanchayatHub()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold">जानकारी खोजें →</button></div></section>
 <div id="panchayat-result-manager-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true"><div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[90vh] overflow-y-auto"><h3 class="text-lg font-black mb-3">✏️ पंचायत परिणाम संपादित करें</h3><div class="grid grid-cols-2 gap-2 mt-2"><input id="pr-edit-search" oninput="renderPanchayatResultManager()" placeholder="गांव / ग्राम पंचायत / वार्ड खोजें..." class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><select id="pr-edit-status" onchange="renderPanchayatResultManager()" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><option value="">सभी स्थिति</option><option value="pending">लंबित</option><option value="verified">सत्यापित</option><option value="published">प्रकाशित</option></select></div><div class="grid grid-cols-4 gap-2 mt-3"><select id="pr-edit-district" onchange="renderPanchayatResultManager()" class="border rounded p-2 text-xs"><option value="">सभी जिले</option></select><select id="pr-edit-panchayat" onchange="renderPanchayatResultManager()" class="border rounded p-2 text-xs"><option value="">सभी पंचायतें</option></select><select id="pr-edit-post" onchange="renderPanchayatResultManager()" class="border rounded p-2 text-xs"><option value="">सभी पद</option></select><select id="pr-edit-page-size" onchange="renderPanchayatResultManager()" class="border rounded p-2 text-xs"><option value="25">25 / पेज</option><option value="50">50 / पेज</option><option value="100">100 / पेज</option></select></div><div id="pr-admin-stats" class="grid grid-cols-4 gap-2 mt-3"></div><div id="pr-edit-list" class="mt-3 space-y-2"></div><div class="flex justify-end mt-4"><button onclick="closePortalModal('panchayat-result-manager-modal')" class="px-4 py-2 rounded border">बंद करें</button></div></div></div><div id="panchayat-result-detail-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true"><div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[90vh] overflow-y-auto"><div id="panchayat-result-detail"></div><div class="flex justify-end mt-4"><button onclick="closePortalModal('panchayat-result-detail-modal')" class="px-4 py-2 rounded border">बंद करें</button></div></div></div><div id="panchayat-results-dashboard" class="mt-4 rounded-2xl border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900"><div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2"><h3 class="font-black text-sm">📊 पंचायत चुनाव परिणाम डैशबोर्ड</h3><span id="pr-count" class="text-[10px] text-gray-500"></span></div><div class="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3"><select id="pr-filter-district" onchange="updatePanchayatCascade('district')" class="border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><option value="">सभी जिले</option></select><select id="pr-filter-ps" onchange="updatePanchayatCascade('ps')" class="border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><option value="">सभी पंचायत समितियां</option></select><select id="pr-filter-gp" onchange="updatePanchayatCascade('gp')" class="border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><option value="">सभी ग्राम पंचायतें</option></select><select id="pr-filter-village" onchange="updatePanchayatCascade('village')" class="border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><option value="">सभी गांव</option></select><select id="pr-filter-ward" onchange="renderPanchayatDashboard()" class="border dark:border-gray-700 dark:bg-gray-800 rounded p-2 text-xs"><option value="">सभी वार्ड</option></select></div><div id="panchayat-dashboard-list" class="mt-3 space-y-2"></div></div><div id="panchayat-hub-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true"><div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-5 shadow-2xl border dark:border-gray-800 max-h-[90vh] overflow-y-auto"><div class="flex items-start justify-between gap-3 mb-4"><div><h3 class="text-lg font-black text-gray-900 dark:text-white">🏡 अपने गांव की जानकारी</h3><p class="text-[11px] text-gray-500 mt-1">पंचायती राज चुनाव से संबंधित प्रकाशित जानकारी।</p></div><button onclick="closePortalModal('panchayat-hub-modal')" class="text-gray-400 text-xl">&times;</button></div><div class="grid sm:grid-cols-[1fr_auto] gap-2 mb-4"><input id="panchayat-search" type="search" oninput="searchPanchayatInfo()" placeholder="गांव / ग्राम पंचायत / पंचायत समिति..." class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded-lg p-2.5 text-sm"><button onclick="searchPanchayatInfo()" class="bg-red-600 text-white px-4 py-2.5 rounded-lg font-bold text-xs">खोजें</button></div><div id="panchayat-search-results"><p class="text-center text-xs text-gray-400 py-6">नाम लिखकर खोजें।</p></div></div></div>
 
     <!-- Modern Trending Topics Strip -->
