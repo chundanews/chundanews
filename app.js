@@ -437,7 +437,7 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
             return `
                 <article class="lead-story-slide min-w-full grid grid-cols-1 lg:grid-cols-12 gap-0" data-lead-index="${index}">
                     <div class="lg:col-span-7 relative h-72 sm:h-96 bg-gray-900 overflow-hidden">
-                        <img src="${escapeHTML(img)}" alt="${title}" width="800" height="450" loading="${index === 0 ? 'eager' : 'lazy'}" class="w-full h-full object-cover cursor-pointer" onclick="openReaderModal('${id}')">
+                        <img src="${escapeHTML(img)}" alt="${title}" width="800" height="450" loading="${index === 0 ? 'eager' : 'lazy'}" fetchpriority="${index === 0 ? 'high' : 'auto'}" decoding="async" class="w-full h-full object-cover cursor-pointer" onclick="openReaderModal('${id}')">
                         <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">⭐ प्रमुख समाचार</div>
                         <div class="absolute top-4 right-4 bg-black/70 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">${index + 1} / ${leads.length}</div>
                     </div>
