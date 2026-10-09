@@ -215,13 +215,13 @@ main>a,.mt-6 a{display:inline-flex;align-items:center;gap:6px;border-radius:999p
                 // Multiple Images handling for article page
                 let imagesHtml = '';
                 if (Array.isArray(data.images) && data.images.length > 0) {
-                    imagesHtml = data.images.map(imgUrl => {
+                    imagesHtml = data.images.map((imgUrl, index) => {
                         const safeImg = sanitizeUrl(imgUrl);
-                        return safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-4 object-cover max-h-[450px]" alt="${cleanText(data.title || "CHUNDA KSHETRA NEWS समाचार")}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : '';
+                        return safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-4 object-cover max-h-[450px]" alt="${cleanText(data.title || "CHUNDA KSHETRA NEWS समाचार")}" loading="${index === 0 ? 'eager' : 'lazy'}" fetchpriority="${index === 0 ? 'high' : 'auto'}" decoding="async" onerror="this.style.display='none'">` : '';
                     }).join('');
                 } else if (data.image) {
                     const safeImg = sanitizeUrl(data.image);
-                    imagesHtml = safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[450px]" alt="${cleanText(data.title || "CHUNDA KSHETRA NEWS समाचार")}" loading="eager" decoding="async">` : '';
+                    imagesHtml = safeImg ? `<img src="${safeImg}" class="w-full h-auto rounded-xl mb-6 object-cover max-h-[450px]" alt="${cleanText(data.title || "CHUNDA KSHETRA NEWS समाचार")}" loading="eager" fetchpriority="high" decoding="async">` : '';
                 }
 
                 container.innerHTML = `
