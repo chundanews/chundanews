@@ -299,6 +299,7 @@ header nav .max-w-7xl{min-height:42px}
     <div class="flex flex-wrap gap-2 text-xs">
         <button onclick="triggerOpenNewPostModal()" class="bg-white text-emerald-900 px-3 py-1 rounded font-bold hover:bg-gray-100">+ नई खबर</button>
         <button onclick="triggerOpenJobModal()" class="bg-amber-400 text-black px-3 py-1 rounded font-bold hover:bg-amber-300">+ नया भर्ती अलर्ट</button>
+        <button onclick="openJobAlertManager()" class="bg-indigo-700 text-white px-3 py-1 rounded font-bold hover:bg-indigo-600">✏️ भर्ती अलर्ट प्रबंधित करें</button>
         <button onclick="triggerOpenElectionModal()" class="bg-amber-700 text-white px-3 py-1 rounded font-bold hover:bg-amber-600">+ चुनाव दस्तावेज़ / PDF</button>
         <button onclick="triggerOpenPanchayatAdminModal()" class="bg-red-600 text-white px-3 py-1 rounded font-bold hover:bg-red-500">+ पंचायत चुनाव जानकारी</button>
         <button onclick="triggerOpenPanchayatResultModal()" class="bg-green-600 text-white px-3 py-1 rounded font-bold hover:bg-green-500">+ पंचायत परिणाम</button>
@@ -532,10 +533,20 @@ header nav .max-w-7xl{min-height:42px}
     </div>
 </div>
 
+<div id="job-manager-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between gap-3 mb-4"><h3 class="text-lg font-bold text-gray-900 dark:text-white">✏️ भर्ती अलर्ट प्रबंधन</h3>
+        <button type="button" onclick="closePortalModal('job-manager-modal')" class="text-gray-500 hover:text-red-600 text-xl" aria-label="बंद करें">&times;</button></div>
+        <p class="text-xs text-gray-500 mb-3">यहाँ सभी पुराने और नए भर्ती अलर्ट मिलेंगे। आप किसी भी अलर्ट को एडिट या हटा सकते हैं।</p>
+        <div id="job-manager-list" class="space-y-2"></div>
+    </div>
+</div>
+
 <div id="job-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="job-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
-        <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
+        <form id="job-form" onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="job-edit-id" value="">
             <input type="text" id="job-title" required placeholder="भर्ती का नाम (उदा. RPSC / REET)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-posts" placeholder="पद संख्या / योग्यता" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-last-date" required placeholder="अंतिम तिथि" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
