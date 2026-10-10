@@ -1019,6 +1019,40 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
     }
 
+    async function openJobAlertManager() {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
+        openPortalModal('job-manager-modal');
+        const list = document.getElementById('job-manager-list');
+        list.innerHTML = '<p class="text-center py-4 text-gray-500">भर्ती अलर्ट लोड हो रहे हैं...</p>';
+        try {
+            const snapshot = await db.collection('job_alerts').get();
+            const jobs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                .sort((a, b) => (timestampToMillis(b.createdAt) || 0) - (timestampToMillis(a.createdAt) || 0));
+            renderJobAlertManager(jobs);
+        } catch (err) {
+            list.innerHTML = '<p class="text-center py-4 text-red-600">अलर्ट लोड नहीं हो सके। कृपया लॉगिन और इंटरनेट जाँचें।</p>';
+        }
+    }
+
+    function renderJobAlertManager(jobs) {
+        const list = document.getElementById('job-manager-list');
+        if (!list) return;
+        if (!jobs.length) {
+            list.innerHTML = '<p class="text-center py-4 text-gray-500">कोई भर्ती अलर्ट उपलब्ध नहीं है।</p>';
+            return;
+        }
+        list.innerHTML = jobs.map(job => {
+            const id = String(job.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+            return `<div class="border dark:border-gray-700 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="min-w-0"><b class="block text-sm">${escapeHTML(job.title || 'बिना शीर्षक')}</b>
+                <p class="text-xs text-gray-500 mt-1">${escapeHTML(job.posts || '')} · अंतिम तिथि: ${escapeHTML(job.lastDate || 'उल्लेख नहीं')}</p></div>
+                <div class="flex gap-2 shrink-0">
+                    <button type="button" onclick="editJobAlert('${id}')" class="bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-bold">✏️ एडिट</button>
+                    <button type="button" onclick="deleteJobAlert('${id}').then(() => openJobAlertManager())" class="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-bold">🗑️ हटाएं</button>
+                </div></div>`;
+        }).join('');
+    }
+
     function triggerOpenJobModal() {
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
         document.getElementById('job-form').reset();
