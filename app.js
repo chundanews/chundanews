@@ -763,7 +763,7 @@ const ADMIN_UID = 'q9yvlsTLBtYgdii6QQjTeGkb4rv2';
     function previewSelectedNewsFiles(){const i=document.getElementById('news-image-files');if(i)renderNewsImagePreview([...i.files].slice(0,12).map(f=>URL.createObjectURL(f)));}
     document.addEventListener('DOMContentLoaded',()=>{['news-title','news-subtitle','news-dateline','news-tags','news-reporter','news-content-editor','news-keypoint-1','news-keypoint-2','news-keypoint-3','news-image-caption','news-image-credit'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',scheduleNewsDraftSave)});const i=document.getElementById('news-image-files');if(i)i.addEventListener('change',previewSelectedNewsFiles);});
     
-    function triggerOpenJobModal() { openPortalModal('job-modal'); }
+    
     function triggerOpenElectionModal() { openPortalModal('election-modal'); }
     function openPanchayatHub(){openPortalModal('panchayat-hub-modal');const i=document.getElementById('panchayat-search');if(i)setTimeout(()=>i.focus(),50);}
     
@@ -1019,6 +1019,48 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
     }
 
+    function triggerOpenJobModal() {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
+        document.getElementById('job-form').reset();
+        document.getElementById('job-edit-id').value = '';
+        document.getElementById('job-modal-title').textContent = 'नया भर्ती अलर्ट जोड़ें';
+        document.getElementById('job-submit-btn').textContent = 'सेव करें';
+        openPortalModal('job-modal');
+    }
+
+    async function editJobAlert(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
+        try {
+            const doc = await db.collection('job_alerts').doc(id).get();
+            if (!doc.exists) { alert('यह भर्ती अलर्ट अब उपलब्ध नहीं है।'); loadWidgetData(true); return; }
+            const job = doc.data();
+            document.getElementById('job-edit-id').value = doc.id;
+            document.getElementById('job-title').value = job.title || '';
+            document.getElementById('job-posts').value = job.posts || '';
+            document.getElementById('job-last-date').value = job.lastDate || '';
+            document.getElementById('job-link').value = job.link && job.link !== '#' ? job.link : '';
+            document.getElementById('job-modal-title').textContent = 'भर्ती अलर्ट संपादित करें';
+            document.getElementById('job-submit-btn').textContent = 'बदलाव सेव करें';
+            openPortalModal('job-modal');
+        } catch (err) {
+            alert('भर्ती अलर्ट खोलने में समस्या हुई।');
+        }
+    }
+
+    async function deleteJobAlert(id) {
+        if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
+        if (!confirm('क्या आप इस भर्ती अलर्ट को हटाना चाहते हैं? यह वेबसाइट से हट जाएगा।')) return;
+        try {
+            await db.collection('job_alerts').doc(id).delete();
+            const cached = JSON.parse(localStorage.getItem('ckn_cached_jobs') || '[]').filter(job => job.id !== id);
+            localStorage.setItem('ckn_cached_jobs', JSON.stringify(cached));
+            alert('भर्ती अलर्ट हटा दिया गया।');
+            loadWidgetData(true);
+        } catch (err) {
+            alert('भर्ती अलर्ट हटाया नहीं जा सका। कृपया लॉगिन और इंटरनेट जाँचें।');
+        }
+    }
+
     async function handleJobSubmit(e) {
         e.preventDefault();
         if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) { alert('एडमिन लॉगिन आवश्यक है।'); return; }
@@ -1026,15 +1068,28 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         const posts = document.getElementById('job-posts').value.trim() || 'विस्तृत विज्ञापन देखें';
         const lastDate = document.getElementById('job-last-date').value.trim();
         const link = sanitizeUrlRaw(document.getElementById('job-link').value.trim()) || '#';
+        const editId = document.getElementById('job-edit-id').value.trim();
         if (title.length < 3 || title.length > 220) { alert('भर्ती शीर्षक जाँचें।'); return; }
+        const submitBtn = document.getElementById('job-submit-btn');
+        submitBtn.disabled = true;
         try {
-            await db.collection('job_alerts').add({ title, posts, lastDate, link, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            alert('भर्ती अलर्ट जोड़ दिया गया!'); 
-            e.target.reset(); 
+            const jobData = { title, posts, lastDate, link };
+            if (editId) {
+                await db.collection('job_alerts').doc(editId).update(jobData);
+                alert('भर्ती अलर्ट अपडेट कर दिया गया!');
+            } else {
+                await db.collection('job_alerts').add({ ...jobData, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                alert('भर्ती अलर्ट जोड़ दिया गया!');
+            }
+            e.target.reset();
+            document.getElementById('job-edit-id').value = '';
             closePortalModal('job-modal');
             loadWidgetData(true);
-        } catch (err) { 
-            alert('भर्ती अलर्ट सेव नहीं हो सका।'); 
+        } catch (err) {
+            alert('भर्ती अलर्ट सेव नहीं हो सका। कृपया लॉगिन और इंटरनेट जाँचें।');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'सेव करें';
         }
     }
 
@@ -1343,6 +1398,7 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
 
     function renderJobsHTML(jobs) {
         const jobContainer = document.getElementById('job-alerts-list');
+        if (!jobContainer) return;
         if (!jobs || !jobs.length) {
             jobContainer.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">कोई सक्रिय फॉर्म नहीं है।</p>';
             return;
@@ -1355,6 +1411,10 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
                     <span class="text-red-500 font-semibold">अंतिम तिथि: ${escapeHTML(job.lastDate)}</span>
                 </div>
                 <a href="${sanitizeUrl(job.link || '#')}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 py-1 rounded text-[10px] font-bold">विवरण देखें / फॉर्म भरें</a>
+                ${isAdminLoggedIn ? `<div class="flex gap-2 mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" onclick="editJobAlert('${String(job.id).replace(/[^a-zA-Z0-9_-]/g, '')}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1 rounded text-[10px] font-bold">✏️ एडिट</button>
+                    <button type="button" onclick="deleteJobAlert('${String(job.id).replace(/[^a-zA-Z0-9_-]/g, '')}')" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-1 rounded text-[10px] font-bold">🗑️ हटाएं</button>
+                </div>` : ''}
             </div>
         `).join('');
     }
