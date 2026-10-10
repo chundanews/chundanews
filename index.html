@@ -457,14 +457,14 @@ header nav .max-w-7xl{min-height:42px}
 
         <div class="border-t border-gray-900 mt-6 pt-4 flex flex-col sm:flex-row justify-between items-center text-[10px] text-gray-500 gap-3">
             <p>© 2026 CHUNDA KSHETRA NEWS. All Rights Reserved.</p>
-            <div class="flex items-center gap-3">
-                <button onclick="openPortalModal('about-modal')" class="hover:text-gray-300 transition">हमारे बारे में</button>
+            <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+                <a href="/about.html" class="hover:text-gray-300 transition">हमारे बारे में</a>
                 <span>•</span>
-                <button onclick="openPortalModal('privacy-modal')" class="hover:text-gray-300 transition">गोपनीयता नीति (Privacy Policy)</button>
+                <a href="/privacy-policy.html" class="hover:text-gray-300 transition">गोपनीयता नीति</a>
                 <span>•</span>
-                <button onclick="openPortalModal('terms-modal')" class="hover:text-gray-300 transition">नियम एवं शर्तें (Terms)</button>
+                <a href="/terms.html" class="hover:text-gray-300 transition">नियम एवं शर्तें</a>
                 <span>•</span>
-                <button onclick="openPortalModal('grievance-modal')" class="hover:text-gray-300 transition">शिकायत निवारण (Grievance)</button>
+                <a href="/grievance.html" class="hover:text-gray-300 transition">शिकायत निवारण</a>
             </div>
         </div>
     </div>
@@ -615,41 +615,6 @@ header nav .max-w-7xl{min-height:42px}
         <div id="reports-list" class="overflow-y-auto space-y-3 text-xs flex-grow">
             <p class="text-center text-gray-400 py-6">कोई नई रिपोर्ट प्राप्त नहीं हुई है।</p>
         </div>
-    </div>
-</div>
-
-<!-- POLICY MODALS -->
-<div id="about-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">हमारे बारे में (About Us)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-            <b>CHUNDA KSHETRA NEWS</b> (chundanewslive.in) दक्षिण राजस्थान के ऋषभदेव, उदयपुर, खैरवाड़ा, सेमारी, सलूंबर, सराड़ा एवं आसपास के अंचल की स्थानीय आवाज़ को डिजिटल पटल पर सशक्त रूप से प्रस्तुत करने वाला स्वतंत्र क्षेत्रीय समाचार पोर्टल है।
-        </p>
-        <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('about-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
-    </div>
-</div>
-
-<div id="privacy-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">गोपनीयता नीति (Privacy Policy)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">CHUNDA KSHETRA NEWS पर आपके पाठकों की गोपनीयता का सम्मान करना हमारी सर्वोच्च प्राथमिकता है।</p>
-        <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('privacy-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
-    </div>
-</div>
-
-<div id="terms-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">नियम एवं शर्तें (Terms & Conditions)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">'चुंडा क्षेत्र न्यूज' वेबसाइट या इसके मोबाइल ऐप का उपयोग करने वाले सभी उपयोगकर्ताओं पर ये नियम लागू होते हैं।</p>
-        <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('terms-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
-    </div>
-</div>
-
-<div id="grievance-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border dark:border-gray-800 text-xs space-y-3 max-h-[85vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-800">शिकायत निवारण नीति (Grievance Redressal)</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed"><b>ईमेल आईडी:</b> chundakshetranews@gmail.com</p>
-        <div class="text-right pt-2 border-t dark:border-gray-800"><button onclick="closePortalModal('grievance-modal')" class="bg-gray-800 text-white px-4 py-1.5 rounded">बंद करें</button></div>
     </div>
 </div>
 
