@@ -535,7 +535,8 @@ header nav .max-w-7xl{min-height:42px}
 <div id="job-modal" class="portal-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border dark:border-gray-800">
         <h3 id="job-modal-title" class="text-lg font-bold mb-3 text-gray-900 dark:text-white">नया भर्ती अलर्ट जोड़ें</h3>
-        <form onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
+        <form id="job-form" onsubmit="handleJobSubmit(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="job-edit-id" value="">
             <input type="text" id="job-title" required placeholder="भर्ती का नाम (उदा. RPSC / REET)" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-posts" placeholder="पद संख्या / योग्यता" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
             <input type="text" id="job-last-date" required placeholder="अंतिम तिथि" class="w-full border dark:border-gray-700 dark:bg-gray-800 rounded p-2">
