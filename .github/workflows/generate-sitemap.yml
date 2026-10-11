@@ -37,8 +37,8 @@ jobs:
 
       - name: Commit sitemap
         run: |
-          if git diff --quiet -- sitemap.xml news-sitemap.xml; then
-            echo "Sitemap unchanged."
+          if [ -z "$(git status --porcelain --untracked-files=all -- sitemap.xml news-sitemap.xml)" ]; then
+            echo "Sitemap files unchanged."
             exit 0
           fi
           git config user.name "github-actions[bot]"
