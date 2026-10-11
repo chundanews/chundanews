@@ -37,7 +37,7 @@ jobs:
 
       - name: Commit sitemap
         run: |
-          if git diff --quiet -- sitemap.xml; then
+          if git diff --quiet -- sitemap.xml news-sitemap.xml; then
             echo "Sitemap unchanged."
             exit 0
           fi
