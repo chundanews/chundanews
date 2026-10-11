@@ -9,18 +9,17 @@ const NEWS_WINDOW_MS = 48 * 60 * 60 * 1000;
 
 function firestoreQuery(collection, field, value) {
   return new Promise((resolve, reject) => {
-    const body = JSON.stringify({
-      structuredQuery: {
-        from: [{ collectionId: collection }],
-        where: {
-          fieldFilter: {
-            field: { fieldPath: field },
-            op: 'EQUAL',
-            value: { stringValue: value }
-          }
+    const structuredQuery = { from: [{ collectionId: collection }] };
+    if (field && value !== undefined) {
+      structuredQuery.where = {
+        fieldFilter: {
+          field: { fieldPath: field },
+          op: 'EQUAL',
+          value: { stringValue: value }
         }
-      }
-    });
+      };
+    }
+    const body = JSON.stringify({ structuredQuery });
     const req = https.request(
       'https://firestore.googleapis.com/v1/projects/' + PROJECT_ID +
       '/databases/(default)/documents:runQuery?key=' + encodeURIComponent(FIREBASE_API_KEY || ''),
@@ -94,7 +93,9 @@ function newsPublicationDate(data) {
 async function generateSitemap() {
   if (!FIREBASE_API_KEY) throw new Error('FIREBASE_WEB_API_KEY is required.');
 
-  const articles = await firestoreQuery('news_posts', 'published', 'true');
+  // News posts are published directly by the site's admin form; they do not
+  // have a consistent "published" field, so include the whole collection.
+  const articles = await firestoreQuery('news_posts');
   const panchayatResults = await firestoreQuery('panchayat_results', 'status', 'published');
 
   const urlEntries = new Map();
