@@ -126,19 +126,33 @@ main>a,.mt-6 a{display:inline-flex;align-items:center;gap:6px;border-radius:999p
             if (el && content) el.setAttribute('content', content);
         }
 
+        function toIsoDate(value) {
+            if (!value) return '';
+            try {
+                if (value && typeof value.toDate === 'function') {
+                    const date = value.toDate();
+                    return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+                }
+                if (value instanceof Date) return Number.isNaN(value.getTime()) ? '' : value.toISOString();
+                if (typeof value === 'number' || typeof value === 'string') {
+                    const date = new Date(value);
+                    return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+                }
+            } catch (err) {
+                console.warn('Invalid article date metadata:', err);
+            }
+            return '';
+        }
+
         function setArticleSeo(data, id) {
             const title = cleanText(data.title || 'विस्तृत खबर');
             const description = makeDescription(data);
             const canonicalUrl = 'https://chundanewslive.in/article.html?id=' + encodeURIComponent(id);
             const imageUrl = sanitizeUrl((Array.isArray(data.images) && data.images.length) ? data.images[0] : data.image) || 'https://chundanewslive.in/icon-512.png';
 
-            // Pehle dates calculate karein taaki meta tags mein error na aaye
-            const published = data.createdAt && typeof data.createdAt.toDate === 'function'
-                ? data.createdAt.toDate().toISOString()
-                : (data.publishedAt || data.datePublished || data.date || '');
-            const modified = data.updatedAt && typeof data.updatedAt.toDate === 'function'
-                ? data.updatedAt.toDate().toISOString()
-                : (data.updatedAt || published);
+            // Structured data dates must be valid ISO-8601 values, not display-only date strings.
+            const published = toIsoDate(data.createdAt) || toIsoDate(data.publishedAt) || toIsoDate(data.datePublished) || toIsoDate(data.date);
+            const modified = toIsoDate(data.updatedAt) || published;
 
             document.title = title + ' - CHUNDA KSHETRA NEWS';
             setMeta('meta-description', description);
@@ -182,6 +196,14 @@ main>a,.mt-6 a{display:inline-flex;align-items:center;gap:6px;border-radius:999p
                 ? { '@type': 'Person', name: cleanText(data.reporter) }
                 : { '@type': 'Organization', name: 'CHUNDA KSHETRA NEWS' };
             if (data.category) schema.articleSection = cleanText(data.category);
+            if (data.tags) {
+                const keywords = Array.isArray(data.tags) ? data.tags : String(data.tags).split(',');
+                schema.keywords = keywords.map(cleanText).filter(Boolean).join(', ');
+            }
+            const articleBody = cleanText(makeDescription(data));
+            if (articleBody) schema.articleBody = articleBody;
+            schema.isAccessibleForFree = true;
+            schema.copyrightHolder = { '@type': 'Organization', name: 'CHUNDA KSHETRA NEWS' };
 
             const schemaEl = document.getElementById('article-schema');
             if (schemaEl) schemaEl.textContent = JSON.stringify(schema);
