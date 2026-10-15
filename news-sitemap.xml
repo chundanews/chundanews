@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
-    <loc>https://chundanewslive.in/article.html?id=1BGz4iRE1FH9VdhcNxXP</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-12T08:54:55.158Z</news:publication_date>
-      <news:title>राजस्थान पंचायत चुनाव 2026: तृतीय चरण के अंतर्गत कल्याणपुर पंचायत समिति में चुनाव और मतदान का पूरा कार्यक्रम घोषित</news:title>
-    </news:news>
-  </url>
-  <url>
     <loc>https://chundanewslive.in/article.html?id=EH1Jh9EQihWrZma1P3te</loc>
     <news:news>
       <news:publication>
@@ -20,28 +9,6 @@
       </news:publication>
       <news:publication_date>2026-10-13T12:21:46.518Z</news:publication_date>
       <news:title>भाजपा के पूर्व विधायक नानालाल अहारी ने वार्ड 22 से भरा जिला परिषद सदस्य का नामांकन</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=rXi4g0VjgsL05T6ZQGHW</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-12T12:20:17.428Z</news:publication_date>
-      <news:title>ऋषभदेव उपखण्ड में कल रहेगा विद्युत शटडाउन, कई क्षेत्रों में 6 घंटे बिजली रहेगी गुल</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=w9PlxXSesKpGwh5CRa4Z</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-13T02:52:32.710Z</news:publication_date>
-      <news:title>कांग्रेस ने पूर्व सरपंच के बेटे व सेवानिवृत्त अध्यापक कांतिलाल पर जताया भरोसा, बनाया जिला परिषद सदस्य उम्मीदवार</news:title>
     </news:news>
   </url>
 </urlset>
