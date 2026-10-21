@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://chundanewslive.in/article.html?id=5ZIgCsdWcyNzqVhwQuU1</loc>
+    <news:news>
+      <news:publication>
+        <news:name>CHUNDA KSHETRA NEWS</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-20T13:14:48.439Z</news:publication_date>
+      <news:title>कल्याणपुर में श्रद्धा और उल्लास के साथ संपन्न हुआ नवरात्र महोत्सव</news:title>
+    </news:news>
+  </url>
+  <url>
     <loc>https://chundanewslive.in/article.html?id=6PpCqtdNJWVV637K4zsS</loc>
     <news:news>
       <news:publication>
@@ -9,6 +20,17 @@
       </news:publication>
       <news:publication_date>2026-10-19T13:55:19.570Z</news:publication_date>
       <news:title>कल्याणपुर :नवगठित कल्याणपुर पंचायत समिति में पहले दिन एक नामांकन दाखिल, 67 ने लिए नामांकन पत्र</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://chundanewslive.in/article.html?id=8rARlQkgYhuTtx26puZk</loc>
+    <news:news>
+      <news:publication>
+        <news:name>CHUNDA KSHETRA NEWS</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-20T15:50:19.761Z</news:publication_date>
+      <news:title>कल्याणपुर में भाजपा के चुनाव कार्यालय का उद्घाटन, कार्यकर्ताओं में दिखा उत्साह</news:title>
     </news:news>
   </url>
   <url>
@@ -34,17 +56,6 @@
     </news:news>
   </url>
   <url>
-    <loc>https://chundanewslive.in/article.html?id=X5XjhtgJc4yT63HxIEGx</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-18T10:02:32.149Z</news:publication_date>
-      <news:title>सलुंबर जिले के सेमारी   थाना क्षेत्र में भीषण सड़क हादसा: अनियंत्रित होकर पलटी तेज रफ्तार पिकअप, 12 लोग गंभीर रूप से घायल; इलाज के दौरान एक महिला की मौत</news:title>
-    </news:news>
-  </url>
-  <url>
     <loc>https://chundanewslive.in/article.html?id=uiHp72fcaGhStIQOLpgd</loc>
     <news:news>
       <news:publication>
@@ -53,17 +64,6 @@
       </news:publication>
       <news:publication_date>2026-10-19T09:29:18.884Z</news:publication_date>
       <news:title>पंड्यावाडा में पोस्ट ऑफिस का आधिकारिक फोन गुम</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=xHv1zowxi3h6HjVXCUQ7</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-18T08:57:00.735Z</news:publication_date>
-      <news:title>टीडी थाना क्षेत्र के बारा गांव में किराना व्यापारी के घर डकैती, 40 तोला सोना और 8 लाख नकद लूटे</news:title>
     </news:news>
   </url>
 </urlset>
