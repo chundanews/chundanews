@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
-    <loc>https://chundanewslive.in/article.html?id=5ZIgCsdWcyNzqVhwQuU1</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-20T13:14:48.439Z</news:publication_date>
-      <news:title>कल्याणपुर में श्रद्धा और उल्लास के साथ संपन्न हुआ नवरात्र महोत्सव</news:title>
-    </news:news>
-  </url>
-  <url>
     <loc>https://chundanewslive.in/article.html?id=8eXUZpm7JeOvPB6lAd7F</loc>
     <news:news>
       <news:publication>
@@ -20,17 +9,6 @@
       </news:publication>
       <news:publication_date>2026-10-21T13:28:31.357Z</news:publication_date>
       <news:title>सांसद मन्नालाल रावत की चुनावी सभा: केंद्र सरकार की योजनाओं का बखान, सुपरफास्ट ट्रेन ठहराव को लेकर सौंपा ज्ञापन</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=8rARlQkgYhuTtx26puZk</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-20T15:50:19.761Z</news:publication_date>
-      <news:title>कल्याणपुर में भाजपा के चुनाव कार्यालय का उद्घाटन, कार्यकर्ताओं में दिखा उत्साह</news:title>
     </news:news>
   </url>
   <url>
@@ -56,6 +34,17 @@
     </news:news>
   </url>
   <url>
+    <loc>https://chundanewslive.in/article.html?id=faLJpAyBMTiLbqLPpZ3R</loc>
+    <news:news>
+      <news:publication>
+        <news:name>CHUNDA KSHETRA NEWS</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-22T15:06:49.861Z</news:publication_date>
+      <news:title>कल्याणपुर उपतहसील क्षेत्र में कल रहेगी बिजली गुल, दीपावली पूर्व रखरखाव के चलते चार घंटे बंद रहेंगे चौराई और पण्ड्यावाड़ा जीएसएस के फीडर</news:title>
+    </news:news>
+  </url>
+  <url>
     <loc>https://chundanewslive.in/article.html?id=lGtVe7mwOYMCViKyLttR</loc>
     <news:news>
       <news:publication>
@@ -64,6 +53,17 @@
       </news:publication>
       <news:publication_date>2026-10-21T12:48:39.587Z</news:publication_date>
       <news:title>कल्याणपुर पंचायत समिति चुनाव: पूर्व प्रधान सहित 12 प्रत्याशियों ने दाखिल किए नामांकन</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://chundanewslive.in/article.html?id=tnuhG5t1dXvuOPWJHDAk</loc>
+    <news:news>
+      <news:publication>
+        <news:name>CHUNDA KSHETRA NEWS</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-10-22T14:30:56.239Z</news:publication_date>
+      <news:title>कल्याणपुर पंचायत समिति में 30 प्रत्याशियों ने दाखिल किए नामांकन</news:title>
     </news:news>
   </url>
 </urlset>
