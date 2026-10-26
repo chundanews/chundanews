@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
-    <loc>https://chundanewslive.in/article.html?id=I7c8iY2qevtuc2bN9acN</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-23T16:21:18.577Z</news:publication_date>
-      <news:title>कल्याणपुर में BAP की चुनावी हुंकार: सैलाना विधायक कमलेश्वर डोडियार बोले— नियमों का पालन कर दर्ज करें जीत</news:title>
-    </news:news>
-  </url>
-  <url>
     <loc>https://chundanewslive.in/article.html?id=IGweHTKh6kn6hL2fYbtU</loc>
     <news:news>
       <news:publication>
@@ -20,39 +9,6 @@
       </news:publication>
       <news:publication_date>2026-10-24T15:43:14.300Z</news:publication_date>
       <news:title>कल्याणपुर पंचायत समिति के 15 वार्डों में 64 प्रत्याशी चुनावी मैदान में, दो के नामांकन निरस्त</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=LDX6g20JrY3pG87feoLe</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-23T16:27:18.824Z</news:publication_date>
-      <news:title>श्यामकनाथ महादेव मंदिर से भाजपा की विशाल वाहन रैली, दिग्गजों की मौजूदगी में किया शक्ति प्रदर्शन</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=SmF1cJu8eQMsvoL1NWSG</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-23T16:12:07.557Z</news:publication_date>
-      <news:title>कल्याणपुर पंचायत समिति में चुनावी घमासान: 15 वार्डों में 66 नामांकन, नेताओं के परिजनों ने भी ठोकी ताल</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://chundanewslive.in/article.html?id=tu2zuZFc4Jr6xtdCW4Km</loc>
-    <news:news>
-      <news:publication>
-        <news:name>CHUNDA KSHETRA NEWS</news:name>
-        <news:language>hi</news:language>
-      </news:publication>
-      <news:publication_date>2026-10-23T12:07:00.759Z</news:publication_date>
-      <news:title>बीएपी (BAP) पार्टी ने कल्याणपुर में निकाली जोरदार नामांकन रैली, एमपी के विधायक कमलेश्वर डिडोर रहे मौजूद</news:title>
     </news:news>
   </url>
 </urlset>
