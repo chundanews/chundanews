@@ -1549,7 +1549,6 @@ function renderPanchayatDashboard(){const list=document.getElementById('panchaya
         }
 
         try { loadWidgetData(); } catch (e) { console.error('Widget load error:', e); }
-        try { loadPanchayatElectionData(); } catch (e) { console.error('Election widget error:', e); }
         try { loadScore(); } catch (e) { console.error('Score load error:', e); }
     });
 
