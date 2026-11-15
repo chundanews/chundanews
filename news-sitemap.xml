@@ -1,3 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://chundanewslive.in/article.html?id=YSwZ1jXQWfZma4i1wmcE</loc>
+    <news:news>
+      <news:publication>
+        <news:name>CHUNDA KSHETRA NEWS</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-11-14T11:44:02.486Z</news:publication_date>
+      <news:title>बिछीवाड़ा में निकला 11 फीट लंबा विशालकाय अजगर, वन विभाग ने किया सुरक्षित रेस्क्यू</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://chundanewslive.in/article.html?id=ov1olu0Xl2AJvjh0sq2q</loc>
+    <news:news>
+      <news:publication>
+        <news:name>CHUNDA KSHETRA NEWS</news:name>
+        <news:language>hi</news:language>
+      </news:publication>
+      <news:publication_date>2026-11-14T11:49:12.106Z</news:publication_date>
+      <news:title>श्यामपुरा पंचायत में नई सरकार ने संभाली कमान, सरपंच निशा मीणा सहित उप सरपंच व वार्ड पंचों ने किया पदभार ग्रहण</news:title>
+    </news:news>
+  </url>
 </urlset>
